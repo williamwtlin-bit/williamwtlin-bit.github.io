@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jira Team Dashboard</title>
 <!-- Security: restrict resource loading to known trusted origins -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://auth.atlassian.com https://api.atlassian.com https://*.workers.dev; connect-src https://auth.atlassian.com https://api.atlassian.com https://*.workers.dev;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://auth.atlassian.com https://api.atlassian.com https://*.workers.dev; connect-src https://auth.atlassian.com https://api.atlassian.com https://*.workers.dev; img-src blob: data:;">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -1135,11 +1135,16 @@ async function fetchMediaBlob(att, token, type, allMedia, idx){
   const slot = document.getElementById('media-'+att.id);
   if(!slot) return;
   try{
-    const resp = await fetch(att.content, {
+    // att.content points to the direct site URL (appier.atlassian.net/...) which
+    // rejects OAuth Bearer tokens. We must use the api.atlassian.com/ex/jira/ base
+    // which accepts them. Construct the correct URL from the attachment ID.
+    const user = getUser();
+    const apiContentUrl = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}/rest/api/3/attachment/content/${att.id}`;
+    const resp = await fetch(apiContentUrl, {
       headers:{ 'Authorization': `Bearer ${token}` }
     });
     if(!resp.ok){
-      slot.innerHTML=`<span style="font-size:10px;color:var(--muted);padding:6px;text-align:center;display:block">${esc(att.filename)}<br><span style="font-size:9px">Failed to load</span></span>`;
+      slot.innerHTML=`<span style="font-size:10px;color:var(--muted);padding:6px;text-align:center;display:block">${esc(att.filename)}<br><span style="font-size:9px">Failed to load (${resp.status})</span></span>`;
       return;
     }
     const blob = await resp.blob();
