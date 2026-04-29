@@ -489,7 +489,7 @@ async function fetchAllIssues(user){
   let issues=[], startAt=0, total=Infinity;
 
   while(issues.length < total){
-    const data=await apiFetch(`${base}/rest/api/3/search`, {
+    const data=await apiFetch(`${base}/rest/api/3/search/jql`, {
       method: 'POST',
       body: JSON.stringify({
         jql,
