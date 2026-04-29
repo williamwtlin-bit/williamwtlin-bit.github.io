@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jira Team Dashboard</title>
 <!-- Security: restrict resource loading to known trusted origins -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://auth.atlassian.com https://api.atlassian.com; connect-src https://auth.atlassian.com https://api.atlassian.com;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://auth.atlassian.com https://api.atlassian.com https://*.workers.dev; connect-src https://auth.atlassian.com https://api.atlassian.com https://*.workers.dev;">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -313,9 +313,11 @@
 // ║  See setup guide (click "Setup" on the login screen)                 ║
 // ╚══════════════════════════════════════════════════════════════════════╝
 const CONFIG = {
-  CLIENT_ID: 'xtLaSSXv7eKGXejZjiVFoDpdV9t8XneW',        // ← Paste your Client ID here
-  REDIRECT_URI: window.location.href.split('?')[0].split('#')[0],
+  CLIENT_ID: 'YOUR_ATLASSIAN_CLIENT_ID',        // ← Paste your Client ID here
+  // Must match exactly what is registered in Atlassian OAuth app Callback URL
+  REDIRECT_URI: 'https://williamwtlin-bit.github.io/',
   AUTH_URL:  'https://auth.atlassian.com/authorize',
+  // ← Replace with your Cloudflare Worker URL after deploying it
   TOKEN_URL: 'https://workerfordashboard.williamlin12.workers.dev',
   API_BASE:  'https://api.atlassian.com',
   SCOPES:    'read:jira-work write:jira-work read:me offline_access',
@@ -401,15 +403,14 @@ async function getAccessToken(){
   // Attempt refresh
   const t=getTokens();
   if(!t?.refresh_token) throw new Error('Session expired. Please log in again.');
-  const body=new URLSearchParams({
-    grant_type:    'refresh_token',
-    client_id:     CONFIG.CLIENT_ID,
-    refresh_token: t.refresh_token,
-  });
+  // Send JSON to Cloudflare Worker proxy (Worker adds client_secret server-side)
   const resp=await fetch(CONFIG.TOKEN_URL,{
     method:'POST',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body: body.toString(),
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      grant_type:    'refresh_token',
+      refresh_token: t.refresh_token,
+    }),
   });
   if(!resp.ok) throw new Error('Token refresh failed. Please log in again.');
   const fresh=await resp.json();
@@ -480,20 +481,19 @@ async function handleOAuthCallback(){
     return;
   }
 
-  // ── Exchange code for tokens ─────────────────────────────────────────────
+  // ── Exchange code for tokens via Cloudflare Worker proxy ───────────────
   showScreen('loading');
   try{
-    const body=new URLSearchParams({
-      grant_type:    'authorization_code',
-      client_id:     getConfiguredClientId(),
-      code:          code,
-      redirect_uri:  CONFIG.REDIRECT_URI,
-      code_verifier: verifier,  // PKCE — no client_secret needed
-    });
+    // Worker receives JSON, adds client_secret server-side, calls Atlassian
     const resp=await fetch(CONFIG.TOKEN_URL,{
       method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body: body.toString(),
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        grant_type:    'authorization_code',
+        code:          code,
+        redirect_uri:  CONFIG.REDIRECT_URI,
+        code_verifier: verifier,
+      }),
     });
     if(!resp.ok){
       const err=await resp.json().catch(()=>({error_description:'Unknown error'}));
