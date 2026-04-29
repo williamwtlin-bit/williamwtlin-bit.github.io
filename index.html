@@ -195,7 +195,43 @@
   .comment-body{font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;word-break:break-word;}
   .panel-loading{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);font-style:italic;}
   .panel-empty{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);font-style:italic;}
-  .panel-description{font-size:13px;color:var(--muted2);line-height:1.7;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;white-space:pre-wrap;word-break:break-word;max-height:220px;overflow-y:auto;}
+  .panel-description{font-size:13px;color:var(--muted2);line-height:1.7;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;max-height:480px;overflow-y:auto;}
+  .desc-text{white-space:pre-wrap;word-break:break-word;margin-bottom:10px;}
+  .desc-text.empty{color:var(--muted);font-style:italic;}
+  .desc-text:last-child{margin-bottom:0;}
+  /* ── MEDIA GRID (thumbnails in panel) ── */
+  .desc-media{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+  .desc-media-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;}
+  .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;}
+  .media-item{border-radius:8px;overflow:hidden;background:var(--surface);border:1px solid var(--border);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;transition:all .18s;}
+  .media-item:hover{border-color:var(--accent);box-shadow:0 0 0 2px rgba(79,142,247,.25);}
+  .media-item:hover .media-zoom{opacity:1;}
+  .media-thumb{width:100%;height:100%;object-fit:cover;display:block;}
+  .media-video-thumb{width:100%;height:100%;object-fit:cover;display:block;}
+  .media-zoom{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);opacity:0;transition:opacity .18s;font-size:22px;}
+  .media-video-badge{position:absolute;bottom:6px;right:7px;background:rgba(0,0,0,.65);color:#fff;font-size:10px;font-family:'DM Mono',monospace;padding:2px 6px;border-radius:3px;}
+  .media-name{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);color:#fff;font-family:'DM Mono',monospace;font-size:10px;padding:3px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+  /* ── PREVIEW MODAL ── */
+  .preview-modal{position:fixed;inset:0;z-index:900;display:flex;align-items:center;justify-content:center;animation:fadeIn .18s ease;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .preview-backdrop{position:absolute;inset:0;background:rgba(5,6,10,.92);backdrop-filter:blur(8px);cursor:zoom-out;}
+  .preview-box{position:relative;z-index:1;display:flex;flex-direction:column;max-width:92vw;max-height:92vh;border-radius:14px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.7);animation:scaleIn .2s cubic-bezier(.4,0,.2,1);}
+  @keyframes scaleIn{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+  .preview-topbar{display:flex;align-items:center;gap:10px;background:var(--surface2);border-bottom:1px solid var(--border);padding:10px 16px;flex-shrink:0;}
+  .preview-filename{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .preview-hint{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap;}
+  .preview-close{background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:4px;transition:all .15s;flex-shrink:0;}
+  .preview-close:hover{background:rgba(248,113,113,.15);color:var(--red);}
+  .preview-content{background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:1;min-height:0;}
+  .preview-img{max-width:92vw;max-height:calc(92vh - 52px);object-fit:contain;display:block;user-select:none;}
+  .preview-video{max-width:92vw;max-height:calc(92vh - 52px);display:block;outline:none;}
+  .preview-footer{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border-top:1px solid var(--border);padding:8px 16px;flex-shrink:0;}
+  .preview-nav{display:flex;gap:6px;}
+  .prev-nav-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:5px 12px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;transition:all .15s;}
+  .prev-nav-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .prev-nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+  .preview-counter{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
   .panel-description.empty{color:var(--muted);font-style:italic;}
   /* Tracking rows — same hover as tbd */
   .tracking-row{cursor:pointer;}
@@ -711,7 +747,7 @@ async function fetchAssignedIssues(user){
   const base=`${CONFIG.API_BASE}/ex/jira/${cloudId}`;
   const since = new Date(); since.setFullYear(since.getFullYear() - 1);
   const sinceStr = since.toISOString().slice(0,10).replace(/-/g,'/');
-  const jql=`assignee = "${accountId}" AND statusCategory != Done AND created >= "${sinceStr}" ORDER BY created ASC`;
+  const jql=`assignee = "${accountId}" AND statusCategory != Done AND project != AIQ AND created >= "${sinceStr}" ORDER BY created ASC`;
   const fields=['summary','status','assignee','reporter','created','resolutiondate'];
   let issues=[], nextPageToken=null;
 
@@ -926,7 +962,9 @@ function openPanel(key, e, mode='tbd'){
     : allData.find(i=>i.key===key);
   if(issue) populatePanelMeta(issue);
 
-  // Reset description + comments to loading state
+  // Reset description + comments to loading state, clear media registry
+  _mediaRegistry = [];
+  document.querySelector('.preview-modal')?.remove();
   document.getElementById('panelDescription').innerHTML='<span class="panel-loading">Loading…</span>';
   document.getElementById('panelCommentList').innerHTML='<span class="panel-loading">Loading…</span>';
 
@@ -1038,20 +1076,166 @@ async function loadPanelDescription(key){
     const user=getUser();
     if(!user){ el.innerHTML='<span class="panel-empty">Login required</span>'; return; }
     const base=`${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
-    const data=await apiFetch(`${base}/rest/api/3/issue/${key}?fields=description,summary`);
-    const desc=data.fields?.description;
-    if(!desc){
-      el.className='panel-description empty';
-      el.textContent='No description provided.';
-      return;
+    const data=await apiFetch(`${base}/rest/api/3/issue/${key}?fields=description,summary,attachment`);
+    const desc   = data.fields?.description;
+    const attaches = data.fields?.attachment || [];
+
+    // Render text
+    const text = desc ? extractAdfText(desc).trim() : '';
+    let html = '';
+    if(text){
+      html += `<div class="desc-text">${esc(text)}</div>`;
+    } else {
+      html += '<div class="desc-text empty">No description provided.</div>';
     }
-    const text=extractAdfText(desc).trim();
+
+    // Separate image and video attachments
+    const imgAtts   = attaches.filter(a=>a.mimeType?.startsWith('image/'));
+    const videoAtts = attaches.filter(a=>a.mimeType?.startsWith('video/'));
+
+    if(imgAtts.length || videoAtts.length){
+      const allMedia = [...imgAtts, ...videoAtts];
+      html += `<div class="desc-media">
+        <div class="desc-media-label">Attachments (${allMedia.length})</div>
+        <div class="media-grid" id="mediaGrid-${key}">`;
+      for(const att of allMedia){
+        html += `<div class="media-item" id="media-${esc(att.id)}" title="${esc(att.filename)}">
+          <div class="media-zoom">🔍</div>
+          <span class="panel-loading" style="font-size:10px;padding:4px">Loading…</span>
+        </div>`;
+      }
+      html += '</div></div>';
+    }
+
     el.className='panel-description';
-    el.textContent=text||'No description provided.';
+    el.innerHTML=html;
+
+    // Fetch each attachment blob with auth and swap in
+    const token = await getAccessToken();
+    const allMedia = [...imgAtts, ...videoAtts];
+    // Store mediaList on the grid element for navigator access
+    const gridEl = document.getElementById('mediaGrid-'+key);
+    if(gridEl) gridEl._mediaList = [];
+    for(let idx=0; idx<allMedia.length; idx++){
+      const att = allMedia[idx];
+      const type = att.mimeType?.startsWith('video/') ? 'video' : 'img';
+      fetchMediaBlob(att, token, type, allMedia, idx);
+    }
+
   }catch(e){
     el.innerHTML='<span class="panel-empty">Could not load description</span>';
   }
 }
+
+// ── MEDIA PREVIEW SYSTEM ────────────────────────────────────────────────────
+// Stores all loaded media for the current panel: [{url, name, type}]
+let _mediaRegistry = [];
+
+async function fetchMediaBlob(att, token, type, allMedia, idx){
+  const slot = document.getElementById('media-'+att.id);
+  if(!slot) return;
+  try{
+    const resp = await fetch(att.content, {
+      headers:{ 'Authorization': `Bearer ${token}` }
+    });
+    if(!resp.ok){
+      slot.innerHTML=`<span style="font-size:10px;color:var(--muted);padding:6px;text-align:center;display:block">${esc(att.filename)}<br><span style="font-size:9px">Failed to load</span></span>`;
+      return;
+    }
+    const blob = await resp.blob();
+    const url  = URL.createObjectURL(blob);
+
+    // Register in global media list for navigator
+    _mediaRegistry[idx] = {url, name: att.filename, type};
+
+    // Find the list index of this slot for the click handler
+    if(type==='img'){
+      slot.innerHTML=`
+        <img class="media-thumb" src="${url}" alt="${esc(att.filename)}" draggable="false"/>
+        <div class="media-zoom">🔍</div>
+        <div class="media-name">${esc(att.filename)}</div>`;
+      slot.addEventListener('click', ()=>openPreviewModal(idx, allMedia.length));
+    } else {
+      // Video: show first frame as thumbnail via video element
+      slot.innerHTML=`
+        <video class="media-video-thumb" src="${url}" preload="metadata" muted playsinline></video>
+        <div class="media-zoom">▶</div>
+        <div class="media-video-badge">VIDEO</div>
+        <div class="media-name">${esc(att.filename)}</div>`;
+      // Seek to 0.5s to show a frame as thumbnail
+      const vid = slot.querySelector('video');
+      vid.addEventListener('loadedmetadata', ()=>{ vid.currentTime=0.5; });
+      slot.addEventListener('click', ()=>openPreviewModal(idx, allMedia.length));
+    }
+  }catch(e){
+    slot.innerHTML=`<span style="font-size:10px;color:var(--muted);padding:6px;text-align:center;display:block">Could not load</span>`;
+  }
+}
+
+function openPreviewModal(idx, total){
+  // Remove any existing modal
+  document.querySelector('.preview-modal')?.remove();
+  const item = _mediaRegistry[idx];
+  if(!item) return;
+
+  const modal = document.createElement('div');
+  modal.className='preview-modal';
+  modal.dataset.idx = idx;
+  modal.dataset.total = total;
+
+  const contentHtml = item.type==='img'
+    ? `<img class="preview-img" src="${item.url}" alt="${esc(item.name)}" draggable="false"/>`
+    : `<video class="preview-video" src="${item.url}" controls autoplay></video>`;
+
+  modal.innerHTML=`
+    <div class="preview-backdrop"></div>
+    <div class="preview-box">
+      <div class="preview-topbar">
+        <span class="preview-filename">${esc(item.name)}</span>
+        <span class="preview-hint">Click outside or press Esc to close</span>
+        <button class="preview-close" onclick="document.querySelector('.preview-modal')?.remove()">✕</button>
+      </div>
+      <div class="preview-content">${contentHtml}</div>
+      ${total>1?`<div class="preview-footer">
+        <div class="preview-nav">
+          <button class="prev-nav-btn" id="prevBtn" onclick="navigatePreview(-1)" ${idx===0?'disabled':''}>← Prev</button>
+          <button class="prev-nav-btn" id="nextBtn" onclick="navigatePreview(1)" ${idx>=total-1?'disabled':''}>Next →</button>
+        </div>
+        <span class="preview-counter">${idx+1} / ${total}</span>
+      </div>`:''}
+    </div>`;
+
+  // Close on backdrop click
+  modal.querySelector('.preview-backdrop').addEventListener('click', ()=>modal.remove());
+  document.body.appendChild(modal);
+}
+
+function navigatePreview(dir){
+  const modal = document.querySelector('.preview-modal');
+  if(!modal) return;
+  const idx   = parseInt(modal.dataset.idx);
+  const total = parseInt(modal.dataset.total);
+  const next  = idx + dir;
+  if(next < 0 || next >= total) return;
+  // Stop any playing video before switching
+  modal.querySelector('video')?.pause();
+  openPreviewModal(next, total);
+}
+
+// Close preview on Escape (separate from panel close)
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){
+    const modal = document.querySelector('.preview-modal');
+    if(modal){ modal.remove(); e.stopImmediatePropagation(); }
+  }
+}, true);
+
+// Arrow key navigation in preview
+document.addEventListener('keydown', e=>{
+  if(!document.querySelector('.preview-modal')) return;
+  if(e.key==='ArrowRight') navigatePreview(1);
+  if(e.key==='ArrowLeft')  navigatePreview(-1);
+});
 
 async function loadPanelComments(key, maxResults=8){
   const el=document.getElementById('panelCommentList');
@@ -1279,10 +1463,13 @@ function renderDashboard(issues){
     if(a==='Others')return 1; if(b==='Others')return -1;
     return map[b].filter(i=>!isDone(i.status)).length - map[a].filter(i=>!isDone(i.status)).length;
   });
+  const doneCt = issues.filter(i=>isDone(i.status)).length;
   document.getElementById('sTotal').textContent=issues.length;
-  document.getElementById('sDone').textContent=issues.filter(i=>isDone(i.status)).length;
+  document.getElementById('sDone').textContent=doneCt;
   document.getElementById('sNS').textContent=issues.filter(i=>isBacklog(i.status)).length;
   document.getElementById('sActive').textContent=issues.filter(i=>isActive(i.status)).length;
+  // Tab badge = open tickets only (total - done)
+  document.getElementById('tc-tracking').textContent=issues.length - doneCt;
   const now=new Date();
   document.getElementById('lu').textContent='Updated: '+now.toLocaleDateString('en-GB')+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   document.getElementById('dash').innerHTML=sorted.map((c,i)=>mkGroup(c,map[c],i)).join('');
@@ -1323,7 +1510,6 @@ async function refresh(){
     ]);
     renderDashboard(reported);
     renderTbd(assigned);
-    document.getElementById('tc-tracking').textContent = reported.length;
     toast('success',`✓ ${reported.length} reported · ${assigned.length} assigned`);
   }catch(e){
     toast('error',`Refresh failed: ${e.message}`);
@@ -1383,7 +1569,6 @@ async function launchDashboard(user){
     ]);
     renderDashboard(reported);
     renderTbd(assigned);
-    document.getElementById('tc-tracking').textContent = reported.length;
     toast('success',`Welcome ${user.displayName} — loaded ${reported.length} reported, ${assigned.length} assigned`);
     scheduleDaily();
   }catch(e){
@@ -1434,7 +1619,7 @@ function loadPreview(){
   document.getElementById('previewBadge').style.display = 'flex';
   renderDashboard(MOCK_REPORTED);
   renderTbd(MOCK_ASSIGNED);
-  document.getElementById('tc-tracking').textContent = MOCK_REPORTED.length;
+  // tc-tracking is set by renderDashboard automatically
   toast('info', '🎨 Preview mode — showing mock data');
 }
 
