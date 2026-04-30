@@ -91,6 +91,33 @@
   /* Groups & tables */
   .client-group{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;transition:box-shadow .2s;}
   .client-group:hover{box-shadow:0 4px 20px rgba(0,0,0,.3);}
+  /* All-done compact row */
+  .all-done-section{margin-bottom:8px;}
+  .all-done-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;transition:all .15s;flex-wrap:wrap;}
+  .all-done-row:hover{border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.04);}
+  .all-done-row .client-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .all-done-row .client-name{font-size:13px;font-weight:600;flex:1;min-width:80px;}
+  .all-done-row .ad-done-badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px;background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.2);white-space:nowrap;}
+  .all-done-row .ad-chev{color:var(--muted);font-size:13px;transition:transform .2s;margin-left:auto;}
+  .all-done-row .ad-chev.open{transform:rotate(90deg);}
+  .all-done-tickets{display:none;border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;background:var(--surface);overflow-x:auto;}
+  .all-done-tickets.open{display:block;}
+  /* Hidden search targets inside collapsed all-done rows */
+  .ad-search-target{display:none;}
+
+  /* ── COMPLETED CLIENTS super-group ── */
+  .completed-super{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;}
+  .completed-header{display:flex;align-items:center;gap:10px;padding:13px 18px;cursor:pointer;background:var(--surface2);border-bottom:1px solid transparent;user-select:none;transition:background .15s;}
+  .completed-header:hover{background:#1a1e2a;}
+  .completed-header.open{border-bottom-color:var(--border);}
+  .completed-title{font-size:14px;font-weight:700;color:var(--muted2);flex:1;}
+  .completed-badge{font-family:'DM Mono',monospace;font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.2);}
+  .completed-chev{color:var(--muted);font-size:17px;transition:transform .2s;}
+  .completed-chev.open{transform:rotate(180deg);}
+  .completed-body{display:none;padding:10px 12px;display:none;}
+  .completed-body.open{display:block;}
+  .completed-body .all-done-section{margin-bottom:6px;}
+  .completed-body .all-done-section:last-child{margin-bottom:0;}
   .client-header{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;cursor:pointer;border-bottom:1px solid var(--border);user-select:none;background:var(--surface2);transition:background .15s;flex-wrap:wrap;gap:8px;}
   .client-header:hover{background:#1e2535;}
   .client-name-wrap{display:flex;align-items:center;gap:10px;}
@@ -914,6 +941,27 @@ function mkGroup(client,issues,ci){
   const notDone=issues.filter(i=>!isDone(i.status)).sort((a,b)=>statusPriority(a.status)-statusPriority(b.status));
   const cActive=notDone.filter(i=>isActive(i.status)).length;
   const cNS=notDone.filter(i=>isBacklog(i.status)).length;
+  const allDone = notDone.length===0 && done.length>0;
+
+  // ── ALL-DONE: render as a single compact row ──────────────────────────────
+  if(allDone){
+    // Hidden search targets so search still finds tickets inside collapsed rows
+    const searchTargets=done.map(i=>`<span class="ad-search-target" data-search="${(i.key+' '+i.summary+' '+i.assignee+' '+i.status).toLowerCase()}" data-asn="${esc(i.assignee)}"></span>`).join('');
+    return `<div class="all-done-section" id="${gid}">
+      ${searchTargets}
+      <div class="all-done-row" onclick="toggleAllDone('${gid}')">
+        <span class="client-dot" style="background:${color}"></span>
+        <span class="client-name" style="color:${color}">${esc(client)}</span>
+        <span class="ad-done-badge">✓ ${done.length} done</span>
+        <span class="ad-chev" id="${gid}_adchev">▸</span>
+      </div>
+      <div class="all-done-tickets" id="${gid}_adtickets">
+        <table class="done-table">${thead}<tbody>${done.map(i=>mkRow(i,false)).join('')}</tbody></table>
+      </div>
+    </div>`;
+  }
+
+  // ── NORMAL: has active/not-started tickets ────────────────────────────────
   return `<div class="client-group" id="${gid}">
     <div class="client-header" onclick="toggleGroup('${gid}')">
       <div class="client-name-wrap"><span class="client-dot" style="background:${color}"></span><span class="client-name" style="color:${color}">${esc(client)}</span></div>
@@ -934,6 +982,14 @@ function mkGroup(client,issues,ci){
       </div>`:''}
     </div>
   </div>`;
+}
+
+function toggleAllDone(gid){
+  const tickets=document.getElementById(gid+'_adtickets');
+  const chev=document.getElementById(gid+'_adchev');
+  if(!tickets) return;
+  tickets.classList.toggle('open');
+  if(chev) chev.classList.toggle('open', tickets.classList.contains('open'));
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -1573,34 +1629,126 @@ async function markDoneTbd(key,btn){
 
 function renderDashboard(issues){
   allData=issues;
+
+  // Build client→issues map
   const map={};
   for(const i of issues){const c=extractClient(i.summary);if(!map[c])map[c]=[];map[c].push(i);}
-  const sorted=Object.keys(map).sort((a,b)=>{
-    if(a==='Others')return 1; if(b==='Others')return -1;
-    return map[b].filter(i=>!isDone(i.status)).length - map[a].filter(i=>!isDone(i.status)).length;
+
+  // Split into: active clients (has open tickets) vs completed clients (all done)
+  const activeClients    = [];
+  const completedClients = [];
+  Object.keys(map).forEach(c=>{
+    const hasOpen = map[c].some(i=>!isDone(i.status));
+    if(hasOpen) activeClients.push(c);
+    else         completedClients.push(c);
   });
+
+  // Rule 1 & 2: Sort active clients by open ticket count DESC (Others included, no exception)
+  const openCount = c => map[c].filter(i=>!isDone(i.status)).length;
+  activeClients.sort((a,b)=> openCount(b) - openCount(a));
+
+  // Rule 3: Completed clients sorted alphabetically inside the super-group
+  completedClients.sort((a,b)=>a.localeCompare(b));
+
+  // Stats
   const doneCt = issues.filter(i=>isDone(i.status)).length;
   document.getElementById('sTotal').textContent=issues.length;
   document.getElementById('sDone').textContent=doneCt;
   document.getElementById('sNS').textContent=issues.filter(i=>isBacklog(i.status)).length;
   document.getElementById('sActive').textContent=issues.filter(i=>isActive(i.status)).length;
-  // Tab badge = open tickets only (total - done)
   document.getElementById('tc-tracking').textContent=issues.length - doneCt;
   const now=new Date();
   document.getElementById('lu').textContent='Updated: '+now.toLocaleDateString('en-GB')+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('dash').innerHTML=sorted.map((c,i)=>mkGroup(c,map[c],i)).join('');
+
+  // Render active client groups
+  let html = activeClients.map((c,i)=>mkGroup(c,map[c],i)).join('');
+
+  // Render completed super-group (contains all all-done clients)
+  if(completedClients.length){
+    const totalDoneTickets = completedClients.reduce((s,c)=>s+map[c].length,0);
+    const innerRows = completedClients.map((c,i)=>mkGroup(c,map[c],activeClients.length+i)).join('');
+    html += `
+    <div class="completed-super" id="completedSuper">
+      <div class="completed-header" id="completedHeader" onclick="toggleCompleted()">
+        <span>✓</span>
+        <span class="completed-title">Completed Clients</span>
+        <span class="completed-badge">${completedClients.length} clients · ${totalDoneTickets} tickets</span>
+        <span class="completed-chev" id="completedChev">▾</span>
+      </div>
+      <div class="completed-body" id="completedBody">
+        ${innerRows}
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('dash').innerHTML=html;
   buildDropdown('asn',[...new Set(issues.map(i=>i.assignee))].sort());
   applyFilters();
 }
 
+function toggleCompleted(){
+  const body=document.getElementById('completedBody');
+  const chev=document.getElementById('completedChev');
+  const hdr =document.getElementById('completedHeader');
+  if(!body) return;
+  body.classList.toggle('open');
+  chev.classList.toggle('open', body.classList.contains('open'));
+  hdr.classList.toggle('open',  body.classList.contains('open'));
+}
+
 function applyFilters(){
   const q=document.getElementById('srch').value.toLowerCase().trim();
+
+  // ── Filter regular group rows ──────────────────────────────────────────────
   document.querySelectorAll('tr[data-search]').forEach(tr=>{
     tr.style.display=(!q||tr.dataset.search.includes(q))&&(!selAsn||tr.dataset.asn===selAsn)?'':'none';
   });
+
+  // ── Show/hide normal client groups ─────────────────────────────────────────
   document.querySelectorAll('.client-group').forEach(g=>{
     g.style.display=g.querySelectorAll('tr[data-search]:not([style*="none"])').length?'':'none';
   });
+
+  // ── Handle all-done compact rows inside the super-group ────────────────────
+  let anyCompletedMatch=false;
+  document.querySelectorAll('.all-done-section').forEach(sec=>{
+    const targets=sec.querySelectorAll('.ad-search-target');
+    const hasMatch=!q || [...targets].some(t=>
+      t.dataset.search.includes(q)&&(!selAsn||t.dataset.asn===selAsn)
+    );
+    sec.style.display=hasMatch?'':'none';
+    if(hasMatch) anyCompletedMatch=true;
+
+    if(q && hasMatch){
+      // Auto-expand the compact client row so results are visible
+      const tickets=sec.querySelector('.all-done-tickets');
+      const chev=sec.querySelector('.ad-chev');
+      if(tickets&&!tickets.classList.contains('open')){
+        tickets.classList.add('open');
+        if(chev) chev.classList.add('open');
+      }
+      sec.querySelectorAll('tr[data-search]').forEach(tr=>{
+        tr.style.display=tr.dataset.search.includes(q)&&(!selAsn||tr.dataset.asn===selAsn)?'':'none';
+      });
+    } else if(!q){
+      sec.querySelectorAll('tr[data-search]').forEach(tr=>tr.style.display='');
+    }
+  });
+
+  // ── Show/hide + auto-expand the Completed Clients super-group ──────────────
+  const superEl  = document.getElementById('completedSuper');
+  const superBody= document.getElementById('completedBody');
+  const superChev= document.getElementById('completedChev');
+  const superHdr = document.getElementById('completedHeader');
+  if(superEl){
+    superEl.style.display = anyCompletedMatch ? '' : 'none';
+    // Auto-expand the super-group when user is searching
+    if(q && anyCompletedMatch && superBody && !superBody.classList.contains('open')){
+      superBody.classList.add('open');
+      if(superChev) superChev.classList.add('open');
+      if(superHdr)  superHdr.classList.add('open');
+    }
+  }
 }
 function toggleGroup(gid){
   const b=document.getElementById(gid+'_body'),c=document.getElementById(gid+'_chev');
@@ -1694,29 +1842,52 @@ async function launchDashboard(user){
 
 // ── PREVIEW / MOCK MODE ──────────────────────────────────────────────────────
 const MOCK_REPORTED = [
+  // ── Mannings: mix of active + done (normal full card) ──
   {key:'ETS-3345',url:'#',summary:'[Mannings] Campaign #3115910 investigation',status:'To Do',assignee:'hazel.wang',reporter:'william.wt.lin',created:'2026-04-28',resolutiondate:null},
   {key:'QGWL-25560',url:'#',summary:'[Mannings] Campaign #3115910 investigation',status:'Backlog',assignee:'hazel.wang',reporter:'william.wt.lin',created:'2026-04-28',resolutiondate:null},
   {key:'QGWL-25487',url:'#',summary:'[Mannings] Check edm campaign deliver queries',status:'In Progress',assignee:'hazel.wang',reporter:'william.wt.lin',created:'2026-04-20',resolutiondate:null},
   {key:'ETS-3058',url:'#',summary:'[Mannings] Request on prediction support data',status:'In Progress',assignee:'Zoe Cheng',reporter:'william.wt.lin',created:'2026-04-15',resolutiondate:null},
-  {key:'QGWL-25317',url:'#',summary:'[1010Hope] klickngo API Integration',status:'In Progress',assignee:'Mark Liu',reporter:'william.wt.lin',created:'2026-04-01',resolutiondate:null},
   {key:'QGWL-25295',url:'#',summary:'[Mannings] OJM delete this node only feature is not working',status:'Backlog',assignee:'hazel.wang',reporter:'william.wt.lin',created:'2026-03-30',resolutiondate:null},
-  {key:'QGWL-24972',url:'#',summary:'[Qchicken] Enable campaign agent for client',status:'Backlog',assignee:'susan.huang',reporter:'william.wt.lin',created:'2026-02-13',resolutiondate:null},
   {key:'ETS-3173',url:'#',summary:'[Mannings] Integration status checking',status:'Done',assignee:'jason.wu',reporter:'william.wt.lin',created:'2026-04-21',resolutiondate:'2026-04-21'},
   {key:'ETS-3166',url:'#',summary:'[Mannings] Check edm campaign deliver queries',status:'Done',assignee:'hazel.wang',reporter:'william.wt.lin',created:'2026-04-21',resolutiondate:'2026-04-22'},
-  {key:'ESPS-43',url:'#',summary:'[1010Hope] Create GCP environment',status:'Done',assignee:'mia.chu',reporter:'william.wt.lin',created:'2026-04-09',resolutiondate:'2026-04-22'},
+  {key:'QGWL-25258',url:'#',summary:'[Mannings] Feed trigger campaign investigation',status:'Done',assignee:'hazel.wang',reporter:'william.wt.lin',created:'2026-03-25',resolutiondate:'2026-04-08'},
+  {key:'ETS-2705',url:'#',summary:'[Mannings] Enable enterprise segment feature',status:"Won't Fix",assignee:'hazel.wang',reporter:'william.wt.lin',created:'2026-03-10',resolutiondate:'2026-03-20'},
+
+  // ── 1010Hope: active only (normal card, no done section) ──
+  {key:'QGWL-25317',url:'#',summary:'[1010Hope] klickngo API Integration',status:'In Progress',assignee:'Mark Liu',reporter:'william.wt.lin',created:'2026-04-01',resolutiondate:null},
+  {key:'QGWL-24745',url:'#',summary:'[1010Hope] Onboarding new AIQUA account',status:'In Progress',assignee:'Mark Liu',reporter:'william.wt.lin',created:'2026-01-16',resolutiondate:null},
+
+  // ── Qchicken: active + done ──
+  {key:'QGWL-24972',url:'#',summary:'[Qchicken] Enable campaign agent for client',status:'Backlog',assignee:'susan.huang',reporter:'william.wt.lin',created:'2026-02-13',resolutiondate:null},
   {key:'ETS-2926',url:'#',summary:'[Qchicken] Enable event count condition on AIQUA',status:'Done',assignee:'vivian.yang',reporter:'william.wt.lin',created:'2026-04-09',resolutiondate:'2026-04-09'},
+  {key:'AEP-6217',url:'#',summary:'[Qchicken] Credit System operation request',status:'Done',assignee:'mars.weng',reporter:'william.wt.lin',created:'2026-03-27',resolutiondate:'2026-03-30'},
+
+  // ── Luxgen: ALL DONE → compact row ──
   {key:'FIN-2402',url:'#',summary:'[Luxgen] 2026-3月服務交付報告',status:'Done',assignee:'william.wt.lin',reporter:'william.wt.lin',created:'2026-04-01',resolutiondate:'2026-04-01'},
-  {key:'AIR-4126',url:'#',summary:'Feature request on providing event prediction on AIRIS UI',status:'To Do',assignee:'Michael Palmer',reporter:'william.wt.lin',created:'2026-02-05',resolutiondate:null},
+  {key:'FIN-2340',url:'#',summary:'[Luxgen] 2026-2月服務交付報告',status:'Done',assignee:'william.wt.lin',reporter:'william.wt.lin',created:'2026-03-05',resolutiondate:'2026-03-10'},
+  {key:'FIN-2283',url:'#',summary:'[Luxgen] 2026-1月服務交付報告',status:'Done',assignee:'william.wt.lin',reporter:'william.wt.lin',created:'2026-02-05',resolutiondate:'2026-02-05'},
+
+  // ── Genki: ALL DONE → compact row ──
+  {key:'ETS-2622',url:'#',summary:'[Genki] Offboard Genki AIXON account',status:'Done',assignee:'jason.wu',reporter:'william.wt.lin',created:'2026-03-20',resolutiondate:'2026-03-20'},
+  {key:'ETS-1650',url:'#',summary:'[Genki] Deactivate Genki account',status:'Done',assignee:'jason.wu',reporter:'william.wt.lin',created:'2026-01-21',resolutiondate:'2026-01-21'},
+  {key:'PROJ-32948',url:'#',summary:'[Genki] Offboard Genki AIXON account',status:"Won't Fix",assignee:'jason.wu',reporter:'william.wt.lin',created:'2026-03-16',resolutiondate:'2026-03-16'},
+
+  // ── 55688潔衣家: Pending Approval (active, normal card) ──
   {key:'BBT-7216',url:'#',summary:'[55688潔衣家] Customized binding feature show error messages',status:'Pending Approval',assignee:'rick.lee',reporter:'william.wt.lin',created:'2026-02-12',resolutiondate:null},
+  {key:'BBT-7209',url:'#',summary:'[55688潔衣家] 反映腳本模組突然消失',status:'Done',assignee:'rick.lee',reporter:'william.wt.lin',created:'2026-02-11',resolutiondate:'2026-02-11'},
+
+  // ── Others: no brackets ──
+  {key:'AIR-4126',url:'#',summary:'Feature request on providing event prediction on AIRIS UI',status:'To Do',assignee:'Michael Palmer',reporter:'william.wt.lin',created:'2026-02-05',resolutiondate:null},
   {key:'EAM-355',url:'#',summary:'Offboard Request - Genki',status:'Backlog',assignee:'Roland Wang',reporter:'william.wt.lin',created:'2026-03-16',resolutiondate:null},
 ];
 
 const MOCK_ASSIGNED = [
+  // Longest lead time first (oldest created = highest priority)
+  {key:'PROJ-9005',url:'#',summary:'[Mannings] Approve AIXON renewal contract',status:'UNDER CLIENT REVIEW',assignee:'william.wt.lin',reporter:'jason.wu',created:'2026-01-20',resolutiondate:null},
+  {key:'QGWL-9003',url:'#',summary:'[Qchicken] Confirm DQB toggle settings',status:'Backlog',assignee:'william.wt.lin',reporter:'vivian.yang',created:'2026-02-20',resolutiondate:null},
   {key:'ETS-9001',url:'#',summary:'[Mannings] Review webhook integration docs',status:'In Progress',assignee:'william.wt.lin',reporter:'hazel.wang',created:'2026-03-01',resolutiondate:null},
   {key:'ETS-9002',url:'#',summary:'[1010Hope] Validate KlickNGo API response format',status:'To Do',assignee:'william.wt.lin',reporter:'Mark Liu',created:'2026-03-15',resolutiondate:null},
-  {key:'QGWL-9003',url:'#',summary:'[Qchicken] Confirm DQB toggle settings',status:'Backlog',assignee:'william.wt.lin',reporter:'vivian.yang',created:'2026-02-20',resolutiondate:null},
   {key:'ETS-9004',url:'#',summary:'[Luxgen] Monthly delivery report sign-off',status:'To Do',assignee:'william.wt.lin',reporter:'Brandon Tang',created:'2026-04-10',resolutiondate:null},
-  {key:'PROJ-9005',url:'#',summary:'[Mannings] Approve AIXON renewal contract',status:'UNDER CLIENT REVIEW',assignee:'william.wt.lin',reporter:'jason.wu',created:'2026-01-20',resolutiondate:null},
 ];
 
 function loadPreview(){
