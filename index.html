@@ -627,7 +627,7 @@ const CONFIG = {
   // ← Replace with your Cloudflare Worker URL after deploying it
   TOKEN_URL: 'https://workerfordashboard.williamlin12.workers.dev',
   API_BASE:  'https://api.atlassian.com',
-  SCOPES:    'read:jira-work write:jira-work read:me offline_access',
+  SCOPES:    'read:jira-work write:jira-work read:jira-user read:me offline_access',
   // Token refresh buffer: refresh if less than 5 min until expiry
   REFRESH_BUFFER_MS: 5 * 60 * 1000,
 };
@@ -2458,43 +2458,49 @@ async function wizCreateOnboardTicket(){
   }
 }
 
-// ── ASSIGNEE SEARCH (Wizard) ─────────────────────────────────────────────────
+// ── ASSIGNEE SEARCH (Wizard) — reuses the same search infrastructure as the panel ──
 function searchWizAssignee(){
   clearTimeout(wizAssigneeTimer);
   const q = document.getElementById('wizAsnSearch')?.value?.trim();
   const res = document.getElementById('wizAsnResults');
   if(!res) return;
   if(!q||q.length<2){ res.style.display='none'; return; }
-  wizAssigneeTimer = setTimeout(async ()=>{
-    res.style.display='block';
-    res.innerHTML='<div class="panel-user-opt" style="pointer-events:none"><span class="panel-loading">Searching…</span></div>';
-    try{
-      const user=getUser();
-      const base=`${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
-      const data=await apiFetch(`${base}/rest/api/3/user/search?query=${encodeURIComponent(q)}&maxResults=8`);
-      if(!data.length){
-        res.innerHTML='<div class="panel-user-opt" style="pointer-events:none"><span class="panel-empty">No users found</span></div>';
-        return;
-      }
-      res.innerHTML=data.map(u=>`
-        <div class="panel-user-opt" onclick="selectWizAssignee(${JSON.stringify({accountId:u.accountId,displayName:u.displayName,avatarUrl:u.avatarUrls?.['24x24']||''}).replace(/"/g,'&quot;')})">
-          ${u.avatarUrls?.['24x24']?`<img class="panel-user-avatar" src="${u.avatarUrls['24x24']}" alt=""/>`:'<span class="panel-user-avatar" style="display:inline-flex;align-items:center;justify-content:center;font-size:10px">👤</span>'}
-          <span>${esc(u.displayName)}</span>
-          <span style="font-size:10px;color:var(--muted);margin-left:auto">${esc(u.emailAddress||'')}</span>
-        </div>`).join('');
-    }catch(e){
-      res.style.display='none';
-    }
-  }, 300);
+  // Use the shared search function, but swap the result container and callback
+  wizAssigneeTimer = setTimeout(()=>doSearchWizAssignees(q, res), 300);
 }
 
-function selectWizAssignee(userObj){
-  // userObj may come in as stringified object from onclick attr
-  if(typeof userObj==='string') try{ userObj=JSON.parse(userObj.replace(/&quot;/g,'"')); }catch(_){}
-  wiz.assignee = userObj;
-  document.getElementById('wizAsnResults').style.display='none';
-  // Re-render the step to show selected state
-  renderWizStep();
+async function doSearchWizAssignees(q, resEl){
+  resEl.style.display='block';
+  resEl.innerHTML='<div class="panel-user-opt" style="pointer-events:none"><span class="panel-loading">Searching…</span></div>';
+  try{
+    const user=getUser();
+    if(!user){ resEl.style.display='none'; return; }
+    const base=`${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+    const data=await apiFetch(
+      `${base}/rest/api/3/user/search?query=${encodeURIComponent(q)}&maxResults=8`
+    );
+    if(!data.length){
+      resEl.innerHTML='<div class="panel-user-opt" style="pointer-events:none"><span class="panel-empty">No users found</span></div>';
+      return;
+    }
+    resEl.innerHTML=data.map(u=>`
+      <div class="panel-user-opt" onclick="pickWizAssignee('${esc(u.accountId)}','${esc(u.displayName)}','${esc(u.avatarUrls?.['24x24']||'')}')">
+        ${u.avatarUrls?.['24x24']
+          ? `<img class="panel-user-avatar" src="${u.avatarUrls['24x24']}" alt=""/>`
+          : '<span class="panel-user-avatar" style="display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted)">👤</span>'}
+        <span>${esc(u.displayName)}</span>
+        <span style="font-size:10px;color:var(--muted);margin-left:auto">${esc(u.emailAddress||'')}</span>
+      </div>`).join('');
+  }catch(e){
+    resEl.innerHTML=`<div class="panel-user-opt" style="pointer-events:none"><span class="panel-empty" style="color:var(--red)">${esc(e.message)}</span></div>`;
+  }
+}
+
+function pickWizAssignee(accountId, displayName, avatarUrl){
+  wiz.assignee = { accountId, displayName, avatarUrl };
+  const res = document.getElementById('wizAsnResults');
+  if(res) res.style.display='none';
+  renderWizStep(); // re-render to show selected chip
 }
 
 function clearWizAssignee(){
