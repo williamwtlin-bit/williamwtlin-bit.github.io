@@ -390,6 +390,50 @@
   .ob-appid-missing{font-family:'DM Mono',monospace;font-size:11px;color:var(--yellow);}
   .ob-del-btn{background:transparent;border:1px solid rgba(248,113,113,.3);color:var(--red);padding:3px 8px;border-radius:4px;font-size:11px;cursor:pointer;margin-left:auto;transition:all .15s;}
   .ob-del-btn:hover{background:rgba(248,113,113,.1);}
+  /* Draft / resume */
+  .ob-card.draft{border-color:rgba(251,191,36,.3);}
+  .ob-card.draft .ob-card-header{background:rgba(251,191,36,.05);}
+  .draft-badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px;background:rgba(251,191,36,.12);color:var(--yellow);border:1px solid rgba(251,191,36,.3);}
+  .btn-resume{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--yellow),var(--orange));color:#fff;border:none;padding:5px 14px;border-radius:6px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+  .btn-resume:hover{opacity:.9;transform:translateY(-1px);}
+  .wiz-save-later{background:transparent;border:1px solid var(--border);color:var(--muted2);padding:9px 16px;border-radius:8px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
+  .wiz-save-later:hover{border-color:var(--yellow);color:var(--yellow);}
+  /* Wizard assignee dropdown (same style as main assignee filter) */
+  .wiz-asn-wrap{position:relative;}
+  .wiz-asn-btn{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--muted2);padding:9px 12px;border-radius:7px;font-family:'DM Mono',monospace;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;text-align:left;transition:all .15s;}
+  .wiz-asn-btn:hover,.wiz-asn-btn.open{border-color:var(--accent);color:var(--text);}
+  .wiz-asn-btn.selected{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.04);color:var(--text);}
+  .wiz-asn-btn .wab-avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+  .wiz-asn-btn .wab-name{flex:1;}
+  .wiz-asn-btn .wab-chev{color:var(--muted);font-size:12px;flex-shrink:0;}
+  .wiz-asn-panel{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface2);border:1px solid var(--border);border-radius:8px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.5);overflow:hidden;display:none;}
+  .wiz-asn-panel.open{display:block;}
+  .wiz-asn-search{width:100%;background:var(--surface);border:none;border-bottom:1px solid var(--border);color:var(--text);padding:8px 12px;font-family:'DM Mono',monospace;font-size:12px;outline:none;}
+  .wiz-asn-search::placeholder{color:var(--muted);}
+  .wiz-asn-list{max-height:220px;overflow-y:auto;}
+  .wiz-asn-opt{padding:8px 12px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;color:var(--muted2);display:flex;align-items:center;gap:8px;transition:background .1s;}
+  .wiz-asn-opt:hover{background:rgba(255,255,255,.04);color:var(--text);}
+  .wiz-asn-opt.sel{color:var(--accent);background:rgba(79,142,247,.08);}
+  .wiz-asn-opt img{width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+  /* ── BULK ACTIONS ── */
+  .bulk-bar{display:none;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;margin-bottom:10px;flex-wrap:wrap;}
+  .bulk-bar.active{display:flex;}
+  .bulk-count{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted2);}
+  .bulk-count strong{color:var(--accent);}
+  .bulk-actions{display:flex;gap:7px;flex-wrap:wrap;margin-left:auto;}
+  .bulk-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:5px 13px;border-radius:6px;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .bulk-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .bulk-btn.danger:hover{border-color:var(--red);color:var(--red);}
+  .bulk-btn.success-btn{border-color:rgba(52,211,153,.4);color:var(--green);}
+  .bulk-btn.success-btn:hover{background:rgba(52,211,153,.1);}
+  .bulk-deselect{background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;}
+  .bulk-deselect:hover{color:var(--red);}
+  /* Row checkbox */
+  .row-cb{width:16px;height:16px;border:2px solid var(--border);border-radius:3px;cursor:pointer;accent-color:var(--accent);flex-shrink:0;}
+  .tracking-row td:first-child{white-space:nowrap;}
+  th.cb-th{width:32px;padding:8px 8px 8px 14px;}
+  td.cb-td{padding:8px 4px 8px 14px;width:32px;}
+  .group-cb{width:15px;height:15px;border:2px solid var(--border);border-radius:3px;cursor:pointer;accent-color:var(--accent);}
 
   /* Wizard nav buttons */
   .btn-wiz-back{background:var(--surface2);border:1px solid var(--border);color:var(--muted2);padding:9px 18px;border-radius:8px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
@@ -506,6 +550,15 @@
             <input class="dd-search" type="text" id="asnSrch" placeholder="Search assignees…" oninput="ddFilter('asn')"/>
             <div class="dd-list" id="asnList"></div>
           </div>
+        </div>
+      </div>
+      <!-- Bulk action bar (appears when checkboxes selected) -->
+      <div class="bulk-bar" id="bulkBar">
+        <button class="bulk-deselect" onclick="clearBulkSelection()" title="Clear selection">✕</button>
+        <span class="bulk-count" id="bulkCount"><strong>0</strong> selected</span>
+        <div class="bulk-actions">
+          <button class="bulk-btn success-btn" onclick="bulkMarkDone()">✓ Mark All Done</button>
+          <button class="bulk-btn" onclick="bulkCopyKeys()">📋 Copy Keys</button>
         </div>
       </div>
       <div id="dash"></div>
@@ -1072,6 +1125,9 @@ function mkRow(issue,showBtn){
   const days=calcLT(issue.created), done=isDone(issue.status);
   const sumClean=esc(normU(issue.summary).replace(/\[[^\]]+\]\s*/,''));
   return `<tr class="tracking-row" data-key="${issue.key}" data-search="${(issue.key+' '+issue.summary+' '+issue.assignee+' '+issue.reporter+' '+issue.status).toLowerCase()}" data-asn="${esc(issue.assignee)}" onclick="openPanel('${issue.key}',event,'tracking')">
+    <td class="cb-td" onclick="event.stopPropagation()">
+      <input type="checkbox" class="row-cb" data-key="${issue.key}" onchange="onRowCbChange(this)"/>
+    </td>
     <td onclick="event.stopPropagation()"><a class="ticket-key" href="${issue.url}" target="_blank">${issue.key}</a></td>
     <td><div class="ticket-summary">${sumClean}</div></td>
     <td><span class="sb ${sClass(issue.status)}"><span class="sd"></span>${esc(issue.status)}</span></td>
@@ -1085,7 +1141,11 @@ function mkRow(issue,showBtn){
 function mkGroup(client,issues,ci){
   const color=COLORS[ci%COLORS.length];
   const gid='g_'+client.replace(/[^a-z0-9]/gi,'_');
-  const thead=`<thead><tr><th>Ticket</th><th>Summary</th><th>Status</th><th>Assignee</th><th>Created</th><th>Lead Time</th><th>Action</th></tr></thead>`;
+  const cbThId=`gcb_${gid}`;
+  const thead=`<thead><tr>
+    <th class="cb-th"><input type="checkbox" class="group-cb" id="${cbThId}" title="Select all in group" onchange="onGroupCbChange('${gid}',this)"/></th>
+    <th>Ticket</th><th>Summary</th><th>Status</th><th>Assignee</th><th>Created</th><th>Lead Time</th><th>Action</th>
+  </tr></thead>`;
   const done=issues.filter(i=>isDone(i.status));
   const notDone=issues.filter(i=>!isDone(i.status)).sort((a,b)=>statusPriority(a.status)-statusPriority(b.status));
   const cActive=notDone.filter(i=>isActive(i.status)).length;
@@ -1777,6 +1837,104 @@ async function markDoneTbd(key,btn){
   }
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+// BULK ACTIONS
+// ════════════════════════════════════════════════════════════════════════════
+let bulkSelected = new Set(); // Set of ticket keys currently checked
+
+function onRowCbChange(cb){
+  const key = cb.dataset.key;
+  if(cb.checked) bulkSelected.add(key);
+  else           bulkSelected.delete(key);
+  updateBulkBar();
+  syncGroupCb(cb.closest('table'));
+}
+
+function onGroupCbChange(gid, headerCb){
+  // Toggle all visible (non-filtered) rows in this group
+  const body = document.getElementById(gid+'_body');
+  if(!body) return;
+  body.querySelectorAll('.row-cb').forEach(cb=>{
+    const tr = cb.closest('tr');
+    if(tr && tr.style.display!=='none'){
+      cb.checked = headerCb.checked;
+      const key = cb.dataset.key;
+      if(headerCb.checked) bulkSelected.add(key);
+      else                  bulkSelected.delete(key);
+    }
+  });
+  updateBulkBar();
+}
+
+function syncGroupCb(table){
+  // Update group header checkbox state to reflect row states
+  if(!table) return;
+  const headerCb = table.querySelector('.group-cb');
+  if(!headerCb) return;
+  const rowCbs = [...table.querySelectorAll('.row-cb')].filter(c=>c.closest('tr')?.style.display!=='none');
+  const allChecked = rowCbs.length>0 && rowCbs.every(c=>c.checked);
+  const anyChecked = rowCbs.some(c=>c.checked);
+  headerCb.checked       = allChecked;
+  headerCb.indeterminate = !allChecked && anyChecked;
+}
+
+function updateBulkBar(){
+  const bar   = document.getElementById('bulkBar');
+  const count = document.getElementById('bulkCount');
+  if(!bar||!count) return;
+  const n = bulkSelected.size;
+  bar.classList.toggle('active', n>0);
+  count.innerHTML = `<strong>${n}</strong> ticket${n===1?'':'s'} selected`;
+}
+
+function clearBulkSelection(){
+  bulkSelected.clear();
+  document.querySelectorAll('.row-cb').forEach(cb=>cb.checked=false);
+  document.querySelectorAll('.group-cb').forEach(cb=>{cb.checked=false;cb.indeterminate=false;});
+  updateBulkBar();
+}
+
+function bulkCopyKeys(){
+  if(!bulkSelected.size){ toast('info','No tickets selected'); return; }
+  const keys = [...bulkSelected].join(', ');
+  navigator.clipboard.writeText(keys).then(()=>toast('success',`Copied ${bulkSelected.size} ticket keys`));
+}
+
+async function bulkMarkDone(){
+  if(!bulkSelected.size){ toast('info','No tickets selected'); return; }
+  const keys = [...bulkSelected];
+  const user = getUser();
+  if(!user){ toast('error','Not logged in'); return; }
+  const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+
+  toast('info',`Marking ${keys.length} tickets as Done…`);
+  let successCount=0, failCount=0;
+
+  for(const key of keys){
+    try{
+      // Fetch transitions for this ticket
+      const data = await apiFetch(`${base}/rest/api/3/issue/${key}/transitions`);
+      const doneT = (data.transitions||[]).find(t=>t.name.toLowerCase()==='done'&&t.isAvailable!==false);
+      if(!doneT) throw new Error('No Done transition');
+      await apiFetch(`${base}/rest/api/3/issue/${key}/transitions`,{
+        method:'POST', body:JSON.stringify({transition:{id:doneT.id}})
+      });
+      // Update local data
+      const issue = allData.find(i=>i.key===key);
+      if(issue){ issue.status='Done'; issue.resolutiondate=new Date().toISOString().slice(0,10); }
+      successCount++;
+    }catch(e){
+      console.warn(`Bulk done failed for ${key}:`, e.message);
+      failCount++;
+    }
+  }
+
+  if(successCount) toast('success',`✓ Marked ${successCount} ticket${successCount===1?'':'s'} as Done`);
+  if(failCount)    toast('error',`${failCount} ticket${failCount===1?'':'s'} could not be transitioned`);
+  clearBulkSelection();
+  renderDashboard(allData);
+}
+
 function renderDashboard(issues){
   allData=issues;
 
@@ -2121,16 +2279,43 @@ function loadPreview(){
 
 function exitPreview(){
   document.getElementById('previewBadge').style.display = 'none';
-  // Clear mock onboardings from localStorage on exit
+  // Clear mock onboardings and mock drafts from localStorage on exit
   if(loadOnboardings().some(o=>o.id.startsWith('ob_mock_'))){
     saveOnboardings([]);
+  }
+  if(loadDrafts().some(d=>d.id.startsWith('draft_MOCK'))){
+    saveDrafts([]);
   }
   allData = []; tbdData = []; selAsn = null;
   showLoginScreen();
 }
 
 // Mock version of renderOnboardingProgress — skips the live Jira status fetch
+// Inject one mock draft so preview shows the draft/resume state
+function injectMockDraft(){
+  const mockDraft = {
+    id:               'draft_MOCK-9999',
+    savedAt:          new Date().toISOString().slice(0,10)+'T09:00:00.000Z',
+    platform:         'AIQUA',
+    clientName:       'Luxgen',
+    legalTicket:      'LEG-2001',
+    opportunityLink:  'https://appier.atlassian.net/opp/999',
+    assignee:         { accountId:'mock', displayName:'hazel.wang', avatarUrl:'' },
+    onboardTicketKey: 'QGWL-MOCK-001',
+    appId:            '',
+    projectId:        '',
+    organizationId:   '',
+    selectedFeatures: { edm:true, seg_split:true, creative:true },
+    extraFields:      { edm:{ email:'noreply@luxgen.com' } },
+    step:             2,
+  };
+  const drafts = loadDrafts().filter(d=>!d.id.startsWith('draft_MOCK'));
+  drafts.unshift(mockDraft);
+  saveDrafts(drafts);
+}
+
 function renderOnboardingProgressMock(){
+  injectMockDraft();
   const list    = loadOnboardings();
   const secEl   = document.getElementById('obProgressSection');
   const newWrap = document.getElementById('obNewWrap');
@@ -2247,7 +2432,70 @@ const CATALOGS = {
 };
 
 // ── LOCALSTORAGE ──────────────────────────────────────────────────────────────
-const OB_KEY = 'jd_onboardings';
+const OB_KEY    = 'jd_onboardings';
+const DRAFT_KEY = 'jd_ob_drafts';   // stores incomplete wizards paused mid-flow
+
+// ── DRAFT PERSISTENCE ──────────────────────────────────────────────────────
+function loadDrafts(){
+  try{ return JSON.parse(localStorage.getItem(DRAFT_KEY)||'[]'); }
+  catch(e){ return []; }
+}
+function saveDrafts(list){ localStorage.setItem(DRAFT_KEY, JSON.stringify(list)); }
+
+function saveWizAsDraft(){
+  if(!wiz.onboardTicketKey){ toast('info','Create the onboard ticket first before saving'); return; }
+  const draft = {
+    id:               'draft_'+wiz.onboardTicketKey,
+    savedAt:          new Date().toISOString(),
+    platform:         wiz.platform,
+    clientName:       wiz.clientName,
+    legalTicket:      wiz.legalTicket,
+    opportunityLink:  wiz.opportunityLink,
+    assignee:         wiz.assignee,
+    onboardTicketKey: wiz.onboardTicketKey,
+    appId:            wiz.appId,
+    projectId:        wiz.projectId,
+    organizationId:   wiz.organizationId,
+    selectedFeatures: wiz.selectedFeatures,
+    extraFields:      wiz.extraFields,
+    step:             2,  // always resumes at App ID + features step
+  };
+  const list = loadDrafts().filter(d=>d.id!==draft.id); // replace existing draft for same ticket
+  list.unshift(draft);
+  saveDrafts(list);
+  toast('success', `Draft saved — resume anytime from the Onboarding Progress section`);
+  closeWizard();
+  renderOnboardingProgress();
+}
+
+function resumeDraft(draftId){
+  const draft = loadDrafts().find(d=>d.id===draftId);
+  if(!draft){ toast('error','Draft not found'); return; }
+
+  // Restore wizard state from draft
+  wiz.platform         = draft.platform;
+  wiz.clientName       = draft.clientName;
+  wiz.legalTicket      = draft.legalTicket;
+  wiz.opportunityLink  = draft.opportunityLink;
+  wiz.assignee         = draft.assignee;
+  wiz.onboardTicketKey = draft.onboardTicketKey;
+  wiz.appId            = draft.appId || '';
+  wiz.projectId        = draft.projectId || '';
+  wiz.organizationId   = draft.organizationId || '';
+  wiz.selectedFeatures = draft.selectedFeatures || {};
+  wiz.extraFields      = draft.extraFields || {};
+  wiz.step             = draft.step || 2;
+
+  document.getElementById('wizOverlay').style.display='flex';
+  renderWizStep();
+  toast('info', `Resumed: ${draft.clientName} — ${draft.platform}`);
+}
+
+function deleteDraft(draftId){
+  saveDrafts(loadDrafts().filter(d=>d.id!==draftId));
+  renderOnboardingProgress();
+  toast('info','Draft deleted');
+}
 
 function loadOnboardings(){
   try{ return JSON.parse(localStorage.getItem(OB_KEY)||'[]'); }
@@ -2285,16 +2533,50 @@ let wiz = {
   assignee: null,           // { accountId, displayName, avatarUrl }
   onboardTicketKey: null,   // set after creating the onboard ticket
   appId: '',                // auto-detected or manually entered
+  projectId: '',
+  organizationId: '',
   selectedFeatures: {},     // { featureId: { extraFields: {} } }
   extraFields: {},          // { featureId: { fieldId: value } }
 };
+
+// ── TEMPLATE ENGINE ───────────────────────────────────────────────────────────
+// Replaces {clientName}, {appId}, {projectId}, {organizationId}, {legalTicket},
+// {opportunityLink}, {platform} in any string from sample ticket content
+function resolveTemplate(str){
+  if(!str||typeof str!=='string') return str;
+  const vars = {
+    clientName:     wiz.clientName    || '',
+    appId:          wiz.appId         || '[TBD]',
+    projectId:      wiz.projectId     || '[TBD]',
+    organizationId: wiz.organizationId|| '[TBD]',
+    legalTicket:    wiz.legalTicket   || '',
+    opportunityLink:wiz.opportunityLink|| '',
+    platform:       wiz.platform      || '',
+  };
+  return str.replace(/\{(\w+)\}/g, (match, key)=> key in vars ? vars[key] : match);
+}
+
+// Recursively resolve templates in an ADF node tree
+function resolveAdfTemplates(node){
+  if(!node) return node;
+  if(typeof node === 'string') return resolveTemplate(node);
+  if(node.type === 'text' && node.text){
+    return {...node, text: resolveTemplate(node.text)};
+  }
+  if(node.content){
+    return {...node, content: node.content.map(resolveAdfTemplates)};
+  }
+  return node;
+}
 let wizAssigneeTimer = null;
 
 const WIZ_STEPS = 4;
 
 function openWizard(){
   wiz = { step:0, platform:null, clientName:'', legalTicket:'', opportunityLink:'',
-          onboardTicketKey:null, appId:'', selectedFeatures:{}, extraFields:{} };
+          assignee:null, onboardTicketKey:null,
+          appId:'', projectId:'', organizationId:'',
+          selectedFeatures:{}, extraFields:{} };
   document.getElementById('wizOverlay').style.display='flex';
   renderWizStep();
 }
@@ -2373,7 +2655,7 @@ function renderWizAccount(body, footer){
     </div>
     <div class="wiz-field">
       <label class="wiz-label">Legal Ticket <span class="wiz-req">*</span></label>
-      <input class="wiz-input" id="wizLegalTicket" placeholder="e.g. QGWL-XXXXX"
+      <input class="wiz-input" id="wizLegalTicket" placeholder="e.g. LEG-XXXX"
         value="${esc(wiz.legalTicket)}" oninput="wiz.legalTicket=this.value.trim()"/>
       <p class="wiz-hint">The legal/contract ticket for this client</p>
     </div>
@@ -2383,18 +2665,25 @@ function renderWizAccount(body, footer){
         value="${esc(wiz.opportunityLink)}" oninput="wiz.opportunityLink=this.value.trim()"/>
       <p class="wiz-hint">CRM opportunity link for this client engagement</p>
     </div>
-    <div class="wiz-field" style="position:relative">
+    <div class="wiz-field">
       <label class="wiz-label">Assign TS To All Tickets <span class="wiz-req">*</span></label>
-      ${wiz.assignee ? `
-        <div style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid rgba(52,211,153,.35);border-radius:7px;padding:8px 12px;">
-          ${wiz.assignee.avatarUrl?`<img src="${wiz.assignee.avatarUrl}" style="width:24px;height:24px;border-radius:50%;" alt=""/>`:''}
-          <span style="font-family:DM Mono,monospace;font-size:13px;color:var(--text);flex:1">${esc(wiz.assignee.displayName)}</span>
-          <button onclick="clearWizAssignee()" style="background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 2px">✕</button>
-        </div>` : `
-        <input class="wiz-input" id="wizAsnSearch" placeholder="Search TS team member…"
-          oninput="searchWizAssignee()" autocomplete="off"/>
-        <div class="panel-user-results" id="wizAsnResults" style="display:none;position:absolute;top:calc(100% + 2px);left:0;right:0;z-index:50"></div>`}
-      <p class="wiz-hint">This person will be assigned to all feature tickets created</p>
+      <div class="wiz-asn-wrap" id="wizAsnWrap">
+        <button class="wiz-asn-btn ${wiz.assignee?'selected':''}" id="wizAsnBtn" onclick="toggleWizAsnDropdown(event)">
+          ${wiz.assignee?.avatarUrl ? `<img class="wab-avatar" src="${wiz.assignee.avatarUrl}" alt=""/>` : '<span style="font-size:14px">👤</span>'}
+          <span class="wab-name">${wiz.assignee ? esc(wiz.assignee.displayName) : 'Select TS team member…'}</span>
+          <span class="wab-chev">▾</span>
+        </button>
+        <div class="wiz-asn-panel" id="wizAsnPanel">
+          <input class="wiz-asn-search" type="text" id="wizAsnSearchInput"
+            placeholder="Search by name…" oninput="filterWizAsnList()" autocomplete="off"/>
+          <div class="wiz-asn-list" id="wizAsnList">
+            <div class="wiz-asn-opt" style="pointer-events:none;color:var(--muted)">
+              <span class="panel-loading">Loading team members…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="wiz-hint">This person will be assigned to all onboarding and feature tickets</p>
     </div>
     ${wiz.onboardTicketKey ? `
     <div class="wiz-success" style="display:flex;align-items:center;gap:8px">
@@ -2404,8 +2693,9 @@ function renderWizAccount(body, footer){
 
   footer.innerHTML = `
     <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
+    ${wiz.onboardTicketKey ? `<button class="wiz-save-later" onclick="saveWizAsDraft()" title="Save progress and wait for TS to provide App ID">⏸ Save & Come Back Later</button>` : ''}
     <button class="btn-wiz-next" id="wizAccBtn" onclick="wizCreateOnboardTicket()">
-      ${wiz.onboardTicketKey ? 'Next →' : 'Create Onboard Ticket →'}
+      ${wiz.onboardTicketKey ? 'Continue to Features →' : 'Create Onboard Ticket →'}
     </button>`;
 }
 
@@ -2432,14 +2722,37 @@ async function wizCreateOnboardTicket(){
     const sample = await apiFetch(`${base}/rest/api/3/issue/${cat.onboardTicket.sampleKey}?fields=issuetype,project,priority,labels`);
     const f = sample.fields||{};
 
-    const desc = `Legal Ticket: ${wiz.legalTicket}\nOpportunity Link: ${wiz.opportunityLink||'N/A'}\n\nPlatform: ${wiz.platform}\nClient: ${wiz.clientName}`;
+    // Build channels + features list from selected features
+    const cat2 = CATALOGS[wiz.platform];
+    const selFeatNames = cat2.features
+      .filter(f=>wiz.selectedFeatures[f.id])
+      .map(f=>f.name);
+    const channelFeats = cat2.features.filter(f=>wiz.selectedFeatures[f.id]&&f.category==='Channels').map(f=>f.name);
+    const otherFeats   = cat2.features.filter(f=>wiz.selectedFeatures[f.id]&&f.category!=='Channels').map(f=>f.name);
+
+    const desc = [
+      `Client: ${wiz.clientName}`,
+      `Platform: ${wiz.platform}`,
+      `Legal Ticket: ${wiz.legalTicket}`,
+      `Opportunity Link: ${wiz.opportunityLink}`,
+      ``,
+      `Channels Requested:`,
+      ...(channelFeats.length ? channelFeats.map(n=>`  - ${n}`) : [`  - None`]),
+      ``,
+      `Features Requested:`,
+      ...(otherFeats.length ? otherFeats.map(n=>`  - ${n}`) : [`  - None`]),
+      ``,
+      `App ID: {appId}`,
+      `Project ID: {projectId}`,
+      `Organization ID: {organizationId}`,
+    ].join('\n');
 
     const payload = {
       fields: {
         project:     { key: 'QGWL' },
         issuetype:   f.issuetype || { name:'Task' },
         summary:     `[${wiz.clientName}] ${wiz.platform} Onboarding`,
-        description: { type:'doc', version:1, content:[{type:'paragraph',content:[{type:'text',text:desc}]}] },
+        description: resolveAdfTemplates({ type:'doc', version:1, content:[{type:'paragraph',content:[{type:'text',text:desc}]}] }),
         labels:      [...(f.labels||[]), 'onboarding-dashboard'],
       }
     };
@@ -2458,55 +2771,85 @@ async function wizCreateOnboardTicket(){
   }
 }
 
-// ── ASSIGNEE SEARCH (Wizard) — reuses the same search infrastructure as the panel ──
-function searchWizAssignee(){
-  clearTimeout(wizAssigneeTimer);
-  const q = document.getElementById('wizAsnSearch')?.value?.trim();
-  const res = document.getElementById('wizAsnResults');
-  if(!res) return;
-  if(!q||q.length<2){ res.style.display='none'; return; }
-  // Use the shared search function, but swap the result container and callback
-  wizAssigneeTimer = setTimeout(()=>doSearchWizAssignees(q, res), 300);
+// ── WIZARD ASSIGNEE DROPDOWN ─────────────────────────────────────────────────
+let wizAsnAllUsers = [];  // cached user list for the dropdown
+
+async function toggleWizAsnDropdown(e){
+  e.stopPropagation();
+  const panel  = document.getElementById('wizAsnPanel');
+  const btn    = document.getElementById('wizAsnBtn');
+  const isOpen = panel.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  if(isOpen){
+    document.getElementById('wizAsnSearchInput')?.focus();
+    // Load users if not cached yet
+    if(!wizAsnAllUsers.length) await loadWizAsnUsers();
+  }
 }
 
-async function doSearchWizAssignees(q, resEl){
-  resEl.style.display='block';
-  resEl.innerHTML='<div class="panel-user-opt" style="pointer-events:none"><span class="panel-loading">Searching…</span></div>';
+async function loadWizAsnUsers(){
+  const list = document.getElementById('wizAsnList');
+  if(!list) return;
+  list.innerHTML='<div class="wiz-asn-opt" style="pointer-events:none"><span class="panel-loading">Loading…</span></div>';
   try{
-    const user=getUser();
-    if(!user){ resEl.style.display='none'; return; }
-    const base=`${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
-    const data=await apiFetch(
-      `${base}/rest/api/3/user/search?query=${encodeURIComponent(q)}&maxResults=8`
-    );
-    if(!data.length){
-      resEl.innerHTML='<div class="panel-user-opt" style="pointer-events:none"><span class="panel-empty">No users found</span></div>';
-      return;
-    }
-    resEl.innerHTML=data.map(u=>`
-      <div class="panel-user-opt" onclick="pickWizAssignee('${esc(u.accountId)}','${esc(u.displayName)}','${esc(u.avatarUrls?.['24x24']||'')}')">
-        ${u.avatarUrls?.['24x24']
-          ? `<img class="panel-user-avatar" src="${u.avatarUrls['24x24']}" alt=""/>`
-          : '<span class="panel-user-avatar" style="display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted)">👤</span>'}
-        <span>${esc(u.displayName)}</span>
-        <span style="font-size:10px;color:var(--muted);margin-left:auto">${esc(u.emailAddress||'')}</span>
-      </div>`).join('');
+    const user = getUser();
+    if(!user){ list.innerHTML='<div class="wiz-asn-opt" style="pointer-events:none;color:var(--red)">Login required</div>'; return; }
+    const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+    // Search with empty string to get a broad list of project members
+    const data = await apiFetch(`${base}/rest/api/3/user/search?query=.&maxResults=50`);
+    wizAsnAllUsers = data.filter(u=>u.accountType==='atlassian'); // only real accounts
+    renderWizAsnList('');
   }catch(e){
-    resEl.innerHTML=`<div class="panel-user-opt" style="pointer-events:none"><span class="panel-empty" style="color:var(--red)">${esc(e.message)}</span></div>`;
+    if(list) list.innerHTML=`<div class="wiz-asn-opt" style="pointer-events:none;color:var(--red)">Error: ${esc(e.message)}</div>`;
   }
+}
+
+function filterWizAsnList(){
+  const q = document.getElementById('wizAsnSearchInput')?.value?.toLowerCase()||'';
+  renderWizAsnList(q);
+}
+
+function renderWizAsnList(q){
+  const list = document.getElementById('wizAsnList');
+  if(!list) return;
+  const filtered = q
+    ? wizAsnAllUsers.filter(u=>(u.displayName||'').toLowerCase().includes(q)||(u.emailAddress||'').toLowerCase().includes(q))
+    : wizAsnAllUsers;
+  if(!filtered.length){
+    list.innerHTML='<div class="wiz-asn-opt" style="pointer-events:none"><span class="panel-empty">No users found</span></div>';
+    return;
+  }
+  list.innerHTML = filtered.map(u=>`
+    <div class="wiz-asn-opt ${wiz.assignee?.accountId===u.accountId?'sel':''}"
+      onclick="pickWizAssignee('${esc(u.accountId)}','${esc(u.displayName)}','${esc(u.avatarUrls?.['24x24']||'')}')">
+      ${u.avatarUrls?.['24x24']
+        ? `<img src="${u.avatarUrls['24x24']}" alt=""/>`
+        : '<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--surface);font-size:10px">👤</span>'}
+      <span style="flex:1">${esc(u.displayName)}</span>
+      <span style="font-size:10px;color:var(--muted)">${esc(u.emailAddress||'')}</span>
+    </div>`).join('');
 }
 
 function pickWizAssignee(accountId, displayName, avatarUrl){
   wiz.assignee = { accountId, displayName, avatarUrl };
-  const res = document.getElementById('wizAsnResults');
-  if(res) res.style.display='none';
-  renderWizStep(); // re-render to show selected chip
+  document.getElementById('wizAsnPanel')?.classList.remove('open');
+  document.getElementById('wizAsnBtn')?.classList.remove('open');
+  renderWizStep();
 }
 
 function clearWizAssignee(){
   wiz.assignee = null;
   renderWizStep();
 }
+
+// Close wizard assignee dropdown on outside click
+document.addEventListener('click', e=>{
+  const wrap = document.getElementById('wizAsnWrap');
+  if(wrap && !wrap.contains(e.target)){
+    document.getElementById('wizAsnPanel')?.classList.remove('open');
+    document.getElementById('wizAsnBtn')?.classList.remove('open');
+  }
+});
 
 // ── STEP 2: App ID fetch + feature selection ──────────────────────────────────
 function renderWizFeaturesAppId(body, footer){
@@ -2531,6 +2874,23 @@ function renderWizFeaturesAppId(body, footer){
         value="${esc(wiz.appId)}" oninput="wiz.appId=this.value.trim();updateAppIdStyle()"/>
       <p class="wiz-hint">Auto-scanned from <a href="https://appier.atlassian.net/browse/${wiz.onboardTicketKey||''}" target="_blank">${wiz.onboardTicketKey||'onboard ticket'}</a> comments, or enter manually</p>
     </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="wiz-field" style="margin-bottom:0">
+        <label class="wiz-label">Project ID</label>
+        <input class="wiz-input ${wiz.projectId?'filled':''}" id="wizProjectId"
+          placeholder="e.g. proj-abc-123"
+          value="${esc(wiz.projectId)}" oninput="wiz.projectId=this.value.trim()"/>
+      </div>
+      <div class="wiz-field" style="margin-bottom:0">
+        <label class="wiz-label">Organization ID</label>
+        <input class="wiz-input ${wiz.organizationId?'filled':''}" id="wizOrgId"
+          placeholder="e.g. org-xyz-456"
+          value="${esc(wiz.organizationId)}" oninput="wiz.organizationId=this.value.trim()"/>
+      </div>
+    </div>
+    <p class="wiz-hint" style="margin-top:-4px">These IDs will be substituted into all ticket descriptions using <code style="font-family:DM Mono,monospace;font-size:11px;background:var(--surface);padding:1px 5px;border-radius:3px;border:1px solid var(--border)">{projectId}</code> and <code style="font-family:DM Mono,monospace;font-size:11px;background:var(--surface);padding:1px 5px;border-radius:3px;border:1px solid var(--border)">{organizationId}</code> placeholders in sample tickets</p>
+    <div class="wiz-field" style="display:none"><!-- spacer --></div>
+    </div>
     <div style="height:1px;background:var(--border);margin:16px 0"></div>
     <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Select features to enable. Each will create a ticket in QGWL.</p>
     <div class="wiz-err" id="wizErr2"></div>
@@ -2538,6 +2898,7 @@ function renderWizFeaturesAppId(body, footer){
 
   footer.innerHTML = `
     <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
+    <button class="wiz-save-later" onclick="saveWizAsDraft()" title="Save and come back when App ID is ready">⏸ Save Draft</button>
     <button class="btn-wiz-next" onclick="wizValidateFeatures()">Review →</button>`;
 }
 
@@ -2654,7 +3015,20 @@ function renderWizReview(body, footer){
       Will create <strong style="color:var(--text)">${total} tickets</strong> in QGWL for
       <strong style="color:var(--text)">${esc(wiz.clientName)}</strong> —
       assigned to <strong style="color:var(--text)">${wiz.assignee?esc(wiz.assignee.displayName):'(unassigned)'}</strong>.
-      ${!wiz.appId?'<span style="color:var(--yellow)"> ⚠️ No App ID yet — will be added as placeholder.</span>':''}
+    </p>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px 14px;margin-bottom:14px;display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;font-family:'DM Mono',monospace;font-size:11px;">
+      <span style="color:var(--muted)">App ID</span>
+      <span style="color:${wiz.appId?'var(--green)':'var(--yellow)'}">${wiz.appId||'⚠️ TBD'}</span>
+      <span style="color:var(--muted)">Project ID</span>
+      <span style="color:${wiz.projectId?'var(--green)':'var(--yellow)'}">${wiz.projectId||'⚠️ TBD'}</span>
+      <span style="color:var(--muted)">Org ID</span>
+      <span style="color:${wiz.organizationId?'var(--green)':'var(--yellow)'}">${wiz.organizationId||'⚠️ TBD'}</span>
+      <span style="color:var(--muted)">Legal Ticket</span>
+      <span style="color:var(--muted2)">${esc(wiz.legalTicket)}</span>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:12px">
+      Feature tickets will be linked to <strong>${wiz.onboardTicketKey||'the onboard ticket'}</strong>.
+      Placeholders like <code style="font-family:DM Mono,monospace;background:var(--surface);padding:1px 4px;border-radius:3px">{appId}</code> in sample tickets are substituted automatically.
     </p>
     <div class="review-list">
       <div class="review-ticket">
@@ -2710,16 +3084,24 @@ async function wizCreateAllTickets(){
       const appLine = wiz.appId ? `App ID: ${wiz.appId}` : 'App ID: [TBD - see onboard ticket]';
       const descText = `${appLine}${extraLines?'\n'+extraLines:''}\n\nOnboard Ticket: ${wiz.onboardTicketKey||'N/A'}`;
 
+      // Build cloned + template-resolved description
+      const clonedContent = sf.description?.content
+        ? sf.description.content.map(resolveAdfTemplates)
+        : [];
+      const appendContent = [{type:'paragraph',content:[{type:'text',
+        text:'\n---\n'+resolveTemplate(descText)}]}];
+
+      // Apply resolveTemplate to summary (handles {clientName} etc in sample ticket)
+      const resolvedSummary = resolveTemplate(
+        sf.summary?.includes('{') ? sf.summary : `[${wiz.clientName}] ${feat.name}`
+      ).replace(/\[.*?\]\s*/, `[${wiz.clientName}] `); // ensure [ClientName] is correct
+
       const payload = {
         fields:{
           project:     { key:'QGWL' },
           issuetype:   sf.issuetype||{name:'Task'},
-          summary:     `[${wiz.clientName}] ${feat.name}`,
-          description: { type:'doc', version:1, content:[
-            // Clone original description if available
-            ...(sf.description?.content||[]),
-            {type:'paragraph',content:[{type:'text',text:'\n---\n'+descText}]},
-          ]},
+          summary:     resolvedSummary,
+          description: { type:'doc', version:1, content:[...clonedContent, ...appendContent] },
           labels:      [...(sf.labels||[]), 'onboarding-dashboard', `ob-${wiz.clientName.toLowerCase().replace(/\s+/g,'-')}`],
         }
       };
@@ -2727,6 +3109,30 @@ async function wizCreateAllTickets(){
       if(wiz.assignee?.accountId) payload.fields.assignee={ accountId: wiz.assignee.accountId };
 
       const res = await apiFetch(`${base}/rest/api/3/issue`,{method:'POST',body:JSON.stringify(payload)});
+
+      // Link this feature ticket as "is cloned by" / child of the onboard ticket
+      if(wiz.onboardTicketKey){
+        try{
+          await apiFetch(`${base}/rest/api/3/issueLink`,{
+            method:'POST',
+            body: JSON.stringify({
+              type:         { name:'Relates' },
+              inwardIssue:  { key: wiz.onboardTicketKey },
+              outwardIssue: { key: res.key },
+              comment: {
+                body:{ type:'doc', version:1, content:[
+                  {type:'paragraph', content:[{type:'text',
+                    text:`Feature ticket created: [${wiz.clientName}] ${feat.name}`}]}
+                ]}
+              }
+            })
+          });
+        }catch(linkErr){
+          // Linking is best-effort — don't fail the whole creation if it errors
+          console.warn('Issue link failed:', linkErr.message);
+        }
+      }
+
       created.push({ featureId:feat.id, ticketKey:res.key,
                      mode:feat.mode, name:feat.name, status:'Backlog' });
 
@@ -2745,10 +3151,15 @@ async function wizCreateAllTickets(){
       opportunityLink:  wiz.opportunityLink,
       onboardTicketKey: wiz.onboardTicketKey,
       appId:            wiz.appId,
+      projectId:        wiz.projectId,
+      organizationId:   wiz.organizationId,
+      assignee:         wiz.assignee,
       createdAt:        new Date().toISOString().slice(0,10),
       features:         created,
     };
     addOnboarding(ob);
+    // Clean up draft now that onboarding is complete
+    deleteDraft('draft_'+wiz.onboardTicketKey);
     toast('success', `✓ Created ${created.length} feature tickets!`);
     closeWizard();
     renderOnboardingProgress();
@@ -2778,9 +3189,35 @@ async function renderOnboardingProgress(){
   secEl.style.display='block';
   if(newWrap) newWrap.style.display='none';
 
+  // Show drafts first (paused onboardings awaiting App ID)
+  const drafts = loadDrafts();
+  const draftHtml = drafts.map(d=>`
+    <div class="ob-card draft" id="dft_${d.id}">
+      <div class="ob-card-header" style="cursor:default">
+        <span class="ob-client">${esc(d.clientName)}</span>
+        <span class="ob-platform-badge">${d.platform}</span>
+        <span class="draft-badge">⏸ Draft</span>
+        <span class="ob-date">Saved ${d.savedAt.slice(0,10)}</span>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+          <button class="btn-resume" onclick="resumeDraft('${d.id}')">▶ Resume</button>
+          <button class="ob-del-btn" style="margin-left:0" onclick="deleteDraft('${d.id}')">Delete</button>
+        </div>
+      </div>
+      <div class="ob-appid-row" style="flex-wrap:wrap;gap:8px">
+        <span class="ob-appid-label">Onboard Ticket</span>
+        <a class="ob-ticket-link" href="https://appier.atlassian.net/browse/${d.onboardTicketKey}" target="_blank">${d.onboardTicketKey}</a>
+        <span class="ob-appid-missing">⏳ Waiting for TS to provide App ID</span>
+        <button class="appid-scan-btn" style="font-size:11px" onclick="scanAndResume('${d.id}','${d.onboardTicketKey}')">🔍 Scan Comments</button>
+      </div>
+      <div style="padding:8px 14px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
+        Legal: ${esc(d.legalTicket)} &nbsp;·&nbsp; Assignee: ${esc(d.assignee?.displayName||'—')}
+        &nbsp;·&nbsp; ${Object.keys(d.selectedFeatures||{}).length} features selected
+      </div>
+    </div>`).join('');
+
   // Fetch latest ticket statuses from Jira for each onboarding
   const user = getUser();
-  cardsEl.innerHTML = list.map(ob=>{
+  cardsEl.innerHTML = draftHtml + list.map(ob=>{
     const done   = ob.features.filter(f=>isDone(f.status||'')).length;
     const total  = ob.features.length;
     const pct    = total ? Math.round((done/total)*100) : 0;
@@ -2796,11 +3233,14 @@ async function renderOnboardingProgress(){
         </div>
       </div>
       <div class="ob-card-body" id="${gid}_body">
-        ${ob.appId ? `<div class="ob-appid-row"><span class="ob-appid-label">App ID</span><span class="ob-appid-val">${esc(ob.appId)}</span>
-          <button class="ob-del-btn" onclick="deleteOnboarding('${ob.id}')">Delete record</button></div>` :
-          `<div class="ob-appid-row"><span class="ob-appid-label">App ID</span><span class="ob-appid-missing">⏳ Awaiting from TS</span>
-          <button class="appid-scan-btn" style="font-size:11px" onclick="scanAppIdForOb('${ob.id}','${ob.onboardTicketKey}')">🔍 Scan</button>
-          <button class="ob-del-btn" onclick="deleteOnboarding('${ob.id}')">Delete</button></div>`}
+        <div class="ob-appid-row" style="flex-wrap:wrap;gap:6px">
+          <span class="ob-appid-label">App ID</span>
+          ${ob.appId ? `<span class="ob-appid-val">${esc(ob.appId)}</span>` : `<span class="ob-appid-missing">⏳ Awaiting from TS</span>`}
+          ${ob.projectId ? `<span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">proj: <span style="color:var(--muted2)">${esc(ob.projectId)}</span></span>` : ''}
+          ${ob.organizationId ? `<span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">org: <span style="color:var(--muted2)">${esc(ob.organizationId)}</span></span>` : ''}
+          ${!ob.appId ? `<button class="appid-scan-btn" style="font-size:11px" onclick="scanAppIdForOb('${ob.id}','${ob.onboardTicketKey}')">🔍 Scan</button>` : ''}
+          <button class="ob-del-btn" onclick="deleteOnboarding('${ob.id}')">Delete record</button>
+        </div>
         <table class="ob-feat-table">
           <thead><tr><th>Feature</th><th>Ticket</th><th>Status</th></tr></thead>
           <tbody>
@@ -2846,6 +3286,37 @@ async function refreshObStatuses(list, user){
     if(pctEl)  pctEl.textContent=`${done}/${total}`;
   }
   saveOnboardings(list);
+}
+
+// Scan comments and auto-resume draft if App ID found
+async function scanAndResume(draftId, ticketKey){
+  if(!ticketKey){ toast('info','No ticket key'); return; }
+  toast('info','Scanning comments for App ID…');
+  try{
+    const user = getUser();
+    const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+    const data = await apiFetch(`${base}/rest/api/3/issue/${ticketKey}/comment?maxResults=20&orderBy=-created`);
+    let found=null;
+    for(const c of (data.comments||[])){
+      const txt=extractAdfText(c.body);
+      const m=txt.match(/app\s*[_-]?\s*id\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i)
+              ||txt.match(/appid\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i);
+      if(m){found=m[1].trim();break;}
+    }
+    if(found){
+      // Update the draft with the found App ID then auto-resume
+      const drafts = loadDrafts();
+      const draft  = drafts.find(d=>d.id===draftId);
+      if(draft){
+        draft.appId = found;
+        saveDrafts(drafts);
+      }
+      toast('success',`✓ App ID found: ${found} — resuming wizard`);
+      setTimeout(()=>resumeDraft(draftId), 600);
+    } else {
+      toast('info','App ID not found in comments yet — TS team may not have responded');
+    }
+  }catch(e){ toast('error','Scan failed: '+e.message); }
 }
 
 async function scanAppIdForOb(obId, ticketKey){
