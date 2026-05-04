@@ -287,6 +287,119 @@
   .tbd-row.panel-active td{background:rgba(79,142,247,.1)!important;}
   .tbd-empty{padding:40px;text-align:center;color:var(--muted);font-size:14px;}
   .tbd-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;}
+
+  /* ══ ONBOARDING WIZARD MODAL ══ */
+  .wiz-overlay{position:fixed;inset:0;background:rgba(5,6,10,.85);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);animation:fadeIn .2s ease;}
+  .wiz-modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.6);animation:scaleIn .2s cubic-bezier(.4,0,.2,1);}
+  .wiz-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);flex-shrink:0;}
+  .wiz-title{font-size:15px;font-weight:700;color:var(--text);}
+  .wiz-step-indicator{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+  .wiz-close{background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:all .15s;line-height:1;}
+  .wiz-close:hover{color:var(--red);}
+  .wiz-body{flex:1;overflow-y:auto;padding:22px;}
+  .wiz-footer{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1px solid var(--border);flex-shrink:0;gap:10px;}
+  .wiz-progress{height:3px;background:var(--border);flex-shrink:0;}
+  .wiz-progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s ease;border-radius:2px;}
+
+  /* Wizard form elements */
+  .wiz-field{margin-bottom:16px;}
+  .wiz-label{display:block;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;}
+  .wiz-label .wiz-req{color:var(--red);}
+  .wiz-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:7px;font-family:'DM Mono',monospace;font-size:13px;outline:none;transition:border-color .15s;}
+  .wiz-input:focus{border-color:var(--accent);}
+  .wiz-input::placeholder{color:var(--muted);}
+  .wiz-input.filled{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.04);}
+  .wiz-hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5;}
+  .wiz-hint a{color:var(--accent);text-decoration:none;}
+  .wiz-err{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:6px;padding:10px 12px;color:var(--red);font-size:12px;margin-bottom:14px;display:none;}
+  .wiz-success{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.25);border-radius:6px;padding:10px 12px;color:var(--green);font-size:12px;margin-bottom:14px;display:none;}
+
+  /* Platform grid */
+  .platform-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:4px;}
+  .platform-card{background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:16px 14px;cursor:pointer;transition:all .18s;text-align:center;}
+  .platform-card:hover:not(.disabled){border-color:var(--accent);background:rgba(79,142,247,.06);}
+  .platform-card.selected{border-color:var(--accent);background:rgba(79,142,247,.1);}
+  .platform-card.disabled{opacity:.4;cursor:not-allowed;}
+  .platform-card .pc-icon{font-size:24px;margin-bottom:6px;}
+  .platform-card .pc-name{font-size:13px;font-weight:700;color:var(--text);}
+  .platform-card .pc-soon{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;}
+
+  /* Feature selection */
+  .feat-category{margin-bottom:18px;}
+  .feat-cat-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+  .feat-grid{display:flex;flex-direction:column;gap:6px;}
+  .feat-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .15s;}
+  .feat-item.selected{border-color:rgba(79,142,247,.5);}
+  .feat-row{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;user-select:none;}
+  .feat-row:hover{background:rgba(255,255,255,.03);}
+  .feat-checkbox{width:16px;height:16px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--accent);transition:all .15s;}
+  .feat-item.selected .feat-checkbox{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .feat-name{font-size:13px;font-weight:600;color:var(--text);flex:1;}
+  .feat-mode-badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 6px;border-radius:3px;border:1px solid var(--border);color:var(--muted);}
+  .feat-extra{padding:0 12px 12px 38px;display:none;flex-direction:column;gap:8px;}
+  .feat-item.selected .feat-extra{display:flex;}
+
+  /* App ID fetch section */
+  .appid-status{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:14px;}
+  .appid-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .appid-dot.found{background:var(--green);}
+  .appid-dot.searching{background:var(--yellow);animation:pulse 1.2s ease-in-out infinite;}
+  .appid-dot.manual{background:var(--muted);}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .appid-text{font-size:13px;color:var(--muted2);flex:1;}
+  .appid-scan-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:5px 12px;border-radius:6px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .appid-scan-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+  /* Review step */
+  .review-list{display:flex;flex-direction:column;gap:6px;}
+  .review-ticket{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;}
+  .review-ticket .rt-badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px;white-space:nowrap;}
+  .rt-clone{background:rgba(79,142,247,.12);color:var(--accent);border:1px solid rgba(79,142,247,.3);}
+  .rt-manual{background:rgba(251,191,36,.12);color:var(--yellow);border:1px solid rgba(251,191,36,.3);}
+  .rt-compulsory{background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3);}
+  .review-ticket .rt-name{font-size:13px;color:var(--text);flex:1;}
+  .review-ticket .rt-ref{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+
+  /* ══ ONBOARDING PROGRESS CARDS ══ */
+  .ob-progress-section{margin-bottom:20px;}
+  .ob-progress-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+  .ob-progress-title{font-size:13px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.6px;}
+  .btn-new-ob{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:7px 14px;border-radius:7px;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 3px 12px rgba(79,142,247,.25);}
+  .btn-new-ob:hover{transform:translateY(-1px);}
+  .ob-cards{display:flex;flex-direction:column;gap:10px;}
+  .ob-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .ob-card-header{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;background:var(--surface2);user-select:none;transition:background .15s;flex-wrap:wrap;}
+  .ob-card-header:hover{background:#1e2535;}
+  .ob-client{font-size:14px;font-weight:700;color:var(--text);}
+  .ob-platform-badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(124,92,250,.12);color:var(--accent2);border:1px solid rgba(124,92,250,.3);}
+  .ob-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-left:auto;}
+  .ob-progress-bar-wrap{flex:1 1 100%;height:4px;background:var(--border);border-radius:2px;margin-top:4px;}
+  .ob-progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--accent));border-radius:2px;transition:width .4s;}
+  .ob-pct{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2);}
+  .ob-card-body{display:none;padding:0;}
+  .ob-card-body.open{display:block;}
+  .ob-feat-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .ob-feat-table th{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;padding:7px 14px;text-align:left;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);}
+  .ob-feat-table td{padding:8px 14px;border-bottom:1px solid rgba(37,42,56,.5);vertical-align:middle;}
+  .ob-feat-table tr:last-child td{border-bottom:none;}
+  .ob-ticket-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);text-decoration:none;}
+  .ob-ticket-link:hover{text-decoration:underline;}
+  .ob-appid-row{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(0,0,0,.1);border-top:1px solid var(--border);}
+  .ob-appid-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
+  .ob-appid-val{font-family:'DM Mono',monospace;font-size:12px;color:var(--green);}
+  .ob-appid-missing{font-family:'DM Mono',monospace;font-size:11px;color:var(--yellow);}
+  .ob-del-btn{background:transparent;border:1px solid rgba(248,113,113,.3);color:var(--red);padding:3px 8px;border-radius:4px;font-size:11px;cursor:pointer;margin-left:auto;transition:all .15s;}
+  .ob-del-btn:hover{background:rgba(248,113,113,.1);}
+
+  /* Wizard nav buttons */
+  .btn-wiz-back{background:var(--surface2);border:1px solid var(--border);color:var(--muted2);padding:9px 18px;border-radius:8px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
+  .btn-wiz-back:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-wiz-next{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:9px 22px;border-radius:8px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 3px 12px rgba(79,142,247,.25);}
+  .btn-wiz-next:hover{opacity:.9;transform:translateY(-1px);}
+  .btn-wiz-next:disabled{opacity:.5;cursor:not-allowed;pointer-events:none;transform:none;}
+  .btn-wiz-create{background:linear-gradient(135deg,var(--green),#059669);color:#fff;border:none;padding:9px 22px;border-radius:8px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 3px 12px rgba(52,211,153,.25);}
+  .btn-wiz-create:hover{opacity:.9;}
+  .btn-wiz-create:disabled{opacity:.5;cursor:not-allowed;pointer-events:none;}
 </style>
 </head>
 <body>
@@ -360,6 +473,21 @@
 
     <!-- TAB: ISSUE TRACKING -->
     <div class="tab-pane active" id="pane-tracking">
+
+      <!-- Onboarding progress cards -->
+      <div class="ob-progress-section" id="obProgressSection" style="display:none">
+        <div class="ob-progress-header">
+          <span class="ob-progress-title">🚀 Onboarding Progress</span>
+          <button class="btn-new-ob" onclick="openWizard()">＋ New Onboarding</button>
+        </div>
+        <div class="ob-cards" id="obCards"></div>
+      </div>
+
+      <!-- New Onboarding button when no onboardings exist -->
+      <div id="obNewWrap" style="margin-bottom:16px;display:flex;justify-content:flex-end;">
+        <button class="btn-new-ob" onclick="openWizard()">🚀 New Onboarding</button>
+      </div>
+
       <div class="stats-row">
         <div class="stat-card c-blue"><div class="stat-label">Total Tickets</div><div class="stat-value" id="sTotal">—</div></div>
         <div class="stat-card c-green"><div class="stat-label">Done</div><div class="stat-value" id="sDone">—</div></div>
@@ -396,6 +524,20 @@
       <div class="tbd-wrap">
         <div id="tbdDash"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- ══ ONBOARDING WIZARD MODAL ══ -->
+  <div class="wiz-overlay" id="wizOverlay" style="display:none" onclick="wizOverlayClick(event)">
+    <div class="wiz-modal">
+      <div class="wiz-progress"><div class="wiz-progress-bar" id="wizProgressBar" style="width:0%"></div></div>
+      <div class="wiz-header">
+        <span class="wiz-title" id="wizTitle">New Onboarding</span>
+        <span class="wiz-step-indicator" id="wizStepInd"></span>
+        <button class="wiz-close" onclick="closeWizard()">✕</button>
+      </div>
+      <div class="wiz-body" id="wizBody"></div>
+      <div class="wiz-footer" id="wizFooter"></div>
     </div>
   </div>
 
@@ -1551,6 +1693,7 @@ function switchTab(name){
     document.getElementById('tab-'+t).classList.toggle('active', t===name);
     document.getElementById('pane-'+t).classList.toggle('active', t===name);
   });
+  if(name==='tracking') renderOnboardingProgress();
 }
 
 // ── TO BE DONE RENDER ────────────────────────────────────────────────────────
@@ -1834,6 +1977,7 @@ async function launchDashboard(user){
     renderDashboard(reported);
     renderTbd(assigned);
     toast('success',`Welcome ${user.displayName} — loaded ${reported.length} reported, ${assigned.length} assigned`);
+    renderOnboardingProgress();
     scheduleDaily();
   }catch(e){
     toast('error',`Could not load tickets: ${e.message}`);
@@ -1890,6 +2034,61 @@ const MOCK_ASSIGNED = [
   {key:'ETS-9004',url:'#',summary:'[Luxgen] Monthly delivery report sign-off',status:'To Do',assignee:'william.wt.lin',reporter:'Brandon Tang',created:'2026-04-10',resolutiondate:null},
 ];
 
+// ── MOCK ONBOARDING RECORDS ─────────────────────────────────────────────────
+const MOCK_ONBOARDINGS = [
+  {
+    id: 'ob_mock_001',
+    platform: 'AIQUA',
+    clientName: 'Mannings',
+    legalTicket: 'LEG-1001',
+    opportunityLink: 'https://appier.atlassian.net/opp/123',
+    onboardTicketKey: 'QGWL-24745',
+    appId: 'app-mannings-hk-001',
+    createdAt: '2026-04-01',
+    features: [
+      { featureId:'sms',          name:'Enable SMS',              ticketKey:'QGWL-21143', status:'Done',        mode:'clone' },
+      { featureId:'edm',          name:'Enable EDM Channel',      ticketKey:'QGWL-25054', status:'Done',        mode:'clone' },
+      { featureId:'onsite',       name:'On-site Experience',      ticketKey:'QGWL-21222', status:'In Progress', mode:'clone' },
+      { featureId:'seg_split',    name:'Segment Split',           ticketKey:'QGWL-25241', status:'Done',        mode:'clone' },
+      { featureId:'creative',     name:'Creative Studio',         ticketKey:'QGWL-24875', status:'Backlog',     mode:'clone' },
+      { featureId:'feed_trigger', name:'Feed Trigger',            ticketKey:'QGWL-25213', status:'Backlog',     mode:'manual_clone' },
+    ],
+  },
+  {
+    id: 'ob_mock_002',
+    platform: 'AIQUA',
+    clientName: '1010Hope',
+    legalTicket: 'LEG-1002',
+    opportunityLink: 'https://appier.atlassian.net/opp/456',
+    onboardTicketKey: 'QGWL-24745',
+    appId: '',   // ← No App ID yet — shows "Awaiting from TS" state
+    createdAt: '2026-04-28',
+    features: [
+      { featureId:'edm',       name:'Enable EDM Channel',      ticketKey:'QGWL-9901', status:'Backlog',     mode:'clone' },
+      { featureId:'onsite',    name:'On-site Experience',      ticketKey:'QGWL-9902', status:'Backlog',     mode:'clone' },
+      { featureId:'seg_split', name:'Segment Split',           ticketKey:'QGWL-9903', status:'To Do',       mode:'clone' },
+      { featureId:'creative',  name:'Creative Studio',         ticketKey:'QGWL-9904', status:'Backlog',     mode:'clone' },
+    ],
+  },
+  {
+    id: 'ob_mock_003',
+    platform: 'AIQUA',
+    clientName: 'Qchicken',
+    legalTicket: 'LEG-1003',
+    opportunityLink: 'https://appier.atlassian.net/opp/789',
+    onboardTicketKey: 'QGWL-24746',
+    appId: 'app-qchicken-tw-007',
+    createdAt: '2026-03-15',
+    features: [
+      { featureId:'sms',          name:'Enable SMS',              ticketKey:'QGWL-8801', status:'Done',    mode:'clone' },
+      { featureId:'edm',          name:'Enable EDM Channel',      ticketKey:'QGWL-8802', status:'Done',    mode:'clone' },
+      { featureId:'seg_split',    name:'Segment Split',           ticketKey:'QGWL-8803', status:'Done',    mode:'clone' },
+      { featureId:'new_seg',      name:'New Segment UI',          ticketKey:'QGWL-8804', status:'Done',    mode:'clone' },
+      { featureId:'content_asst', name:'Content Assistant',       ticketKey:'QGWL-8805', status:'Done',    mode:'clone' },
+    ],
+  },
+];
+
 function loadPreview(){
   const mockUser = {
     accountId: 'preview-user',
@@ -1906,14 +2105,701 @@ function loadPreview(){
   document.getElementById('previewBadge').style.display = 'flex';
   renderDashboard(MOCK_REPORTED);
   renderTbd(MOCK_ASSIGNED);
-  // tc-tracking is set by renderDashboard automatically
   toast('info', '🎨 Preview mode — showing mock data');
+
+  // Inject mock onboardings into localStorage for preview
+  saveOnboardings(MOCK_ONBOARDINGS);
+  renderOnboardingProgressMock();
 }
 
 function exitPreview(){
   document.getElementById('previewBadge').style.display = 'none';
+  // Clear mock onboardings from localStorage on exit
+  if(loadOnboardings().some(o=>o.id.startsWith('ob_mock_'))){
+    saveOnboardings([]);
+  }
   allData = []; tbdData = []; selAsn = null;
   showLoginScreen();
+}
+
+// Mock version of renderOnboardingProgress — skips the live Jira status fetch
+function renderOnboardingProgressMock(){
+  const list    = loadOnboardings();
+  const secEl   = document.getElementById('obProgressSection');
+  const newWrap = document.getElementById('obNewWrap');
+  const cardsEl = document.getElementById('obCards');
+  if(!secEl||!cardsEl) return;
+
+  if(!list.length){
+    secEl.style.display='none';
+    if(newWrap) newWrap.style.display='flex';
+    return;
+  }
+
+  secEl.style.display='block';
+  if(newWrap) newWrap.style.display='none';
+
+  cardsEl.innerHTML = list.map(ob=>{
+    const done  = ob.features.filter(f=>isDone(f.status||'')).length;
+    const total = ob.features.length;
+    const pct   = total ? Math.round((done/total)*100) : 0;
+    const gid   = 'obc_'+ob.id;
+    return `<div class="ob-card" id="${gid}">
+      <div class="ob-card-header" onclick="toggleObCard('${gid}')">
+        <span class="ob-client">${esc(ob.clientName)}</span>
+        <span class="ob-platform-badge">${ob.platform}</span>
+        <span class="ob-pct">${done}/${total} features done</span>
+        <span class="ob-date">${ob.createdAt}</span>
+        <div class="ob-progress-bar-wrap">
+          <div class="ob-progress-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+      <div class="ob-card-body open" id="${gid}_body">
+        ${ob.appId
+          ? `<div class="ob-appid-row">
+               <span class="ob-appid-label">App ID</span>
+               <span class="ob-appid-val">${esc(ob.appId)}</span>
+               <button class="ob-del-btn" onclick="deleteOnboarding('${ob.id}')">Delete record</button>
+             </div>`
+          : `<div class="ob-appid-row">
+               <span class="ob-appid-label">App ID</span>
+               <span class="ob-appid-missing">⏳ Awaiting from TS team</span>
+               <button class="appid-scan-btn" style="font-size:11px">🔍 Scan (preview)</button>
+               <button class="ob-del-btn" onclick="deleteOnboarding('${ob.id}')">Delete</button>
+             </div>`}
+        <table class="ob-feat-table">
+          <thead><tr><th>Feature</th><th>Ticket</th><th>Status</th><th>Lead Time</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="color:var(--muted2);font-size:12px">Onboard Ticket</td>
+              <td><a class="ob-ticket-link" href="https://appier.atlassian.net/browse/${ob.onboardTicketKey}" target="_blank">${ob.onboardTicketKey}</a></td>
+              <td><span class="sb s-ip"><span class="sd"></span>tracking</span></td>
+              <td>—</td>
+            </tr>
+            ${ob.features.map(f=>{
+              const days = Math.floor((Date.now()-new Date(ob.createdAt))/86400000);
+              return `<tr>
+                <td style="font-size:12px">${esc(f.name)}${f.mode==='manual_clone'?'<span style="margin-left:6px;font-size:10px;color:var(--yellow)">⚠️</span>':''}</td>
+                <td><a class="ob-ticket-link" href="https://appier.atlassian.net/browse/${f.ticketKey}" target="_blank">${f.ticketKey}</a></td>
+                <td><span class="sb ${sClass(f.status)}"><span class="sd"></span>${esc(f.status)}</span></td>
+                <td><span class="lt ${ltC(days)}">${days}d</span></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// ONBOARDING WIZARD
+// ════════════════════════════════════════════════════════════════════════════
+
+// ── FEATURE CATALOG ──────────────────────────────────────────────────────────
+const PLATFORMS = [
+  { id:'AIQUA',     icon:'🎯', active:true },
+  { id:'AIXON',     icon:'🤖', active:false },
+  { id:'BotBonnie', icon:'🤖', active:false },
+  { id:'AIRIS',     icon:'👁️',  active:false },
+];
+
+const CATALOGS = {
+  AIQUA: {
+    onboardTicket: {
+      sampleKey: 'QGWL-24745',
+      summaryTpl: '[{clientName}] AIQUA Onboarding',
+      fields: ['legalTicket','opportunityLink'],
+    },
+    features: [
+      { id:'sms',          category:'Channels',  name:'Enable SMS',
+        sample:'QGWL-21143', mode:'clone',
+        extra:[{id:'legalTicket',label:'Legal Ticket',placeholder:'LEG-XXXX'},
+               {id:'opportunityLink',label:'Opportunity Link',placeholder:'https://...'}]},
+      { id:'edm',          category:'Channels',  name:'Enable EDM Channel',
+        sample:'QGWL-25054', mode:'clone',
+        extra:[{id:'email',label:'Email / Domain',placeholder:'e.g. noreply@client.com'}]},
+      { id:'onsite',       category:'Channels',  name:'On-site Experience',
+        sample:'QGWL-21222', mode:'clone', extra:[]},
+      { id:'product_feed', category:'Channels',  name:'Onboard Product Feed',
+        sample:'QGWL-14534', mode:'manual_clone', extra:[]},
+      { id:'seg_split',    category:'Audience',  name:'Segment Split',
+        sample:'QGWL-25241', mode:'clone', extra:[]},
+      { id:'new_seg',      category:'Audience',  name:'New Segment UI',
+        sample:'QGWL-22650', mode:'clone', extra:[]},
+      { id:'creative',     category:'Campaign',  name:'Creative Studio',
+        sample:'QGWL-24875', mode:'clone', extra:[]},
+      { id:'inapp',        category:'Campaign',  name:'In-app Creative Studio',
+        sample:'QGWL-21404', mode:'clone', extra:[]},
+      { id:'content_asst', category:'Campaign',  name:'Content Assistant',
+        sample:'QGWL-21223', mode:'clone', extra:[]},
+      { id:'feed_trigger', category:'Campaign',  name:'Feed Trigger',
+        sample:'QGWL-25213', mode:'manual_clone', extra:[]},
+    ]
+  }
+};
+
+// ── LOCALSTORAGE ──────────────────────────────────────────────────────────────
+const OB_KEY = 'jd_onboardings';
+
+function loadOnboardings(){
+  try{ return JSON.parse(localStorage.getItem(OB_KEY)||'[]'); }
+  catch(e){ return []; }
+}
+
+function saveOnboardings(list){
+  localStorage.setItem(OB_KEY, JSON.stringify(list));
+}
+
+function addOnboarding(ob){
+  const list = loadOnboardings();
+  list.unshift(ob);
+  saveOnboardings(list);
+}
+
+function updateOnboarding(id, patch){
+  const list = loadOnboardings();
+  const idx  = list.findIndex(o=>o.id===id);
+  if(idx>-1){ list[idx]={...list[idx],...patch}; saveOnboardings(list); }
+}
+
+function deleteOnboarding(id){
+  saveOnboardings(loadOnboardings().filter(o=>o.id!==id));
+  renderOnboardingProgress();
+}
+
+// ── WIZARD STATE ──────────────────────────────────────────────────────────────
+let wiz = {
+  step: 0,          // 0=platform 1=account 2=appid+features 3=review
+  platform: null,
+  clientName: '',
+  legalTicket: '',
+  opportunityLink: '',
+  onboardTicketKey: null,   // set after creating the onboard ticket
+  appId: '',                // auto-detected or manually entered
+  selectedFeatures: {},     // { featureId: { extraFields: {} } }
+  extraFields: {},          // { featureId: { fieldId: value } }
+};
+
+const WIZ_STEPS = 4;
+
+function openWizard(){
+  wiz = { step:0, platform:null, clientName:'', legalTicket:'', opportunityLink:'',
+          onboardTicketKey:null, appId:'', selectedFeatures:{}, extraFields:{} };
+  document.getElementById('wizOverlay').style.display='flex';
+  renderWizStep();
+}
+
+function closeWizard(){
+  document.getElementById('wizOverlay').style.display='none';
+}
+
+function wizOverlayClick(e){
+  if(e.target===document.getElementById('wizOverlay')) closeWizard();
+}
+
+function setWizProgress(pct){
+  document.getElementById('wizProgressBar').style.width=pct+'%';
+}
+
+function renderWizStep(){
+  const body   = document.getElementById('wizBody');
+  const footer = document.getElementById('wizFooter');
+  const stepInd= document.getElementById('wizStepInd');
+  setWizProgress((wiz.step/(WIZ_STEPS-1))*100);
+  stepInd.textContent = `Step ${wiz.step+1} of ${WIZ_STEPS}`;
+
+  switch(wiz.step){
+    case 0: renderWizPlatform(body,footer); break;
+    case 1: renderWizAccount(body,footer);  break;
+    case 2: renderWizFeaturesAppId(body,footer); break;
+    case 3: renderWizReview(body,footer);   break;
+  }
+}
+
+// ── STEP 0: Platform ──────────────────────────────────────────────────────────
+function renderWizPlatform(body, footer){
+  document.getElementById('wizTitle').textContent = 'New Onboarding';
+  body.innerHTML = `
+    <p style="font-size:13px;color:var(--muted2);margin-bottom:16px;line-height:1.6">
+      Select the platform to onboard. Each platform has its own ticket catalog.
+    </p>
+    <div class="platform-grid">
+      ${PLATFORMS.map(p=>`
+        <div class="platform-card ${!p.active?'disabled':''} ${wiz.platform===p.id?'selected':''}"
+          onclick="${p.active?`selectPlatform('${p.id}')`:''}" id="pc-${p.id}">
+          <div class="pc-icon">${p.icon}</div>
+          <div class="pc-name">${p.id}</div>
+          ${!p.active?'<div class="pc-soon">Coming soon</div>':''}
+        </div>`).join('')}
+    </div>`;
+  footer.innerHTML = `
+    <span></span>
+    <button class="btn-wiz-next" id="wizNextBtn" onclick="wizNext()" ${!wiz.platform?'disabled':''}>
+      Next →
+    </button>`;
+}
+
+function selectPlatform(id){
+  wiz.platform = id;
+  document.querySelectorAll('.platform-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('pc-'+id)?.classList.add('selected');
+  document.getElementById('wizNextBtn').disabled = false;
+}
+
+// ── STEP 1: Account details + create onboard ticket ───────────────────────────
+function renderWizAccount(body, footer){
+  document.getElementById('wizTitle').textContent = `${wiz.platform} — Account Details`;
+  const cat = CATALOGS[wiz.platform];
+  body.innerHTML = `
+    <p style="font-size:13px;color:var(--muted2);margin-bottom:16px;line-height:1.6">
+      This will create the compulsory <strong>AIQUA Onboard ticket</strong> in QGWL.
+      The TS team will process it and provide the App ID in the comments.
+    </p>
+    <div class="wiz-err" id="wizErr1"></div>
+    <div class="wiz-field">
+      <label class="wiz-label">Client Name <span class="wiz-req">*</span></label>
+      <input class="wiz-input" id="wizClientName" placeholder="e.g. Mannings"
+        value="${esc(wiz.clientName)}" oninput="wiz.clientName=this.value.trim()"/>
+    </div>
+    <div class="wiz-field">
+      <label class="wiz-label">Legal Ticket <span class="wiz-req">*</span></label>
+      <input class="wiz-input" id="wizLegalTicket" placeholder="e.g. QGWL-XXXXX"
+        value="${esc(wiz.legalTicket)}" oninput="wiz.legalTicket=this.value.trim()"/>
+      <p class="wiz-hint">The legal/contract ticket for this client</p>
+    </div>
+    <div class="wiz-field">
+      <label class="wiz-label">Opportunity Link <span class="wiz-req">*</span></label>
+      <input class="wiz-input" id="wizOppLink" placeholder="https://..."
+        value="${esc(wiz.opportunityLink)}" oninput="wiz.opportunityLink=this.value.trim()"/>
+      <p class="wiz-hint">CRM opportunity link for this client engagement</p>
+    </div>
+    ${wiz.onboardTicketKey ? `
+    <div class="wiz-success" style="display:flex;align-items:center;gap:8px">
+      ✓ Onboard ticket created: <a href="https://appier.atlassian.net/browse/${wiz.onboardTicketKey}"
+        target="_blank" style="color:var(--green)">${wiz.onboardTicketKey}</a>
+    </div>` : ''}`;
+
+  footer.innerHTML = `
+    <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
+    <button class="btn-wiz-next" id="wizAccBtn" onclick="wizCreateOnboardTicket()">
+      ${wiz.onboardTicketKey ? 'Next →' : 'Create Onboard Ticket →'}
+    </button>`;
+}
+
+async function wizCreateOnboardTicket(){
+  const btn = document.getElementById('wizAccBtn');
+  const err = document.getElementById('wizErr1');
+  err.style.display='none';
+
+  if(!wiz.clientName){ err.textContent='Client name is required'; err.style.display='block'; return; }
+  if(!wiz.legalTicket){ err.textContent='Legal ticket is required (e.g. LEG-XXXX)'; err.style.display='block'; return; }
+  if(!wiz.opportunityLink){ err.textContent='Opportunity link is required'; err.style.display='block'; return; }
+
+  // If already created, just advance
+  if(wiz.onboardTicketKey){ wizNext(); return; }
+
+  btn.disabled=true; btn.textContent='Creating…';
+  try{
+    const user = getUser();
+    const cat  = CATALOGS[wiz.platform];
+    const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+
+    // Fetch sample ticket to clone its fields
+    const sample = await apiFetch(`${base}/rest/api/3/issue/${cat.onboardTicket.sampleKey}?fields=issuetype,project,priority,labels`);
+    const f = sample.fields||{};
+
+    const desc = `Legal Ticket: ${wiz.legalTicket}\nOpportunity Link: ${wiz.opportunityLink||'N/A'}\n\nPlatform: ${wiz.platform}\nClient: ${wiz.clientName}`;
+
+    const payload = {
+      fields: {
+        project:     { key: 'QGWL' },
+        issuetype:   f.issuetype || { name:'Task' },
+        summary:     `[${wiz.clientName}] ${wiz.platform} Onboarding`,
+        description: { type:'doc', version:1, content:[{type:'paragraph',content:[{type:'text',text:desc}]}] },
+        labels:      [...(f.labels||[]), 'onboarding-dashboard'],
+      }
+    };
+    if(f.priority) payload.fields.priority = f.priority;
+
+    const created = await apiFetch(`${base}/rest/api/3/issue`, { method:'POST', body:JSON.stringify(payload) });
+    wiz.onboardTicketKey = created.key;
+    toast('success', `✓ Created ${created.key}`);
+    renderWizStep(); // re-render to show success + advance
+    setTimeout(()=>wizNext(), 800);
+  }catch(e){
+    err.textContent = `Failed to create ticket: ${e.message}`;
+    err.style.display='block';
+    btn.disabled=false; btn.textContent='Create Onboard Ticket →';
+  }
+}
+
+// ── STEP 2: App ID fetch + feature selection ──────────────────────────────────
+function renderWizFeaturesAppId(body, footer){
+  document.getElementById('wizTitle').textContent = `${wiz.platform} — Features & App ID`;
+  const cat = CATALOGS[wiz.platform];
+  const cats = [...new Set(cat.features.map(f=>f.category))];
+
+  const appIdStatus = wiz.appId
+    ? `<div class="appid-status"><span class="appid-dot found"></span><span class="appid-text">App ID: <strong style="color:var(--green)">${esc(wiz.appId)}</strong></span></div>`
+    : `<div class="appid-status">
+        <span class="appid-dot searching" id="appidDot"></span>
+        <span class="appid-text" id="appidText">App ID not yet received from TS team</span>
+        <button class="appid-scan-btn" onclick="scanForAppId()">🔍 Scan Comments</button>
+       </div>`;
+
+  body.innerHTML = `
+    <div class="wiz-field" style="margin-bottom:10px">
+      <label class="wiz-label">App ID</label>
+      ${appIdStatus}
+      <input class="wiz-input ${wiz.appId?'filled':''}" id="wizAppId"
+        placeholder="Enter manually if already received"
+        value="${esc(wiz.appId)}" oninput="wiz.appId=this.value.trim();updateAppIdStyle()"/>
+      <p class="wiz-hint">Auto-scanned from <a href="https://appier.atlassian.net/browse/${wiz.onboardTicketKey||''}" target="_blank">${wiz.onboardTicketKey||'onboard ticket'}</a> comments, or enter manually</p>
+    </div>
+    <div style="height:1px;background:var(--border);margin:16px 0"></div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Select features to enable. Each will create a ticket in QGWL.</p>
+    <div class="wiz-err" id="wizErr2"></div>
+    ${cats.map(cat=>renderFeatCategory(cat, CATALOGS[wiz.platform].features.filter(f=>f.category===cat))).join('')}`;
+
+  footer.innerHTML = `
+    <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
+    <button class="btn-wiz-next" onclick="wizValidateFeatures()">Review →</button>`;
+}
+
+function renderFeatCategory(catName, features){
+  return `<div class="feat-category">
+    <div class="feat-cat-label">${catName}</div>
+    <div class="feat-grid">
+      ${features.map(f=>{
+        const sel = !!wiz.selectedFeatures[f.id];
+        return `<div class="feat-item ${sel?'selected':''}" id="fi-${f.id}">
+          <div class="feat-row" onclick="toggleFeature('${f.id}')">
+            <div class="feat-checkbox">${sel?'✓':''}</div>
+            <span class="feat-name">${f.name}</span>
+            <span class="feat-mode-badge">${f.mode==='manual_clone'?'⚠️ manual':'clone'}</span>
+          </div>
+          ${f.extra.length||f.mode==='manual_clone' ? `<div class="feat-extra" id="fe-${f.id}">
+            ${f.extra.map(ex=>`
+              <div>
+                <label class="wiz-label">${ex.label}</label>
+                <input class="wiz-input" id="fex-${f.id}-${ex.id}"
+                  placeholder="${ex.placeholder||''}"
+                  value="${esc((wiz.extraFields[f.id]||{})[ex.id]||'')}"
+                  oninput="setFeatureExtra('${f.id}','${ex.id}',this.value)"/>
+              </div>`).join('')}
+            ${f.mode==='manual_clone'?`<p class="wiz-hint">⚠️ This ticket will be cloned from <a href="https://appier.atlassian.net/browse/${f.sample}" target="_blank">${f.sample}</a> — you will need to fill in additional details after creation.</p>`:''}
+          </div>` : ''}
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function toggleFeature(id){
+  if(wiz.selectedFeatures[id]) delete wiz.selectedFeatures[id];
+  else wiz.selectedFeatures[id] = true;
+
+  const item = document.getElementById('fi-'+id);
+  if(!item) return;
+  const sel = !!wiz.selectedFeatures[id];
+  item.classList.toggle('selected', sel);
+  const cb = item.querySelector('.feat-checkbox');
+  if(cb) cb.textContent = sel ? '✓' : '';
+  const extra = document.getElementById('fe-'+id);
+  if(extra) extra.style.display = sel ? 'flex' : 'none';
+}
+
+function setFeatureExtra(featId, fieldId, value){
+  if(!wiz.extraFields[featId]) wiz.extraFields[featId]={};
+  wiz.extraFields[featId][fieldId]=value.trim();
+}
+
+function updateAppIdStyle(){
+  const inp = document.getElementById('wizAppId');
+  if(inp) inp.classList.toggle('filled', !!wiz.appId);
+}
+
+async function scanForAppId(){
+  if(!wiz.onboardTicketKey){ toast('info','No onboard ticket yet'); return; }
+  const dot  = document.getElementById('appidDot');
+  const text = document.getElementById('appidText');
+  if(dot) dot.className='appid-dot searching';
+  if(text) text.textContent='Scanning comments…';
+  try{
+    const user = getUser();
+    const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+    const data = await apiFetch(`${base}/rest/api/3/issue/${wiz.onboardTicketKey}/comment?maxResults=20&orderBy=-created`);
+    const comments = data.comments||[];
+    let found = null;
+    for(const c of comments){
+      const txt = extractAdfText(c.body);
+      // Scan for common App ID patterns
+      const m = txt.match(/app\s*[_-]?\s*id\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i)
+               || txt.match(/appid\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i)
+               || txt.match(/application\s*id\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i);
+      if(m){ found=m[1].trim(); break; }
+    }
+    if(found){
+      wiz.appId = found;
+      const inp = document.getElementById('wizAppId');
+      if(inp){ inp.value=found; inp.classList.add('filled'); }
+      if(dot) dot.className='appid-dot found';
+      if(text) text.innerHTML=`App ID found: <strong style="color:var(--green)">${esc(found)}</strong>`;
+      toast('success', `✓ App ID detected: ${found}`);
+    } else {
+      if(dot) dot.className='appid-dot manual';
+      if(text) text.textContent='App ID not found in comments yet — enter manually below';
+      toast('info','App ID not found yet — TS team may not have responded yet');
+    }
+  }catch(e){
+    if(text) text.textContent='Scan failed — enter manually';
+    toast('error','Scan failed: '+e.message);
+  }
+}
+
+function wizValidateFeatures(){
+  const err = document.getElementById('wizErr2');
+  if(Object.keys(wiz.selectedFeatures).length===0){
+    err.textContent='Please select at least one feature to enable';
+    err.style.display='block'; return;
+  }
+  err.style.display='none';
+  wizNext();
+}
+
+// ── STEP 3: Review ────────────────────────────────────────────────────────────
+function renderWizReview(body, footer){
+  document.getElementById('wizTitle').textContent = 'Review & Create Tickets';
+  const cat      = CATALOGS[wiz.platform];
+  const selected = cat.features.filter(f=>wiz.selectedFeatures[f.id]);
+  const total    = 1 + selected.length; // 1 onboard + features
+
+  body.innerHTML = `
+    <p style="font-size:13px;color:var(--muted2);margin-bottom:16px;line-height:1.6">
+      Will create <strong style="color:var(--text)">${total} tickets</strong> in QGWL for
+      <strong style="color:var(--text)">${esc(wiz.clientName)}</strong>.
+      ${!wiz.appId?'<span style="color:var(--yellow)">⚠️ No App ID — will be added as placeholder</span>':''}
+    </p>
+    <div class="review-list">
+      <div class="review-ticket">
+        <span class="rt-badge rt-compulsory">compulsory</span>
+        <span class="rt-name">[${esc(wiz.clientName)}] ${wiz.platform} Onboarding</span>
+        <span class="rt-ref">${wiz.onboardTicketKey||'to create'}</span>
+      </div>
+      ${selected.map(f=>`
+        <div class="review-ticket">
+          <span class="rt-badge ${f.mode==='manual_clone'?'rt-manual':'rt-clone'}">${f.mode==='manual_clone'?'manual clone':'clone'}</span>
+          <span class="rt-name">[${esc(wiz.clientName)}] ${f.name}</span>
+          <span class="rt-ref">from ${f.sample}</span>
+        </div>`).join('')}
+    </div>
+    ${selected.some(f=>f.mode==='manual_clone')?`
+    <p style="font-size:11px;color:var(--yellow);margin-top:12px;line-height:1.6">
+      ⚠️ Manual clone tickets will be created and opened in Jira — please fill in the additional details required.
+    </p>`:''}`;
+
+  footer.innerHTML = `
+    <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
+    <button class="btn-wiz-create" id="wizCreateBtn" onclick="wizCreateAllTickets()">
+      🚀 Create ${total} Tickets
+    </button>`;
+}
+
+// ── WIZARD NAVIGATION ─────────────────────────────────────────────────────────
+function wizNext(){ if(wiz.step<WIZ_STEPS-1){ wiz.step++; renderWizStep(); } }
+function wizBack(){ if(wiz.step>0){ wiz.step--; renderWizStep(); } }
+
+// ── CREATE ALL TICKETS ────────────────────────────────────────────────────────
+async function wizCreateAllTickets(){
+  const btn = document.getElementById('wizCreateBtn');
+  btn.disabled=true; btn.textContent='Creating…';
+
+  const user    = getUser();
+  const base    = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+  const cat     = CATALOGS[wiz.platform];
+  const selected= cat.features.filter(f=>wiz.selectedFeatures[f.id]);
+  const created = [];
+
+  try{
+    for(const feat of selected){
+      btn.textContent=`Creating ${feat.name}…`;
+      // Fetch sample ticket fields
+      const sample = await apiFetch(`${base}/rest/api/3/issue/${feat.sample}?fields=issuetype,project,priority,labels,description`);
+      const sf = sample.fields||{};
+
+      // Build description: clone sample desc + append our extra fields
+      const extras = wiz.extraFields[feat.id]||{};
+      const extraLines = Object.entries(extras).filter(([,v])=>v)
+        .map(([k,v])=>`${k}: ${v}`).join('\n');
+      const appLine = wiz.appId ? `App ID: ${wiz.appId}` : 'App ID: [TBD - see onboard ticket]';
+      const descText = `${appLine}${extraLines?'\n'+extraLines:''}\n\nOnboard Ticket: ${wiz.onboardTicketKey||'N/A'}`;
+
+      const payload = {
+        fields:{
+          project:     { key:'QGWL' },
+          issuetype:   sf.issuetype||{name:'Task'},
+          summary:     `[${wiz.clientName}] ${feat.name}`,
+          description: { type:'doc', version:1, content:[
+            // Clone original description if available
+            ...(sf.description?.content||[]),
+            {type:'paragraph',content:[{type:'text',text:'\n---\n'+descText}]},
+          ]},
+          labels:      [...(sf.labels||[]), 'onboarding-dashboard', `ob-${wiz.clientName.toLowerCase().replace(/\s+/g,'-')}`],
+        }
+      };
+      if(sf.priority) payload.fields.priority=sf.priority;
+
+      const res = await apiFetch(`${base}/rest/api/3/issue`,{method:'POST',body:JSON.stringify(payload)});
+      created.push({ featureId:feat.id, ticketKey:res.key,
+                     mode:feat.mode, name:feat.name, status:'Backlog' });
+
+      // Open manual clone tickets in new tab so user can fill them in
+      if(feat.mode==='manual_clone'){
+        window.open(`https://appier.atlassian.net/browse/${res.key}`, '_blank');
+      }
+    }
+
+    // Save onboarding record to localStorage
+    const ob = {
+      id:               'ob_'+Date.now(),
+      platform:         wiz.platform,
+      clientName:       wiz.clientName,
+      legalTicket:      wiz.legalTicket,
+      opportunityLink:  wiz.opportunityLink,
+      onboardTicketKey: wiz.onboardTicketKey,
+      appId:            wiz.appId,
+      createdAt:        new Date().toISOString().slice(0,10),
+      features:         created,
+    };
+    addOnboarding(ob);
+    toast('success', `✓ Created ${created.length} feature tickets!`);
+    closeWizard();
+    renderOnboardingProgress();
+    // Refresh the main dashboard to show new tickets
+    refresh().catch(()=>{});
+
+  }catch(e){
+    toast('error','Failed to create tickets: '+e.message);
+    btn.disabled=false; btn.textContent=`🚀 Create Tickets`;
+  }
+}
+
+// ── ONBOARDING PROGRESS CARDS ─────────────────────────────────────────────────
+async function renderOnboardingProgress(){
+  const list = loadOnboardings();
+  const secEl   = document.getElementById('obProgressSection');
+  const newWrap = document.getElementById('obNewWrap');
+  const cardsEl = document.getElementById('obCards');
+  if(!secEl||!cardsEl) return;
+
+  if(!list.length){
+    secEl.style.display='none';
+    if(newWrap) newWrap.style.display='flex';
+    return;
+  }
+
+  secEl.style.display='block';
+  if(newWrap) newWrap.style.display='none';
+
+  // Fetch latest ticket statuses from Jira for each onboarding
+  const user = getUser();
+  cardsEl.innerHTML = list.map(ob=>{
+    const done   = ob.features.filter(f=>isDone(f.status||'')).length;
+    const total  = ob.features.length;
+    const pct    = total ? Math.round((done/total)*100) : 0;
+    const gid    = 'obc_'+ob.id;
+    return `<div class="ob-card" id="${gid}">
+      <div class="ob-card-header" onclick="toggleObCard('${gid}')">
+        <span class="ob-client">${esc(ob.clientName)}</span>
+        <span class="ob-platform-badge">${ob.platform}</span>
+        <span class="ob-pct">${done}/${total}</span>
+        <span class="ob-date">${ob.createdAt}</span>
+        <div class="ob-progress-bar-wrap">
+          <div class="ob-progress-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+      <div class="ob-card-body" id="${gid}_body">
+        ${ob.appId ? `<div class="ob-appid-row"><span class="ob-appid-label">App ID</span><span class="ob-appid-val">${esc(ob.appId)}</span>
+          <button class="ob-del-btn" onclick="deleteOnboarding('${ob.id}')">Delete record</button></div>` :
+          `<div class="ob-appid-row"><span class="ob-appid-label">App ID</span><span class="ob-appid-missing">⏳ Awaiting from TS</span>
+          <button class="appid-scan-btn" style="font-size:11px" onclick="scanAppIdForOb('${ob.id}','${ob.onboardTicketKey}')">🔍 Scan</button>
+          <button class="ob-del-btn" onclick="deleteOnboarding('${ob.id}')">Delete</button></div>`}
+        <table class="ob-feat-table">
+          <thead><tr><th>Feature</th><th>Ticket</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Onboard Ticket</td>
+              <td><a class="ob-ticket-link" href="https://appier.atlassian.net/browse/${ob.onboardTicketKey||''}" target="_blank">${ob.onboardTicketKey||'—'}</a></td>
+              <td><span class="sb s-ip"><span class="sd"></span>tracking</span></td>
+            </tr>
+            ${ob.features.map(f=>`<tr>
+              <td>${esc(f.name)}</td>
+              <td><a class="ob-ticket-link" href="https://appier.atlassian.net/browse/${f.ticketKey}" target="_blank">${f.ticketKey}</a></td>
+              <td id="obst-${f.ticketKey}"><span class="sb s-bl"><span class="sd"></span>${esc(f.status||'Backlog')}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Async: refresh ticket statuses
+  if(user) refreshObStatuses(list, user);
+}
+
+async function refreshObStatuses(list, user){
+  const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+  for(const ob of list){
+    for(const feat of ob.features){
+      try{
+        const data = await apiFetch(`${base}/rest/api/3/issue/${feat.ticketKey}?fields=status`);
+        const status = data.fields?.status?.name||feat.status;
+        feat.status = status;
+        const el = document.getElementById('obst-'+feat.ticketKey);
+        if(el) el.innerHTML=`<span class="sb ${sClass(status)}"><span class="sd"></span>${esc(status)}</span>`;
+      }catch(_){}
+    }
+    // Update done count
+    const done  = ob.features.filter(f=>isDone(f.status||'')).length;
+    const total = ob.features.length;
+    const pct   = total ? Math.round((done/total)*100) : 0;
+    const fillEl= document.querySelector(`#obc_${ob.id} .ob-progress-fill`);
+    const pctEl = document.querySelector(`#obc_${ob.id} .ob-pct`);
+    if(fillEl) fillEl.style.width=pct+'%';
+    if(pctEl)  pctEl.textContent=`${done}/${total}`;
+  }
+  saveOnboardings(list);
+}
+
+async function scanAppIdForOb(obId, ticketKey){
+  if(!ticketKey){ toast('info','No ticket key'); return; }
+  wiz.onboardTicketKey = ticketKey;
+  toast('info','Scanning comments…');
+  try{
+    const user = getUser();
+    const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+    const data = await apiFetch(`${base}/rest/api/3/issue/${ticketKey}/comment?maxResults=20&orderBy=-created`);
+    let found=null;
+    for(const c of (data.comments||[])){
+      const txt=extractAdfText(c.body);
+      const m=txt.match(/app\s*[_-]?\s*id\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i)
+              ||txt.match(/appid\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i);
+      if(m){found=m[1].trim();break;}
+    }
+    if(found){
+      updateOnboarding(obId,{appId:found});
+      toast('success',`✓ App ID found: ${found}`);
+      renderOnboardingProgress();
+    } else {
+      toast('info','App ID not found in comments yet');
+    }
+  }catch(e){ toast('error','Scan failed: '+e.message); }
+}
+
+function toggleObCard(gid){
+  const body = document.getElementById(gid+'_body');
+  if(body) body.classList.toggle('open');
 }
 
 // ── ENTRY POINT ──────────────────────────────────────────────────────────────
