@@ -2390,43 +2390,60 @@ function renderOnboardingProgressMock(){
 
 // ── FEATURE CATALOG ──────────────────────────────────────────────────────────
 const PLATFORMS = [
-  { id:'AIQUA',     icon:'🎯', active:true },
+  { id:'AIQUA',     icon:'🎯', active:true  },
   { id:'AIXON',     icon:'🤖', active:false },
   { id:'BotBonnie', icon:'🤖', active:false },
   { id:'AIRIS',     icon:'👁️',  active:false },
+  { id:'OJM',       icon:'💬', active:false },
 ];
 
 const CATALOGS = {
   AIQUA: {
+    board: 'QGWL',
     onboardTicket: {
-      sampleKey: 'QGWL-24745',
+      sampleKey: 'QGWL-25607',           // Updated sample ticket
       summaryTpl: '[{clientName}] AIQUA Onboarding',
-      fields: ['legalTicket','opportunityLink'],
     },
     features: [
       { id:'sms',          category:'Channels',  name:'Enable SMS',
-        sample:'QGWL-21143', mode:'clone',
-        extra:[{id:'legalTicket',label:'Legal Ticket',placeholder:'LEG-XXXX'},
-               {id:'opportunityLink',label:'Opportunity Link',placeholder:'https://...'}]},
+        sample:'QGWL-25618', mode:'clone',
+        extra:[
+          {id:'smsQuantity',   label:'SMS Quantity',   placeholder:'e.g. 100000', type:'number'},
+          {id:'smsValidPeriod',label:'Valid Period',    placeholder:'e.g. 12 months / 2026-12-31'},
+        ]},
       { id:'edm',          category:'Channels',  name:'Enable EDM Channel',
-        sample:'QGWL-25054', mode:'clone',
+        sample:'QGWL-25619', mode:'clone',
         extra:[{id:'email',label:'Email / Domain',placeholder:'e.g. noreply@client.com'}]},
       { id:'onsite',       category:'Channels',  name:'On-site Experience',
-        sample:'QGWL-21222', mode:'clone', extra:[]},
+        sample:'QGWL-25620', mode:'clone', extra:[]},
       { id:'product_feed', category:'Channels',  name:'Onboard Product Feed',
         sample:'QGWL-14534', mode:'manual_clone', extra:[]},
       { id:'seg_split',    category:'Audience',  name:'Segment Split',
-        sample:'QGWL-25241', mode:'clone', extra:[]},
+        sample:'QGWL-25620', mode:'clone', extra:[]},
       { id:'new_seg',      category:'Audience',  name:'New Segment UI',
-        sample:'QGWL-22650', mode:'clone', extra:[]},
+        sample:'QGWL-25621', mode:'clone', extra:[]},
       { id:'creative',     category:'Campaign',  name:'Creative Studio',
-        sample:'QGWL-24875', mode:'clone', extra:[]},
+        sample:'QGWL-25620', mode:'clone', extra:[]},
       { id:'inapp',        category:'Campaign',  name:'In-app Creative Studio',
-        sample:'QGWL-21404', mode:'clone', extra:[]},
+        sample:'QGWL-25620', mode:'clone', extra:[]},
       { id:'content_asst', category:'Campaign',  name:'Content Assistant',
-        sample:'QGWL-21223', mode:'clone', extra:[]},
+        sample:'QGWL-25620', mode:'clone', extra:[]},
       { id:'feed_trigger', category:'Campaign',  name:'Feed Trigger',
         sample:'QGWL-25213', mode:'manual_clone', extra:[]},
+    ]
+  },
+  // OJM catalog — uses PHXX + BBT boards, marked coming soon until boards wired up
+  OJM: {
+    board: 'PHXX',
+    onboardTicket: {
+      sampleKey: 'PHXX-3893',
+      summaryTpl: '[{clientName}] OJM Onboarding',
+    },
+    features: [
+      { id:'enable_ojm',    category:'Channels',  name:'Enable OJM',
+        sample:'PHXX-3893', mode:'manual_clone', extra:[]},
+      { id:'dummy_bb',      category:'Line',      name:'Create Dummy BB (Line)',
+        sample:'BBT-7073',  mode:'manual_clone', extra:[], board:'BBT'},
     ]
   }
 };
@@ -2443,7 +2460,7 @@ function loadDrafts(){
 function saveDrafts(list){ localStorage.setItem(DRAFT_KEY, JSON.stringify(list)); }
 
 function saveWizAsDraft(){
-  if(!wiz.onboardTicketKey){ toast('info','Create the onboard ticket first before saving'); return; }
+  if(!wiz.onboardTicketKey){ toast('info','Please create the onboard ticket first'); return; }
   const draft = {
     id:               'draft_'+wiz.onboardTicketKey,
     savedAt:          new Date().toISOString(),
@@ -2458,7 +2475,7 @@ function saveWizAsDraft(){
     organizationId:   wiz.organizationId,
     selectedFeatures: wiz.selectedFeatures,
     extraFields:      wiz.extraFields,
-    step:             2,  // always resumes at App ID + features step
+    step:             2,  // resumes at App IDs step (features already saved)
   };
   const list = loadDrafts().filter(d=>d.id!==draft.id); // replace existing draft for same ticket
   list.unshift(draft);
@@ -2544,6 +2561,12 @@ let wiz = {
 // {opportunityLink}, {platform} in any string from sample ticket content
 function resolveTemplate(str){
   if(!str||typeof str!=='string') return str;
+  // Build {channels} and {features} lists from selected features
+  const _cat = wiz.platform && CATALOGS[wiz.platform];
+  const _sel = _cat ? _cat.features.filter(f=>wiz.selectedFeatures[f.id]) : [];
+  const _channels = _sel.filter(f=>f.category==='Channels').map(f=>f.name);
+  const _features = _sel.filter(f=>f.category!=='Channels').map(f=>f.name);
+
   const vars = {
     clientName:     wiz.clientName    || '',
     appId:          wiz.appId         || '[TBD]',
@@ -2552,6 +2575,15 @@ function resolveTemplate(str){
     legalTicket:    wiz.legalTicket   || '',
     opportunityLink:wiz.opportunityLink|| '',
     platform:       wiz.platform      || '',
+    // {channels} and {features} — comma-separated lists
+    channels:       _channels.length ? _channels.join(', ') : 'None',
+    features:       _features.length ? _features.join(', ') : 'None',
+    // {TS} — assigned TS person
+    TS:             wiz.assignee?.displayName || '[TBD]',
+    // {enableFeature} is set per-ticket in wizCreateAllTickets (feature-specific)
+    enableFeature:  '',
+    // Flatten all feature extra fields: {smsQuantity}, {smsValidPeriod}, {email}, etc.
+    ...Object.values(wiz.extraFields||{}).reduce((acc,obj)=>({...acc,...obj}),{}),
   };
   return str.replace(/\{(\w+)\}/g, (match, key)=> key in vars ? vars[key] : match);
 }
@@ -2601,10 +2633,10 @@ function renderWizStep(){
   stepInd.textContent = `Step ${wiz.step+1} of ${WIZ_STEPS}`;
 
   switch(wiz.step){
-    case 0: renderWizPlatform(body,footer); break;
-    case 1: renderWizAccount(body,footer);  break;
-    case 2: renderWizFeaturesAppId(body,footer); break;
-    case 3: renderWizReview(body,footer);   break;
+    case 0: renderWizPlatform(body,footer);        break;
+    case 1: renderWizAccountAndFeatures(body,footer); break;  // account + channels + features
+    case 2: renderWizAppIds(body,footer);           break;    // app id + project id + org id (resume here)
+    case 3: renderWizReview(body,footer);           break;
   }
 }
 
@@ -2639,15 +2671,19 @@ function selectPlatform(id){
 }
 
 // ── STEP 1: Account details + create onboard ticket ───────────────────────────
-function renderWizAccount(body, footer){
-  document.getElementById('wizTitle').textContent = `${wiz.platform} — Account Details`;
-  const cat = CATALOGS[wiz.platform];
+function renderWizAccountAndFeatures(body, footer){
+  document.getElementById('wizTitle').textContent = `${wiz.platform} — Account & Features`;
+  const cat  = CATALOGS[wiz.platform];
+  const cats = [...new Set(cat.features.map(f=>f.category))];
+
   body.innerHTML = `
     <p style="font-size:13px;color:var(--muted2);margin-bottom:16px;line-height:1.6">
-      This will create the compulsory <strong>AIQUA Onboard ticket</strong> in QGWL.
-      The TS team will process it and provide the App ID in the comments.
+      Fill in the client details and select the channels and features to enable.
+      This information will be included in the onboarding ticket sent to the TS team.
     </p>
     <div class="wiz-err" id="wizErr1"></div>
+
+    <!-- Account fields -->
     <div class="wiz-field">
       <label class="wiz-label">Client Name <span class="wiz-req">*</span></label>
       <input class="wiz-input" id="wizClientName" placeholder="e.g. Mannings"
@@ -2657,13 +2693,11 @@ function renderWizAccount(body, footer){
       <label class="wiz-label">Legal Ticket <span class="wiz-req">*</span></label>
       <input class="wiz-input" id="wizLegalTicket" placeholder="e.g. LEG-XXXX"
         value="${esc(wiz.legalTicket)}" oninput="wiz.legalTicket=this.value.trim()"/>
-      <p class="wiz-hint">The legal/contract ticket for this client</p>
     </div>
     <div class="wiz-field">
       <label class="wiz-label">Opportunity Link <span class="wiz-req">*</span></label>
       <input class="wiz-input" id="wizOppLink" placeholder="https://..."
         value="${esc(wiz.opportunityLink)}" oninput="wiz.opportunityLink=this.value.trim()"/>
-      <p class="wiz-hint">CRM opportunity link for this client engagement</p>
     </div>
     <div class="wiz-field">
       <label class="wiz-label">Assign TS To All Tickets <span class="wiz-req">*</span></label>
@@ -2683,20 +2717,36 @@ function renderWizAccount(body, footer){
           </div>
         </div>
       </div>
-      <p class="wiz-hint">This person will be assigned to all onboarding and feature tickets</p>
     </div>
+
+    <!-- Divider -->
+    <div style="height:1px;background:var(--border);margin:18px 0 14px"></div>
+    <p style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">Channels & Features to Enable</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5">
+      These will appear in the onboarding ticket so the TS team knows what to prepare.
+      Feature tickets are only created after the App ID is received.
+    </p>
+    <div class="wiz-err" id="wizErr2"></div>
+    ${cats.map(cat=>renderFeatCategory(cat, CATALOGS[wiz.platform].features.filter(f=>f.category===cat))).join('')}
+
+    <!-- Onboard ticket status -->
     ${wiz.onboardTicketKey ? `
-    <div class="wiz-success" style="display:flex;align-items:center;gap:8px">
-      ✓ Onboard ticket created: <a href="https://appier.atlassian.net/browse/${wiz.onboardTicketKey}"
-        target="_blank" style="color:var(--green)">${wiz.onboardTicketKey}</a>
+    <div style="height:1px;background:var(--border);margin:18px 0 14px"></div>
+    <div class="wiz-success" style="display:flex;align-items:center;gap:8px;margin-bottom:0">
+      ✓ Onboard ticket created:
+      <a href="https://appier.atlassian.net/browse/${wiz.onboardTicketKey}"
+        target="_blank" style="color:var(--green);font-family:DM Mono,monospace">${wiz.onboardTicketKey}</a>
     </div>` : ''}`;
 
-  footer.innerHTML = `
+  // Footer changes based on whether onboard ticket is already created
+  footer.innerHTML = wiz.onboardTicketKey ? `
     <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
-    ${wiz.onboardTicketKey ? `<button class="wiz-save-later" onclick="saveWizAsDraft()" title="Save progress and wait for TS to provide App ID">⏸ Save & Come Back Later</button>` : ''}
-    <button class="btn-wiz-next" id="wizAccBtn" onclick="wizCreateOnboardTicket()">
-      ${wiz.onboardTicketKey ? 'Continue to Features →' : 'Create Onboard Ticket →'}
-    </button>`;
+    <button class="wiz-save-later" onclick="saveWizAsDraft()">⏸ Save & Wait for App ID</button>
+    <button class="btn-wiz-next" onclick="wizNext()">Enter IDs & Create Tickets →</button>
+  ` : `
+    <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
+    <button class="btn-wiz-next" id="wizAccBtn" onclick="wizCreateOnboardTicket()">Create Onboard Ticket →</button>
+  `;
 }
 
 async function wizCreateOnboardTicket(){
@@ -2708,6 +2758,19 @@ async function wizCreateOnboardTicket(){
   if(!wiz.legalTicket){ err.textContent='Legal ticket is required (e.g. LEG-XXXX)'; err.style.display='block'; return; }
   if(!wiz.opportunityLink){ err.textContent='Opportunity link is required'; err.style.display='block'; return; }
   if(!wiz.assignee){ err.textContent='Please assign a TS team member to handle these tickets'; err.style.display='block'; return; }
+  const warnErr2 = document.getElementById('wizErr2');
+  if(warnErr2&&Object.keys(wiz.selectedFeatures).length===0){
+    warnErr2.textContent='⚠️ No channels or features selected — you can still create the onboard ticket and select them when resuming.';
+    warnErr2.style.display='block';
+    // Not a hard block — allow continuing
+  }
+
+  // Pre-populate legalTicket + opportunityLink into extraFields
+  // so {legalTicket} and {opportunityLink} in any feature ticket description get substituted
+  // without asking the user again (they already provided these in Step 1)
+  if(!wiz.extraFields['_global']) wiz.extraFields['_global']={};
+  wiz.extraFields['_global'].legalTicket    = wiz.legalTicket;
+  wiz.extraFields['_global'].opportunityLink= wiz.opportunityLink;
 
   // If already created, just advance
   if(wiz.onboardTicketKey){ wizNext(); return; }
@@ -2722,26 +2785,20 @@ async function wizCreateOnboardTicket(){
     const sample = await apiFetch(`${base}/rest/api/3/issue/${cat.onboardTicket.sampleKey}?fields=issuetype,project,priority,labels`);
     const f = sample.fields||{};
 
-    // Build channels + features list from selected features
-    const cat2 = CATALOGS[wiz.platform];
-    const selFeatNames = cat2.features
-      .filter(f=>wiz.selectedFeatures[f.id])
-      .map(f=>f.name);
-    const channelFeats = cat2.features.filter(f=>wiz.selectedFeatures[f.id]&&f.category==='Channels').map(f=>f.name);
-    const otherFeats   = cat2.features.filter(f=>wiz.selectedFeatures[f.id]&&f.category!=='Channels').map(f=>f.name);
-
+    // Description uses template variables — resolveAdfTemplates will substitute them
+    // {channels} and {features} are auto-built from wiz.selectedFeatures in resolveTemplate
     const desc = [
-      `Client: ${wiz.clientName}`,
-      `Platform: ${wiz.platform}`,
-      `Legal Ticket: ${wiz.legalTicket}`,
-      `Opportunity Link: ${wiz.opportunityLink}`,
+      `Client: {clientName}`,
+      `Platform: {platform}`,
+      `Legal Ticket: {legalTicket}`,
+      `Opportunity Link: {opportunityLink}`,
+      `Assigned TS: {TS}`,
       ``,
-      `Channels Requested:`,
-      ...(channelFeats.length ? channelFeats.map(n=>`  - ${n}`) : [`  - None`]),
+      `Channels Requested: {channels}`,
       ``,
-      `Features Requested:`,
-      ...(otherFeats.length ? otherFeats.map(n=>`  - ${n}`) : [`  - None`]),
+      `Features Requested: {features}`,
       ``,
+      `--- To be filled in by TS ---`,
       `App ID: {appId}`,
       `Project ID: {projectId}`,
       `Organization ID: {organizationId}`,
@@ -2749,7 +2806,7 @@ async function wizCreateOnboardTicket(){
 
     const payload = {
       fields: {
-        project:     { key: 'QGWL' },
+        project:     { key: CATALOGS[wiz.platform]?.board || 'QGWL' },
         issuetype:   f.issuetype || { name:'Task' },
         summary:     `[${wiz.clientName}] ${wiz.platform} Onboarding`,
         description: resolveAdfTemplates({ type:'doc', version:1, content:[{type:'paragraph',content:[{type:'text',text:desc}]}] }),
@@ -2852,10 +2909,8 @@ document.addEventListener('click', e=>{
 });
 
 // ── STEP 2: App ID fetch + feature selection ──────────────────────────────────
-function renderWizFeaturesAppId(body, footer){
-  document.getElementById('wizTitle').textContent = `${wiz.platform} — Features & App ID`;
-  const cat = CATALOGS[wiz.platform];
-  const cats = [...new Set(cat.features.map(f=>f.category))];
+function renderWizAppIds(body, footer){
+  document.getElementById('wizTitle').textContent = `${wiz.platform} — Enter IDs`;
 
   const appIdStatus = wiz.appId
     ? `<div class="appid-status"><span class="appid-dot found"></span><span class="appid-text">App ID: <strong style="color:var(--green)">${esc(wiz.appId)}</strong></span></div>`
@@ -2866,15 +2921,22 @@ function renderWizFeaturesAppId(body, footer){
        </div>`;
 
   body.innerHTML = `
-    <div class="wiz-field" style="margin-bottom:10px">
-      <label class="wiz-label">App ID</label>
+    <p style="font-size:13px;color:var(--muted2);margin-bottom:16px;line-height:1.6">
+      Enter the IDs provided by the TS team after processing
+      <a href="https://appier.atlassian.net/browse/${wiz.onboardTicketKey||''}" target="_blank"
+        style="color:var(--accent);font-family:DM Mono,monospace">${wiz.onboardTicketKey||'the onboard ticket'}</a>.
+      These will be substituted into all feature ticket descriptions.
+    </p>
+    <div class="wiz-err" id="wizErrIds"></div>
+
+    <div class="wiz-field">
+      <label class="wiz-label">App ID <span class="wiz-req">*</span></label>
       ${appIdStatus}
       <input class="wiz-input ${wiz.appId?'filled':''}" id="wizAppId"
-        placeholder="Enter manually if already received"
+        placeholder="Enter manually or scan from ticket comments"
         value="${esc(wiz.appId)}" oninput="wiz.appId=this.value.trim();updateAppIdStyle()"/>
-      <p class="wiz-hint">Auto-scanned from <a href="https://appier.atlassian.net/browse/${wiz.onboardTicketKey||''}" target="_blank">${wiz.onboardTicketKey||'onboard ticket'}</a> comments, or enter manually</p>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div class="wiz-field" style="margin-bottom:0">
         <label class="wiz-label">Project ID</label>
         <input class="wiz-input ${wiz.projectId?'filled':''}" id="wizProjectId"
@@ -2888,18 +2950,29 @@ function renderWizFeaturesAppId(body, footer){
           value="${esc(wiz.organizationId)}" oninput="wiz.organizationId=this.value.trim()"/>
       </div>
     </div>
-    <p class="wiz-hint" style="margin-top:-4px">These IDs will be substituted into all ticket descriptions using <code style="font-family:DM Mono,monospace;font-size:11px;background:var(--surface);padding:1px 5px;border-radius:3px;border:1px solid var(--border)">{projectId}</code> and <code style="font-family:DM Mono,monospace;font-size:11px;background:var(--surface);padding:1px 5px;border-radius:3px;border:1px solid var(--border)">{organizationId}</code> placeholders in sample tickets</p>
-    <div class="wiz-field" style="display:none"><!-- spacer --></div>
-    </div>
-    <div style="height:1px;background:var(--border);margin:16px 0"></div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Select features to enable. Each will create a ticket in QGWL.</p>
-    <div class="wiz-err" id="wizErr2"></div>
-    ${cats.map(cat=>renderFeatCategory(cat, CATALOGS[wiz.platform].features.filter(f=>f.category===cat))).join('')}`;
+    <p class="wiz-hint" style="margin-top:8px">
+      These IDs substitute <code style="font-family:DM Mono,monospace;font-size:11px;background:var(--surface);padding:1px 5px;border-radius:3px;border:1px solid var(--border)">{appId}</code>,
+      <code style="font-family:DM Mono,monospace;font-size:11px;background:var(--surface);padding:1px 5px;border-radius:3px;border:1px solid var(--border)">{projectId}</code>,
+      <code style="font-family:DM Mono,monospace;font-size:11px;background:var(--surface);padding:1px 5px;border-radius:3px;border:1px solid var(--border)">{organizationId}</code>
+      in all feature ticket descriptions automatically.
+    </p>
+
+    <!-- Summary of selected features -->
+    <div style="height:1px;background:var(--border);margin:18px 0 14px"></div>
+    <p style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px">
+      Features selected in Step 1 (${Object.keys(wiz.selectedFeatures).length})
+    </p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      ${CATALOGS[wiz.platform].features
+          .filter(f=>wiz.selectedFeatures[f.id])
+          .map(f=>`<span style="font-family:'DM Mono',monospace;font-size:11px;padding:3px 9px;border-radius:4px;background:rgba(79,142,247,.1);color:var(--accent);border:1px solid rgba(79,142,247,.25)">${esc(f.name)}</span>`)
+          .join('')||'<span style="color:var(--muted);font-size:12px">No features selected — go back to Step 1</span>'}
+    </div>`;
 
   footer.innerHTML = `
     <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
-    <button class="wiz-save-later" onclick="saveWizAsDraft()" title="Save and come back when App ID is ready">⏸ Save Draft</button>
-    <button class="btn-wiz-next" onclick="wizValidateFeatures()">Review →</button>`;
+    <button class="wiz-save-later" onclick="saveWizAsDraft()">⏸ Save Draft</button>
+    <button class="btn-wiz-next" onclick="wizValidateIds()">Review & Create →</button>`;
 }
 
 function renderFeatCategory(catName, features){
@@ -2918,10 +2991,11 @@ function renderFeatCategory(catName, features){
             ${f.extra.map(ex=>`
               <div>
                 <label class="wiz-label">${ex.label}</label>
-                <input class="wiz-input" id="fex-${f.id}-${ex.id}"
+                <input class="wiz-input" type="${ex.type||'text'}" id="fex-${f.id}-${ex.id}"
                   placeholder="${ex.placeholder||''}"
                   value="${esc((wiz.extraFields[f.id]||{})[ex.id]||'')}"
-                  oninput="setFeatureExtra('${f.id}','${ex.id}',this.value)"/>
+                  oninput="setFeatureExtra('${f.id}','${ex.id}',this.value)"
+                  ${ex.type==='number'?'min="0" style="width:100%"':''}/>
               </div>`).join('')}
             ${f.mode==='manual_clone'?`<p class="wiz-hint">⚠️ This ticket will be cloned from <a href="https://appier.atlassian.net/browse/${f.sample}" target="_blank">${f.sample}</a> — you will need to fill in additional details after creation.</p>`:''}
           </div>` : ''}
@@ -2955,37 +3029,88 @@ function updateAppIdStyle(){
   if(inp) inp.classList.toggle('filled', !!wiz.appId);
 }
 
+// ── SHARED ID SCANNER ────────────────────────────────────────────────────────
+// Scans both the ticket description AND all comments for appId, projectId, organizationId.
+// Returns { appId, projectId, organizationId } — any field not found is null.
+async function scanTicketForIds(ticketKey){
+  const user = getUser();
+  const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+
+  // Fetch ticket description + comments in parallel
+  const [issueData, commentData] = await Promise.all([
+    apiFetch(`${base}/rest/api/3/issue/${ticketKey}?fields=description`),
+    apiFetch(`${base}/rest/api/3/issue/${ticketKey}/comment?maxResults=30&orderBy=-created`),
+  ]);
+
+  // Collect all text blocks to scan: description first, then comments newest-first
+  const blocks = [];
+  if(issueData.fields?.description) blocks.push(extractAdfText(issueData.fields.description));
+  for(const c of (commentData.comments||[])) blocks.push(extractAdfText(c.body));
+
+  const result = { appId:null, projectId:null, organizationId:null };
+
+  for(const txt of blocks){
+    if(!result.appId){
+      const m = txt.match(/app\s*[_\-]?\s*id\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i)
+              || txt.match(/appid\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i);
+      if(m) result.appId = m[1].trim();
+    }
+    if(!result.projectId){
+      const m = txt.match(/project\s*[_\-]?\s*id\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i)
+              || txt.match(/projectid\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i);
+      if(m) result.projectId = m[1].trim();
+    }
+    if(!result.organizationId){
+      const m = txt.match(/org(?:anization)?\s*[_\-]?\s*id\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i)
+              || txt.match(/organizationid\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i);
+      if(m) result.organizationId = m[1].trim();
+    }
+    // Stop early if all three found
+    if(result.appId && result.projectId && result.organizationId) break;
+  }
+
+  return result;
+}
+
 async function scanForAppId(){
   if(!wiz.onboardTicketKey){ toast('info','No onboard ticket yet'); return; }
   const dot  = document.getElementById('appidDot');
   const text = document.getElementById('appidText');
   if(dot) dot.className='appid-dot searching';
-  if(text) text.textContent='Scanning comments…';
+  if(text) text.textContent='Scanning ticket and comments…';
   try{
-    const user = getUser();
-    const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
-    const data = await apiFetch(`${base}/rest/api/3/issue/${wiz.onboardTicketKey}/comment?maxResults=20&orderBy=-created`);
-    const comments = data.comments||[];
-    let found = null;
-    for(const c of comments){
-      const txt = extractAdfText(c.body);
-      // Scan for common App ID patterns
-      const m = txt.match(/app\s*[_-]?\s*id\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i)
-               || txt.match(/appid\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i)
-               || txt.match(/application\s*id\s*[:\-=]\s*([a-zA-Z0-9_\-\.]+)/i);
-      if(m){ found=m[1].trim(); break; }
-    }
-    if(found){
-      wiz.appId = found;
+    const ids = await scanTicketForIds(wiz.onboardTicketKey);
+    const foundAny = ids.appId || ids.projectId || ids.organizationId;
+
+    if(ids.appId){
+      wiz.appId = ids.appId;
       const inp = document.getElementById('wizAppId');
-      if(inp){ inp.value=found; inp.classList.add('filled'); }
+      if(inp){ inp.value=ids.appId; inp.classList.add('filled'); }
+    }
+    if(ids.projectId){
+      wiz.projectId = ids.projectId;
+      const inp = document.getElementById('wizProjectId');
+      if(inp){ inp.value=ids.projectId; inp.classList.add('filled'); }
+    }
+    if(ids.organizationId){
+      wiz.organizationId = ids.organizationId;
+      const inp = document.getElementById('wizOrgId');
+      if(inp){ inp.value=ids.organizationId; inp.classList.add('filled'); }
+    }
+
+    if(foundAny){
+      const parts = [
+        ids.appId         ? `App ID: ${ids.appId}` : null,
+        ids.projectId     ? `Project ID: ${ids.projectId}` : null,
+        ids.organizationId? `Org ID: ${ids.organizationId}` : null,
+      ].filter(Boolean);
       if(dot) dot.className='appid-dot found';
-      if(text) text.innerHTML=`App ID found: <strong style="color:var(--green)">${esc(found)}</strong>`;
-      toast('success', `✓ App ID detected: ${found}`);
+      if(text) text.innerHTML=parts.map(p=>`<strong style="color:var(--green)">${esc(p)}</strong>`).join(' &nbsp;·&nbsp; ');
+      toast('success', `✓ Found: ${parts.join(', ')}`);
     } else {
       if(dot) dot.className='appid-dot manual';
-      if(text) text.textContent='App ID not found in comments yet — enter manually below';
-      toast('info','App ID not found yet — TS team may not have responded yet');
+      if(text) text.textContent='No IDs found yet — enter manually below';
+      toast('info','IDs not found in ticket yet — TS team may not have responded');
     }
   }catch(e){
     if(text) text.textContent='Scan failed — enter manually';
@@ -2993,10 +3118,14 @@ async function scanForAppId(){
   }
 }
 
-function wizValidateFeatures(){
-  const err = document.getElementById('wizErr2');
+function wizValidateIds(){
+  const err = document.getElementById('wizErrIds');
+  if(!wiz.appId){
+    err.textContent='App ID is required to create feature tickets';
+    err.style.display='block'; return;
+  }
   if(Object.keys(wiz.selectedFeatures).length===0){
-    err.textContent='Please select at least one feature to enable';
+    err.textContent='No features selected — go back to Step 1 to select features';
     err.style.display='block'; return;
   }
   err.style.display='none';
@@ -3084,6 +3213,9 @@ async function wizCreateAllTickets(){
       const appLine = wiz.appId ? `App ID: ${wiz.appId}` : 'App ID: [TBD - see onboard ticket]';
       const descText = `${appLine}${extraLines?'\n'+extraLines:''}\n\nOnboard Ticket: ${wiz.onboardTicketKey||'N/A'}`;
 
+      // Set {enableFeature} to this specific feature's name before resolving templates
+      wiz.extraFields['_enableFeature'] = { enableFeature: feat.name };
+
       // Build cloned + template-resolved description
       const clonedContent = sf.description?.content
         ? sf.description.content.map(resolveAdfTemplates)
@@ -3098,7 +3230,7 @@ async function wizCreateAllTickets(){
 
       const payload = {
         fields:{
-          project:     { key:'QGWL' },
+          project:     { key: feat.board || (CATALOGS[wiz.platform]?.board) || 'QGWL' },
           issuetype:   sf.issuetype||{name:'Task'},
           summary:     resolvedSummary,
           description: { type:'doc', version:1, content:[...clonedContent, ...appendContent] },
