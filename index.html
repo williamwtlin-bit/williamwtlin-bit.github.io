@@ -521,7 +521,12 @@
       <!-- Onboarding progress cards -->
       <div class="ob-progress-section" id="obProgressSection" style="display:none">
         <div class="ob-progress-header">
-          <span class="ob-progress-title">🚀 Onboarding Progress</span>
+          <div>
+            <span class="ob-progress-title">🚀 Onboarding Progress</span>
+            <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px">
+              Drafts awaiting App ID can be resumed below
+            </p>
+          </div>
           <button class="btn-new-ob" onclick="openWizard()">＋ New Onboarding</button>
         </div>
         <div class="ob-cards" id="obCards"></div>
@@ -921,24 +926,9 @@ async function apiFetch(url, opts={}){
   // For mutating requests, prevent the browser from silently converting POST→GET
   // when the Atlassian API gateway issues a 302 redirect to the Jira instance.
   // Using redirect:'manual' lets us detect the redirect and re-issue with the correct method.
-  let resp;
-  if(method !== 'GET' && method !== 'HEAD'){
-    const manualResp = await fetch(url, {...fetchOpts, redirect:'manual'});
-    if(manualResp.type === 'opaqueredirect'){
-      // Gateway redirected — re-issue the POST directly to the Jira site URL
-      const user = getUser();
-      const pathMatch = url.match(/\/(rest\/.+)$/);
-      if(user?.siteUrl && pathMatch){
-        resp = await fetch(`${user.siteUrl}/${pathMatch[1]}`, {...fetchOpts, redirect:'follow'});
-      } else {
-        throw new Error('API gateway issued an unexpected redirect. Please log out and log back in.');
-      }
-    } else {
-      resp = manualResp;
-    }
-  } else {
-    resp = await fetch(url, fetchOpts);
-  }
+  // Always follow redirects — the explicit method + body setup above ensures
+  // the browser sends POST (not GET) even through Atlassian's API gateway redirects.
+  const resp = await fetch(url, {...fetchOpts, redirect:'follow'});
 
   if(resp.status===401){
     // Token truly invalid — force re-login
@@ -2355,7 +2345,8 @@ function renderOnboardingProgressMock(){
   const cardsEl = document.getElementById('obCards');
   if(!secEl||!cardsEl) return;
 
-  if(!list.length){
+  const mockDrafts = loadDrafts();
+  if(!list.length && !mockDrafts.length){
     secEl.style.display='none';
     if(newWrap) newWrap.style.display='flex';
     return;
@@ -3347,7 +3338,9 @@ async function renderOnboardingProgress(){
   const cardsEl = document.getElementById('obCards');
   if(!secEl||!cardsEl) return;
 
-  if(!list.length){
+  const drafts = loadDrafts();
+  // Show section if there are any completed onboardings OR active drafts
+  if(!list.length && !drafts.length){
     secEl.style.display='none';
     if(newWrap) newWrap.style.display='flex';
     return;
@@ -3355,9 +3348,6 @@ async function renderOnboardingProgress(){
 
   secEl.style.display='block';
   if(newWrap) newWrap.style.display='none';
-
-  // Show drafts first (paused onboardings awaiting App ID)
-  const drafts = loadDrafts();
   const draftHtml = drafts.map(d=>`
     <div class="ob-card draft" id="dft_${d.id}">
       <div class="ob-card-header" style="cursor:default">
