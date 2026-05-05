@@ -276,6 +276,7 @@
   .tab-btn:hover{color:var(--text);}
   .tab-btn.active{background:var(--surface2);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.3);}
   .tab-btn .tab-count{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px;background:rgba(255,255,255,.06);color:var(--muted2);}
+  .tab-draft-badge{font-size:12px;margin-left:2px;animation:pulse 1.5s ease-in-out infinite;}
   .tab-btn.active .tab-count{background:rgba(79,142,247,.15);color:var(--accent);}
   .tab-pane{display:none;}
   .tab-pane.active{display:block;}
@@ -509,6 +510,7 @@
     <div class="tabs">
       <button class="tab-btn active" id="tab-tracking" onclick="switchTab('tracking')">
         📋 Issue Tracking <span class="tab-count" id="tc-tracking">—</span>
+        <span class="tab-draft-badge" id="tabDraftBadge" style="display:none" title="Onboarding drafts waiting for App ID">⏸</span>
       </button>
       <button class="tab-btn" id="tab-tbd" onclick="switchTab('tbd')">
         ✅ To Be Done <span class="tab-count" id="tc-tbd">—</span>
@@ -2504,9 +2506,16 @@ function saveWizAsDraft(){
   const list = loadDrafts().filter(d=>d.id!==draft.id); // replace existing draft for same ticket
   list.unshift(draft);
   saveDrafts(list);
-  toast('success', `Draft saved — resume anytime from the Onboarding Progress section`);
+  toast('success', `Draft saved — resuming from Issue Tracking → Onboarding Progress`);
   closeWizard();
+  // Switch to Issue Tracking tab so the draft card is immediately visible
+  switchTab('tracking');
   renderOnboardingProgress();
+  // Scroll to the progress section
+  setTimeout(()=>{
+    const sec = document.getElementById('obProgressSection');
+    if(sec) sec.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 150);
 }
 
 function resumeDraft(draftId){
@@ -3339,6 +3348,10 @@ async function renderOnboardingProgress(){
   if(!secEl||!cardsEl) return;
 
   const drafts = loadDrafts();
+  // Show/hide the ⏸ badge on the Issue Tracking tab
+  const tabBadge = document.getElementById('tabDraftBadge');
+  if(tabBadge) tabBadge.style.display = drafts.length ? 'inline' : 'none';
+
   // Show section if there are any completed onboardings OR active drafts
   if(!list.length && !drafts.length){
     secEl.style.display='none';
