@@ -2841,6 +2841,7 @@ async function wizCreateOnboardTicket(){
         project:     { key: CATALOGS[wiz.platform]?.board || 'QGWL' },
         issuetype:   f.issuetype || { name:'Task' },
         summary:     `[${wiz.clientName}] ${wiz.platform} Onboarding`,
+        reporter:    { accountId: user.accountId },
         description: resolveAdfTemplates({ type:'doc', version:1, content:[{type:'paragraph',content:[{type:'text',text:desc}]}] }),
         labels:      [...(f.labels||[]), 'onboarding-dashboard'],
       }
@@ -3266,6 +3267,7 @@ async function wizCreateAllTickets(){
           project:     { key: feat.board || (CATALOGS[wiz.platform]?.board) || 'QGWL' },
           issuetype:   sf.issuetype||{name:'Task'},
           summary:     resolvedSummary,
+          reporter:    { accountId: user.accountId },
           description: { type:'doc', version:1, content:[...clonedContent, ...appendContent] },
           labels:      [...(sf.labels||[]), 'onboarding-dashboard', `ob-${wiz.clientName.toLowerCase().replace(/\s+/g,'-')}`],
         }
