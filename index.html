@@ -581,6 +581,15 @@
       <div class="controls-bar">
         <input class="search-input" type="text" id="tbdSrch" placeholder="Search tickets…" oninput="applyTbdFilters()" style="width:240px"/>
       </div>
+      <!-- TBD Bulk action bar -->
+      <div class="bulk-bar" id="tbdBulkBar">
+        <button class="bulk-deselect" onclick="clearTbdBulk()" title="Clear selection">✕</button>
+        <span class="bulk-count" id="tbdBulkCount"><strong>0</strong> selected</span>
+        <div class="bulk-actions">
+          <button class="bulk-btn success-btn" onclick="tbdBulkMarkDone()">✓ Mark All Done</button>
+          <button class="bulk-btn" onclick="tbdBulkCopyKeys()">📋 Copy Keys</button>
+        </div>
+      </div>
       <div class="tbd-wrap">
         <div id="tbdDash"></div>
       </div>
@@ -1786,9 +1795,88 @@ function switchTab(name){
   if(name==='tracking') renderOnboardingProgress();
 }
 
+// ── TBD BULK ACTIONS ─────────────────────────────────────────────────────────
+let tbdBulkSelected = new Set();
+
+function onTbdCbChange(cb){
+  const key = cb.dataset.key;
+  if(cb.checked) tbdBulkSelected.add(key);
+  else            tbdBulkSelected.delete(key);
+  updateTbdBulkBar();
+  // Sync group checkbox
+  const groupCb = document.getElementById('tbdGroupCb');
+  if(groupCb){
+    const allCbs = [...document.querySelectorAll('.tbd-cb')].filter(c=>c.closest('tr')?.style.display!=='none');
+    groupCb.checked       = allCbs.length>0 && allCbs.every(c=>c.checked);
+    groupCb.indeterminate = !groupCb.checked && allCbs.some(c=>c.checked);
+  }
+}
+
+function onTbdGroupCbChange(headerCb){
+  document.querySelectorAll('.tbd-cb').forEach(cb=>{
+    const tr = cb.closest('tr');
+    if(tr && tr.style.display!=='none'){
+      cb.checked = headerCb.checked;
+      if(headerCb.checked) tbdBulkSelected.add(cb.dataset.key);
+      else                  tbdBulkSelected.delete(cb.dataset.key);
+    }
+  });
+  updateTbdBulkBar();
+}
+
+function updateTbdBulkBar(){
+  const bar   = document.getElementById('tbdBulkBar');
+  const count = document.getElementById('tbdBulkCount');
+  if(!bar||!count) return;
+  const n = tbdBulkSelected.size;
+  bar.classList.toggle('active', n>0);
+  count.innerHTML = `<strong>${n}</strong> ticket${n===1?'':'s'} selected`;
+}
+
+function clearTbdBulk(){
+  tbdBulkSelected.clear();
+  document.querySelectorAll('.tbd-cb').forEach(cb=>cb.checked=false);
+  const groupCb = document.getElementById('tbdGroupCb');
+  if(groupCb){ groupCb.checked=false; groupCb.indeterminate=false; }
+  updateTbdBulkBar();
+}
+
+function tbdBulkCopyKeys(){
+  if(!tbdBulkSelected.size){ toast('info','No tickets selected'); return; }
+  navigator.clipboard.writeText([...tbdBulkSelected].join(', '))
+    .then(()=>toast('success',`Copied ${tbdBulkSelected.size} ticket keys`));
+}
+
+async function tbdBulkMarkDone(){
+  if(!tbdBulkSelected.size){ toast('info','No tickets selected'); return; }
+  const keys = [...tbdBulkSelected];
+  const user = getUser();
+  if(!user){ toast('error','Not logged in'); return; }
+  const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+  toast('info',`Marking ${keys.length} tickets as Done…`);
+  let ok=0, fail=0;
+  for(const key of keys){
+    try{
+      const data = await apiFetch(`${base}/rest/api/3/issue/${key}/transitions`);
+      const doneT = (data.transitions||[]).find(t=>t.name.toLowerCase()==='done'&&t.isAvailable!==false);
+      if(!doneT) throw new Error('No Done transition');
+      await apiFetch(`${base}/rest/api/3/issue/${key}/transitions`,{
+        method:'POST', body:JSON.stringify({transition:{id:doneT.id}})
+      });
+      tbdData = tbdData.filter(i=>i.key!==key);
+      ok++;
+    }catch(e){ fail++; }
+  }
+  if(ok)   toast('success',`✓ Marked ${ok} ticket${ok===1?'':'s'} as Done`);
+  if(fail) toast('error',`${fail} ticket${fail===1?'':'s'} could not be transitioned`);
+  clearTbdBulk();
+  renderTbd(tbdData);
+}
+
 // ── TO BE DONE RENDER ────────────────────────────────────────────────────────
 function renderTbd(issues){
   tbdData = issues;
+  tbdBulkSelected.clear();
   // Sort by lead time DESC (longest = highest priority)
   const sorted = [...issues].sort((a,b)=>calcLT(a.created)-calcLT(b.created)).reverse();
 
@@ -1808,6 +1896,7 @@ function renderTbd(issues){
   }
 
   const thead=`<thead><tr>
+    <th class="cb-th"><input type="checkbox" class="group-cb" id="tbdGroupCb" title="Select all" onchange="onTbdGroupCbChange(this)"/></th>
     <th>Ticket</th><th>Summary</th><th>Client</th><th>Status</th>
     <th>Reporter</th><th>Created</th><th>Lead Time ↓</th><th>Action</th>
   </tr></thead>`;
@@ -1817,7 +1906,10 @@ function renderTbd(issues){
     const client=extractClient(i.summary)||'—';
     const sumClean=esc(normU(i.summary).replace(/\[[^\]]+\]\s*/,''));
     return `<tr class="tbd-row" data-key="${i.key}" data-tbd-search="${(i.key+' '+i.summary+' '+i.status+' '+i.reporter).toLowerCase()}" onclick="openPanel('${i.key}',event,'tbd')">
-      <td><a class="ticket-key" href="${i.url}" target="_blank" onclick="event.stopPropagation()">${i.key}</a></td>
+      <td class="cb-td" onclick="event.stopPropagation()">
+        <input type="checkbox" class="row-cb tbd-cb" data-key="${i.key}" onchange="onTbdCbChange(this)"/>
+      </td>
+      <td onclick="event.stopPropagation()"><a class="ticket-key" href="${i.url}" target="_blank">${i.key}</a></td>
       <td><div class="ticket-summary">${sumClean}</div></td>
       <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2)">${esc(client)}</span></td>
       <td><span class="sb ${sClass(i.status)}"><span class="sd"></span>${esc(i.status)}</span></td>
@@ -2389,13 +2481,13 @@ function renderOnboardingProgressMock(){
             <tr>
               <td style="color:var(--muted2);font-size:12px">Onboard Ticket</td>
               <td><a class="ob-ticket-link" href="https://appier.atlassian.net/browse/${ob.onboardTicketKey}" target="_blank">${ob.onboardTicketKey}</a></td>
-              <td><span class="sb s-ip"><span class="sd"></span>tracking</span></td>
+              <td id="obst-${ob.onboardTicketKey}"><span class="sb s-ip"><span class="sd"></span>${esc(ob.onboardStatus||'In Progress')}</span></td>
               <td>—</td>
             </tr>
             ${ob.features.map(f=>{
               const days = Math.floor((Date.now()-new Date(ob.createdAt))/86400000);
               return `<tr>
-                <td style="font-size:12px">${esc(f.name)}${f.mode==='manual_clone'?'<span style="margin-left:6px;font-size:10px;color:var(--yellow)">⚠️</span>':''}</td>
+                <td style="font-size:12px">${esc(f.name)}${f.mode==='manual_clone'?'<span style="margin-left:6px;font-family:DM Mono,monospace;font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(251,191,36,.12);color:var(--yellow);border:1px solid rgba(251,191,36,.3)">MANUAL</span>':''}</td>
                 <td><a class="ob-ticket-link" href="https://appier.atlassian.net/browse/${f.ticketKey}" target="_blank">${f.ticketKey}</a></td>
                 <td><span class="sb ${sClass(f.status)}"><span class="sd"></span>${esc(f.status)}</span></td>
                 <td><span class="lt ${ltC(days)}">${days}d</span></td>
@@ -3451,9 +3543,19 @@ async function renderOnboardingProgress(){
 async function refreshObStatuses(list, user){
   const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
   for(const ob of list){
+    // Also fetch onboard ticket status
+    if(ob.onboardTicketKey){
+      try{
+        const data = await apiFetch(`${base}/rest/api/3/issue/${ob.onboardTicketKey}?fields=status`);
+        const status = data.fields?.status?.name || 'In Progress';
+        ob.onboardStatus = status;
+        const el = document.getElementById('obst-'+ob.onboardTicketKey);
+        if(el) el.innerHTML=`<span class="sb ${sClass(status)}"><span class="sd"></span>${esc(status)}</span>`;
+      }catch(_){}
+    }
     for(const feat of ob.features){
       try{
-        if(!feat.ticketKey) continue; // empty key would produce a trailing-slash URL → 301 redirect → 405 GET
+        if(!feat.ticketKey) continue;
         const data = await apiFetch(`${base}/rest/api/3/issue/${feat.ticketKey}?fields=status`);
         const status = data.fields?.status?.name||feat.status;
         feat.status = status;
@@ -3461,7 +3563,8 @@ async function refreshObStatuses(list, user){
         if(el) el.innerHTML=`<span class="sb ${sClass(status)}"><span class="sd"></span>${esc(status)}</span>`;
       }catch(_){}
     }
-    // Update done count
+    // Update done count (include onboard ticket if done)
+    const allStatuses = [...ob.features.map(f=>f.status||''), ob.onboardStatus||''];
     const done  = ob.features.filter(f=>isDone(f.status||'')).length;
     const total = ob.features.length;
     const pct   = total ? Math.round((done/total)*100) : 0;
