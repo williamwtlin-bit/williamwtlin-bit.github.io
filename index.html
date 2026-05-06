@@ -900,17 +900,27 @@ async function handleOAuthCallback(){
 // ════════════════════════════════════════════════════════════════════════════
 
 async function apiFetch(url, opts={}){
-  if(url.includes('/ex/jira//')){
+  if(url.includes('/ex/jira//'))
     throw new Error('API URL is malformed — cloudId is missing. Please log in again.');
-  }
-  // A trailing slash before '?' means a key/id was empty (e.g. /issue/?fields=...)
-  // Atlassian 301-redirects these to the bare collection endpoint, and browsers follow with GET → 405
-  if(/\/\?/.test(url)){
+  if(/\/\?/.test(url))
     throw new Error(`API URL has an empty path segment (likely a missing ticket key): ${url}`);
-  }
-  const token=await getAccessToken();
-  // Explicitly set method to prevent browsers silently converting POST→GET on redirect
+
+  const token  = await getAccessToken();
   const method = opts.method || 'GET';
+
+  // ── WRITE OPERATIONS: bypass api.atlassian.com gateway entirely ─────────────
+  // The gateway issues 301/302 redirects for POST/PUT/DELETE, and browsers follow
+  // those redirects as GET (per HTTP spec) → causes 405 "GET not supported".
+  // Fix: extract the /rest/api/... path and send directly to the Jira site URL.
+  let finalUrl = url;
+  if(method !== 'GET' && method !== 'HEAD'){
+    const user = getUser();
+    if(user?.siteUrl && url.includes('/ex/jira/')){
+      const pathMatch = url.match(/\/ex\/jira\/[^\/]+\/(.+)$/);
+      if(pathMatch) finalUrl = `${user.siteUrl}/${pathMatch[1]}`;
+    }
+  }
+
   const fetchOpts = {
     method,
     headers:{
@@ -919,46 +929,23 @@ async function apiFetch(url, opts={}){
       'Accept':        'application/json',
       ...(opts.headers||{}),
     },
+    redirect: 'follow',
   };
-  // Only attach body for methods that support it
-  if(opts.body && method !== 'GET' && method !== 'HEAD'){
+  if(opts.body && method !== 'GET' && method !== 'HEAD')
     fetchOpts.body = opts.body;
-  }
 
-  // For mutating requests, prevent the browser from silently converting POST→GET
-  // when the Atlassian API gateway issues a 302 redirect to the Jira instance.
-  // Using redirect:'manual' lets us detect the redirect and re-issue with the correct method.
-  // Always follow redirects — the explicit method + body setup above ensures
-  // the browser sends POST (not GET) even through Atlassian's API gateway redirects.
-  const resp = await fetch(url, {...fetchOpts, redirect:'follow'});
-
-  // If we get 405 on a POST/PUT/DELETE it means the API gateway redirected
-  // and the browser re-sent as GET — retry once directly via the Jira site URL
-  if(resp.status===405 && method !== 'GET'){
-    const user2 = getUser();
-    const pathMatch = url.match(/\/ex\/jira\/[^/]+\/(.+)$/);
-    if(user2?.siteUrl && pathMatch){
-      const retryUrl = `${user2.siteUrl}/${pathMatch[1]}`;
-      const retryResp = await fetch(retryUrl, {...fetchOpts, redirect:'follow'});
-      if(retryResp.status===204) return null;
-      if(retryResp.ok) return retryResp.json().catch(()=>null);
-    }
-    const err405 = await resp.json().catch(()=>({message:'Method not allowed'}));
-    throw new Error(err405.message || 'Method not allowed (405)');
-  }
+  const resp = await fetch(finalUrl, fetchOpts);
 
   if(resp.status===401){
-    // Token truly invalid — force re-login
-    clearSession();
-    showLoginScreen();
+    clearSession(); showLoginScreen();
     showLoginError('Your session has expired. Please log in again.');
     throw new Error('Session expired');
   }
   if(!resp.ok){
-    const body=await resp.json().catch(()=>null);
-    throw new Error(body?.message || body?.errorMessages?.[0] || `HTTP ${resp.status}`);
+    let body = null;
+    try{ body = await resp.json(); }catch(_){}
+    throw new Error(body?.message || body?.errorMessages?.[0] || body?.detail || `HTTP ${resp.status}`);
   }
-  // Some Jira endpoints return 204 No Content
   if(resp.status===204) return null;
   return resp.json();
 }
