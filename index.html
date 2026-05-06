@@ -288,7 +288,7 @@
   .tbd-row.panel-active td{background:rgba(79,142,247,.1)!important;}
   /* Inline reassign dropdown */
   .inline-asn-wrap{position:relative;display:inline-block;}
-  .inline-asn-dd{position:absolute;top:calc(100% + 4px);right:0;min-width:220px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;z-index:300;box-shadow:0 8px 24px rgba(0,0,0,.5);overflow:hidden;display:none;}
+  .inline-asn-dd{position:fixed;min-width:220px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.5);overflow:hidden;display:none;}
   .inline-asn-dd.open{display:block;}
   .inline-asn-search{width:100%;background:var(--surface);border:none;border-bottom:1px solid var(--border);color:var(--text);padding:7px 10px;font-family:'DM Mono',monospace;font-size:12px;outline:none;}
   .inline-asn-list{max-height:180px;overflow-y:auto;}
@@ -1856,8 +1856,22 @@ async function openRowAsnDd(key, btn, e){
   const isOpen = dd.classList.toggle('open');
   _openRowDd = isOpen ? key : null;
   if(isOpen){
+    // Position dropdown using fixed coords based on button location
+    const rect = btn.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const dropH = 240; // estimated dropdown height
+    if(spaceBelow < dropH){
+      // Open upward
+      dd.style.top    = (rect.top - dropH - 4) + 'px';
+      dd.style.bottom = '';
+    } else {
+      dd.style.top    = (rect.bottom + 4) + 'px';
+      dd.style.bottom = '';
+    }
+    dd.style.left  = Math.max(4, rect.right - 220) + 'px';
+    dd.style.width = '220px';
     document.getElementById('rowAsnSearch-'+key)?.focus();
-    const list = document.getElementById('rowAsnList-'+key);
+    const list   = document.getElementById('rowAsnList-'+key);
     const search = document.getElementById('rowAsnSearch-'+key);
     if(list && !list.children.length){
       list.innerHTML='<div class="inline-asn-opt" style="pointer-events:none;color:var(--muted)">Loading…</div>';
@@ -1979,6 +1993,9 @@ function updateTbdBulkBar(){
   const bar   = document.getElementById('tbdBulkBar');
   const count = document.getElementById('tbdBulkCount');
   if(!bar||!count) return;
+  // Derive count + keys directly from DOM — always in sync with what's visually checked
+  const checked = [...document.querySelectorAll('.tbd-cb:checked')];
+  tbdBulkSelected = new Set(checked.map(c=>c.dataset.key));
   const n = tbdBulkSelected.size;
   bar.classList.toggle('active', n>0);
   count.innerHTML = `<strong>${n}</strong> ticket${n===1?'':'s'} selected`;
@@ -2158,6 +2175,9 @@ function updateBulkBar(){
   const bar   = document.getElementById('bulkBar');
   const count = document.getElementById('bulkCount');
   if(!bar||!count) return;
+  // Derive count + keys directly from DOM — always in sync with what's visually checked
+  const checked = [...document.querySelectorAll('#pane-tracking .row-cb:checked')];
+  bulkSelected = new Set(checked.map(c=>c.dataset.key));
   const n = bulkSelected.size;
   bar.classList.toggle('active', n>0);
   count.innerHTML = `<strong>${n}</strong> ticket${n===1?'':'s'} selected`;
@@ -2224,6 +2244,9 @@ function getOnboardingTicketKeys(){
 
 function renderDashboard(issues){
   allData=issues; // keep full set for mark-done sync
+  // Reset bulk selection state so stale counts don't persist across renders
+  bulkSelected.clear();
+  updateBulkBar();
 
   // Filter out onboarding wizard tickets — shown in Onboarding Progress only
   const obKeys = getOnboardingTicketKeys();
@@ -2661,7 +2684,7 @@ function renderOnboardingProgressMock(){
             <tr>
               <td style="color:var(--muted2);font-size:12px">Onboard Ticket</td>
               <td><a class="ob-ticket-link" href="https://appier.atlassian.net/browse/${ob.onboardTicketKey}" target="_blank">${ob.onboardTicketKey}</a></td>
-              <td id="obst-${ob.onboardTicketKey}"><span class="sb s-ip"><span class="sd"></span>${esc(ob.onboardStatus||'In Progress')}</span></td>
+              <td id="obst-${ob.onboardTicketKey}"><span class="sb ${sClass(ob.onboardStatus||'')}" style="${ob.onboardStatus?'':'color:var(--muted);font-style:italic'}"><span class="sd"></span>${esc(ob.onboardStatus||'Loading…')}</span></td>
               <td>—</td>
             </tr>
             ${ob.features.map(f=>{
@@ -3268,13 +3291,12 @@ function renderWizAppIds(body, footer){
 
   // Compute selected features fresh at render time (not inside the template string)
   const _selFeats = (CATALOGS[wiz.platform]?.features||[]).filter(f=>wiz.selectedFeatures[f.id]);
-  body.innerHTML += `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+  body.innerHTML += `<div style="margin-bottom:8px">
     <p style="font-size:12px;font-weight:700;color:var(--text);margin:0">Features selected (${_selFeats.length})</p>
-    <button onclick="wizBack()" style="background:transparent;border:none;color:var(--accent);font-size:11px;font-family:DM Mono,monospace;cursor:pointer;text-decoration:underline">← Edit selection</button>
   </div>
   <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px">
     ${_selFeats.map(f=>`<span style="font-family:'DM Mono',monospace;font-size:11px;padding:3px 9px;border-radius:4px;background:rgba(79,142,247,.1);color:var(--accent);border:1px solid rgba(79,142,247,.25)">${esc(f.name)}</span>`).join('')
-      ||'<span style="color:var(--muted);font-size:12px">No features selected — click ← Edit selection above</span>'}
+      ||'<span style="color:var(--muted);font-size:12px">No features selected — go back to Step 1 to select features</span>'}
   </div>`;
 
   footer.innerHTML = `
