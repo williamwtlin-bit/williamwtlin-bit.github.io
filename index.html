@@ -152,9 +152,12 @@
   .dc{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);white-space:nowrap;}
   .lt{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;white-space:nowrap;}
   .lt-lo{color:var(--green);}.lt-mi{color:var(--yellow);}.lt-hi{color:var(--red);}
-  .btn-md{background:transparent;border:1px solid rgba(52,211,153,.32);color:var(--green);padding:3px 9px;border-radius:5px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
-  .btn-md:hover{background:rgba(52,211,153,.1);border-color:var(--green);}
+  .btn-md{background:transparent;border:1px solid var(--border);color:var(--muted2);padding:3px 9px;border-radius:5px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+  .btn-md:hover{background:rgba(255,255,255,.04);border-color:var(--muted2);}
   .btn-md:disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
+  /* TBD done button — always neutral grey, never green */
+  .btn-done-tbd{color:var(--muted2)!important;border-color:var(--border)!important;}
+  .btn-done-tbd:hover{border-color:var(--muted2)!important;color:var(--text)!important;}
   .done-section{border-top:1px solid var(--border);background:rgba(0,0,0,.15);}
   .done-toggle{display:flex;align-items:center;gap:7px;padding:9px 18px;cursor:pointer;font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;user-select:none;}
   .done-toggle:hover{color:var(--green);}
@@ -2073,7 +2076,7 @@ function renderTbd(issues){
   const thead=`<thead><tr>
     <th class="cb-th"><input type="checkbox" class="group-cb" id="tbdGroupCb" title="Select all" onchange="onTbdGroupCbChange(this)"/></th>
     <th>Ticket</th><th>Summary</th><th>Client</th><th>Status</th>
-    <th>Reporter</th><th>Created</th><th>Lead Time ↓</th><th>Reassign</th><th>Action</th>
+    <th>Reporter</th><th>Created</th><th>Lead Time ↓</th><th>Action</th>
   </tr></thead>`;
 
   const rows = sorted.map(i=>{
@@ -2092,17 +2095,7 @@ function renderTbd(issues){
       <td><span class="dc">${i.created}</span></td>
       <td><span class="lt ${ltC(days)}">${days}d</span></td>
       <td onclick="event.stopPropagation()">
-        <div class="inline-asn-wrap">
-          <button class="btn-reassign" onclick="openRowAsnDd('${i.key}',this,event)">👤 Reassign</button>
-          <div class="inline-asn-dd" id="rowAsn-${i.key}">
-            <input class="inline-asn-search" type="text" id="rowAsnSearch-${i.key}"
-              placeholder="Search…" oninput="filterRowAsn('${i.key}')" autocomplete="off"/>
-            <div class="inline-asn-list" id="rowAsnList-${i.key}"></div>
-          </div>
-        </div>
-      </td>
-      <td onclick="event.stopPropagation()">
-        <button class="btn-md" onclick="markDoneTbd('${i.key}',this)">✓ Done</button>
+        <button class="btn-md btn-done-tbd" onclick="markDoneTbd('${i.key}',this)">Mark Done</button>
       </td>
     </tr>`;
   }).join('');
@@ -2707,6 +2700,9 @@ function renderOnboardingProgressMock(){
             }).join('')}
           </tbody>
         </table>
+        <div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;justify-content:flex-end">
+          <button class="btn-add-feat" onclick="addObFeatures('${ob.id}')">＋ Add Features</button>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -3735,6 +3731,7 @@ async function renderOnboardingProgress(){
           ${ob.projectId ? `<span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">proj: <span style="color:var(--muted2)">${esc(ob.projectId)}</span></span>` : ''}
           ${ob.organizationId ? `<span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">org: <span style="color:var(--muted2)">${esc(ob.organizationId)}</span></span>` : ''}
           ${!ob.appId ? `<button class="appid-scan-btn" style="font-size:11px" onclick="scanAppIdForOb('${ob.id}','${ob.onboardTicketKey}')">🔍 Scan</button>` : ''}
+          <button class="btn-add-feat" onclick="addObFeatures('${ob.id}')">＋ Add Features</button>
           <button class="ob-del-btn" onclick="deleteOnboarding('${ob.id}')">Delete record</button>
         </div>
         <table class="ob-feat-table">
@@ -3743,12 +3740,12 @@ async function renderOnboardingProgress(){
             <tr>
               <td>Onboard Ticket</td>
               <td><a class="ob-ticket-link" href="https://appier.atlassian.net/browse/${ob.onboardTicketKey||''}" target="_blank">${ob.onboardTicketKey||'—'}</a></td>
-              <td><span class="sb s-ip"><span class="sd"></span>tracking</span></td>
+              <td id="obst-${ob.onboardTicketKey}"><span class="sb ${sClass(ob.onboardStatus||'')}"><span class="sd"></span>${esc(ob.onboardStatus||'Loading…')}</span></td>
             </tr>
             ${ob.features.map(f=>`<tr>
-              <td>${esc(f.name)}</td>
+              <td>${esc(f.name)}${f.mode==='manual_clone'?'<span style="margin-left:6px;font-family:DM Mono,monospace;font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(251,191,36,.12);color:var(--yellow);border:1px solid rgba(251,191,36,.3)">MANUAL</span>':''}</td>
               <td><a class="ob-ticket-link" href="https://appier.atlassian.net/browse/${f.ticketKey}" target="_blank">${f.ticketKey}</a></td>
-              <td id="obst-${f.ticketKey}"><span class="sb s-bl"><span class="sd"></span>${esc(f.status||'Backlog')}</span></td>
+              <td id="obst-${f.ticketKey}"><span class="sb ${sClass(f.status||'Backlog')}"><span class="sd"></span>${esc(f.status||'Backlog')}</span></td>
             </tr>`).join('')}
           </tbody>
         </table>
