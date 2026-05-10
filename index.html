@@ -2663,7 +2663,7 @@ function injectMockDraft(){
     organizationId:   '',
     selectedFeatures: { edm:true, seg_split:true, creative:true },
     extraFields:      { edm:{ email:'noreply@luxgen.com' } },
-    step:             2,
+    step:             2,  // resumes at IDs step — TS provides these before feature selection
   };
   const drafts = loadDrafts().filter(d=>!d.id.startsWith('draft_MOCK'));
   drafts.unshift(mockDraft);
@@ -3015,7 +3015,7 @@ function resolveAdfTemplates(node){
 }
 let wizAssigneeTimer = null;
 
-const WIZ_STEPS = 4;
+const WIZ_STEPS = 5;  // 0=platform 1=account 2=features 3=IDs 4=review
 
 // BotBonnie quick-onboard modal (no full wizard)
 function openBotBonnieModal(){
@@ -3063,13 +3063,18 @@ async function createBotBonnieTicket(){
       if(cleaned.content) cleaned.content = cleaned.content.map(stripLocalIds);
       return cleaned;
     }
-    const clonedDesc = (sf.fields.description?.content||[]).map(stripLocalIds);
+    // BBT-7539 has complex ADF (tables, smartlinks, Chinese) that fails on create
+    // Since this is a manual_clone, user fills the description in Jira anyway.
+    // Send a minimal description stub so the ticket creation succeeds.
+    const bbDesc = { type:'doc', version:1, content:[
+      { type:'paragraph', content:[{ type:'text', text:'BotBonnie onboarding for '+clientName+'. Please refer to BBT-7539 for the full configuration template.'}] }
+    ]};
     const payload = {
       fields:{
         project:    { key:'BBT' },
         issuetype:  sf.fields.issuetype?.id ? { id:sf.fields.issuetype.id } : { name:'Service Request' },
         summary:    `[${clientName}] BotBonnie Onboarding`,
-        description:{ type:'doc', version:1, content:clonedDesc },
+        description: bbDesc,
         labels:     [...(sf.fields.labels||[]).filter(l=>typeof l==='string'), 'onboarding-dashboard',
                      `ob-${clientName.toLowerCase().replace(/\s+/g,'-')}`],
       }
@@ -3122,10 +3127,11 @@ function renderWizStep(){
   stepInd.textContent = `Step ${wiz.step+1} of ${WIZ_STEPS}`;
 
   switch(wiz.step){
-    case 0: renderWizPlatform(body,footer);        break;
-    case 1: renderWizAccountAndFeatures(body,footer); break;  // account + channels + features
-    case 2: renderWizAppIds(body,footer);           break;    // app id + project id + org id (resume here)
-    case 3: renderWizReview(body,footer);           break;
+    case 0: renderWizPlatform(body,footer);   break;
+    case 1: renderWizAccount(body,footer);    break;  // account details + create onboard ticket
+    case 2: renderWizAppIds(body,footer);     break;  // IDs from TS (TS provides these first)
+    case 3: renderWizFeatures(body,footer);   break;  // feature selection (using those IDs)
+    case 4: renderWizReview(body,footer);     break;
   }
 }
 
@@ -3273,19 +3279,15 @@ function renderFeatCategory(catName, feats){
 }
 
 
-function renderWizAccountAndFeatures(body, footer){
-  document.getElementById('wizTitle').textContent = `${wiz.platform} — Account & Features`;
-  const cat  = CATALOGS[wiz.platform];
-  const cats = [...new Set(cat.features.map(f=>f.category))];
-
+// STEP 1: Account details + create onboard ticket (no feature selection yet)
+function renderWizAccount(body, footer){
+  document.getElementById('wizTitle').textContent = `${wiz.platform} — Account Details`;
   body.innerHTML = `
     <p style="font-size:13px;color:var(--muted2);margin-bottom:16px;line-height:1.6">
-      Fill in the client details and select the channels and features to enable.
-      This information will be included in the onboarding ticket sent to the TS team.
+      Fill in the client details to create the onboarding ticket.
+      After creation, you will select the features to enable.
     </p>
     <div class="wiz-err" id="wizErr1"></div>
-
-    <!-- Account fields -->
     <div class="wiz-field">
       <label class="wiz-label">Client Name <span class="wiz-req">*</span></label>
       <input class="wiz-input" id="wizClientName" placeholder="e.g. Mannings"
@@ -3305,8 +3307,8 @@ function renderWizAccountAndFeatures(body, footer){
       <label class="wiz-label">Assign TS To All Tickets <span style="color:var(--muted);font-size:9px;margin-left:4px">(optional)</span></label>
       <div class="wiz-asn-wrap" id="wizAsnWrap">
         <button class="wiz-asn-btn ${wiz.assignee?'selected':''}" id="wizAsnBtn" onclick="toggleWizAsnDropdown(event)">
-          ${wiz.assignee?.avatarUrl ? `<img class="wab-avatar" src="${wiz.assignee.avatarUrl}" alt=""/>` : '<span style="font-size:14px">👤</span>'}
-          <span class="wab-name">${wiz.assignee ? esc(wiz.assignee.displayName) : 'Select TS team member…'}</span>
+          ${wiz.assignee?.avatarUrl?`<img class="wab-avatar" src="${wiz.assignee.avatarUrl}" alt=""/>`:'<span style="font-size:14px">👤</span>'}
+          <span class="wab-name">${wiz.assignee?esc(wiz.assignee.displayName):'Select TS team member…'}</span>
           <span class="wab-chev">▾</span>
         </button>
         <div class="wiz-asn-panel" id="wizAsnPanel">
@@ -3320,238 +3322,46 @@ function renderWizAccountAndFeatures(body, footer){
         </div>
       </div>
     </div>
-
-    <!-- Divider -->
-    <div style="height:1px;background:var(--border);margin:18px 0 14px"></div>
-
-
-
-    <p style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">
-      ${wiz._addToObId ? 'Select Additional Features to Enable' : 'Channels & Features to Enable'}
-    </p>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5">
-      ${wiz._addToObId
-        ? 'Pick features to add. Already-created features are greyed out.'
-        : 'These will appear in the onboarding ticket so the TS team knows what to prepare. Feature tickets are only created after the App ID is received.'}
-    </p>
-
-
-    <div class="wiz-err" id="wizErr2"></div>
-    ${cats.map(cat=>renderFeatCategory(cat, CATALOGS[wiz.platform].features.filter(f=>f.category===cat))).join('')}
-
-    <!-- Onboard ticket status -->
     ${wiz.onboardTicketKey ? `
-    <div style="height:1px;background:var(--border);margin:18px 0 14px"></div>
+    <div style="height:1px;background:var(--border);margin:14px 0"></div>
     <div class="wiz-success" style="display:flex;align-items:center;gap:8px;margin-bottom:0">
       ✓ Onboard ticket created:
       <a href="https://appier.atlassian.net/browse/${wiz.onboardTicketKey}"
         target="_blank" style="color:var(--green);font-family:DM Mono,monospace">${wiz.onboardTicketKey}</a>
     </div>` : ''}`;
 
-  // Footer changes based on whether onboard ticket is already created
   footer.innerHTML = wiz.onboardTicketKey ? `
     <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
-    <button class="wiz-save-later" onclick="saveWizAsDraft()">⏸ Save & Wait for App ID</button>
-    <button class="btn-wiz-next" onclick="wizNext()">Enter IDs & Create Tickets →</button>
+    <button class="wiz-save-later" onclick="saveWizAsDraft()">⏸ Save Draft</button>
+    <button class="btn-wiz-next" onclick="wizNext()">Select Features →</button>
   ` : `
     <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
     <button class="btn-wiz-next" id="wizAccBtn" onclick="wizCreateOnboardTicket()">Create Onboard Ticket →</button>
   `;
 }
 
-async function wizCreateOnboardTicket(){
-  const btn = document.getElementById('wizAccBtn');
-  const err = document.getElementById('wizErr1');
-  err.style.display='none';
+// STEP 2: Feature selection (runs after onboard ticket exists)
+function renderWizFeatures(body, footer){
+  document.getElementById('wizTitle').textContent = `${wiz.platform} — Select Features`;
+  const cat  = CATALOGS[wiz.platform];
+  const cats = cat ? [...new Set(cat.features.map(f=>f.category))] : [];
 
-  if(!wiz.clientName){ err.textContent='Client name is required'; err.style.display='block'; return; }
-  if(!wiz.legalTicket){ err.textContent='Legal ticket is required (e.g. LEG-XXXX)'; err.style.display='block'; return; }
-  if(!wiz.opportunityLink){ err.textContent='Opportunity link is required'; err.style.display='block'; return; }
-  const warnErr2 = document.getElementById('wizErr2');
-  if(warnErr2&&Object.keys(wiz.selectedFeatures).length===0){
-    warnErr2.textContent='⚠️ No channels or features selected — you can still create the onboard ticket and select them when resuming.';
-    warnErr2.style.display='block';
-    // Not a hard block — allow continuing
-  }
+  body.innerHTML = `
+    <p style="font-size:13px;color:var(--muted2);margin-bottom:12px;line-height:1.6">
+      Select the channels and features to enable for
+      <strong>${esc(wiz.clientName)}</strong>.
+      Feature tickets will be created once the App ID is received.
+    </p>
+    <div class="wiz-err" id="wizErr2"></div>
+    ${cats.map(c=>renderFeatCategory(c, cat.features.filter(f=>f.category===c))).join('')}`;
 
-  // Pre-populate legalTicket + opportunityLink into extraFields
-  // so {legalTicket} and {opportunityLink} in any feature ticket description get substituted
-  // without asking the user again (they already provided these in Step 1)
-  if(!wiz.extraFields['_global']) wiz.extraFields['_global']={};
-  wiz.extraFields['_global'].legalTicket    = wiz.legalTicket;
-  wiz.extraFields['_global'].opportunityLink= wiz.opportunityLink;
-
-  // If already created, just advance
-  if(wiz.onboardTicketKey){ wizNext(); return; }
-
-  btn.disabled=true; btn.textContent='Creating…';
-  try{
-    const user = getUser();
-    const cat  = CATALOGS[wiz.platform];
-    const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
-
-    // Fetch sample ticket to clone its fields
-    if(!cat.onboardTicket?.sampleKey) throw new Error('No sample ticket key configured for this platform.');
-    const sample = await apiFetch(`${base}/rest/api/3/issue/${cat.onboardTicket.sampleKey}?fields=issuetype,project,priority,labels`);
-    const f = sample.fields||{};
-
-    // Description uses template variables — resolveAdfTemplates will substitute them
-    // {channels} and {features} are auto-built from wiz.selectedFeatures in resolveTemplate
-    const desc = [
-      `Client: {clientName}`,
-      `Platform: {platform}`,
-      `Legal Ticket: {legalTicket}`,
-      `Opportunity Link: {opportunityLink}`,
-      `Assigned TS: {TS}`,
-      ``,
-      `Channels Requested: {channels}`,
-      ``,
-      `Features Requested: {features}`,
-      ``,
-      `--- To be filled in by TS ---`,
-      `App ID: {appId}`,
-      `Project ID: {projectId}`,
-      `Organization ID: {organizationId}`,
-    ].join('\n');
-
-    const payload = {
-      fields: {
-        project:     { key: CATALOGS[wiz.platform]?.board || 'QGWL' },
-        issuetype:   f.issuetype || { name:'Task' },
-        summary:     `[${wiz.clientName}] ${wiz.platform} Onboarding`,
-        // Only set reporter for boards that require it (e.g. QGWL)
-        ...(CATALOGS[wiz.platform]?.reporterRequired
-            ? { reporter: { accountId: user.accountId } } : {}),
-        description: resolveAdfTemplates({ type:'doc', version:1, content:[{type:'paragraph',content:[{type:'text',text:desc}]}] }),
-        labels:      [...(f.labels||[]), 'onboarding-dashboard'],
-      }
-    };
-    // Only send minimal priority object
-    if(f.priority?.id) payload.fields.priority = { id: f.priority.id };
-    // Only set assignee if one was selected (optional)
-    if(wiz.assignee?.accountId) payload.fields.assignee = { accountId: wiz.assignee.accountId };
-    // Merge board-specific required custom fields
-    const obBoardKey = CATALOGS[wiz.platform]?.board || 'QGWL';
-    const obReqCF    = Object.values(CATALOGS).find(c=>c.board===obBoardKey)?.requiredCustomFields || {};
-    Object.assign(payload.fields, obReqCF);
-
-    const created = await apiFetch(`${base}/rest/api/3/issue`, { method:'POST', body:JSON.stringify(payload) });
-    wiz.onboardTicketKey = created.key;
-    toast('success', `✓ Created ${created.key}`);
-    renderWizStep(); // re-render to show success + advance
-    setTimeout(()=>wizNext(), 800);
-  }catch(e){
-    err.textContent = `Failed to create ticket: ${e.message}`;
-    err.style.display='block';
-    btn.disabled=false; btn.textContent='Create Onboard Ticket →';
-  }
+  footer.innerHTML = `
+    <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
+    <button class="btn-wiz-next" onclick="wizNext()">Review & Create →</button>
+  `;
 }
 
-// ── WIZARD ASSIGNEE DROPDOWN ─────────────────────────────────────────────────
-let wizAsnAllUsers = [];  // cached user list for the dropdown
 
-async function toggleWizAsnDropdown(e){
-  e.stopPropagation();
-  const panel  = document.getElementById('wizAsnPanel');
-  const btn    = document.getElementById('wizAsnBtn');
-  const isOpen = panel.classList.toggle('open');
-  btn.classList.toggle('open', isOpen);
-  if(isOpen){
-    document.getElementById('wizAsnSearchInput')?.focus();
-    // Load users if not cached yet
-    if(!wizAsnAllUsers.length) await loadWizAsnUsers();
-  }
-}
-
-async function loadWizAsnUsers(){
-  const list = document.getElementById('wizAsnList');
-  if(!list) return;
-  list.innerHTML='<div class="wiz-asn-opt" style="pointer-events:none"><span class="panel-loading">Loading…</span></div>';
-  try{
-    const user = getUser();
-    if(!user){ list.innerHTML='<div class="wiz-asn-opt" style="pointer-events:none;color:var(--red)">Login required</div>'; return; }
-    const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
-    // Search with empty string to get a broad list of project members
-    const data = await apiFetch(`${base}/rest/api/3/user/search?query=.&maxResults=50`);
-    wizAsnAllUsers = data.filter(u=>u.accountType==='atlassian'); // only real accounts
-    renderWizAsnList('');
-  }catch(e){
-    if(list) list.innerHTML=`<div class="wiz-asn-opt" style="pointer-events:none;color:var(--red)">Error: ${esc(e.message)}</div>`;
-  }
-}
-
-function filterWizAsnList(){
-  const q = document.getElementById('wizAsnSearchInput')?.value?.toLowerCase()||'';
-  renderWizAsnList(q);
-}
-
-function renderWizAsnList(q){
-  const list = document.getElementById('wizAsnList');
-  if(!list) return;
-  const filtered = q
-    ? wizAsnAllUsers.filter(u=>(u.displayName||'').toLowerCase().includes(q)||(u.emailAddress||'').toLowerCase().includes(q))
-    : wizAsnAllUsers;
-  if(!filtered.length){
-    list.innerHTML='<div class="wiz-asn-opt" style="pointer-events:none"><span class="panel-empty">No users found</span></div>';
-    return;
-  }
-  list.innerHTML = filtered.map(u=>`
-    <div class="wiz-asn-opt ${wiz.assignee?.accountId===u.accountId?'sel':''}"
-      onclick="pickWizAssignee('${esc(u.accountId)}','${esc(u.displayName)}','${esc(u.avatarUrls?.['24x24']||'')}')">
-      ${u.avatarUrls?.['24x24']
-        ? `<img src="${u.avatarUrls['24x24']}" alt=""/>`
-        : '<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--surface);font-size:10px">👤</span>'}
-      <span style="flex:1">${esc(u.displayName)}</span>
-      <span style="font-size:10px;color:var(--muted)">${esc(u.emailAddress||'')}</span>
-    </div>`).join('');
-}
-
-function toggleOjmChip(type, value){
-  // Also callable as toggleOjmChip(element) from data-attribute onclick
-  if(type==='channel'){
-    const arr = wiz.ojmSelectedChannels||[];
-    const i = arr.indexOf(value);
-    if(i>=0) arr.splice(i,1); else arr.push(value);
-    wiz.ojmSelectedChannels = arr;
-  } else {
-    const arr = wiz.ojmSelectedFeatures||[];
-    const i = arr.indexOf(value);
-    if(i>=0) arr.splice(i,1); else arr.push(value);
-    wiz.ojmSelectedFeatures = arr;
-  }
-  // Re-render just the chip pickers without full re-render
-  const chPicker = document.getElementById('ojmChannelPicker');
-  if(chPicker) chPicker.querySelectorAll('.ojm-chip').forEach(el=>{
-    el.classList.toggle('sel',(wiz.ojmSelectedChannels||[]).includes(el.textContent));
-  });
-  const ftPicker = document.getElementById('ojmFeaturePicker');
-  if(ftPicker) ftPicker.querySelectorAll('.ojm-chip').forEach(el=>{
-    el.classList.toggle('sel',(wiz.ojmSelectedFeatures||[]).includes(el.textContent));
-  });
-}
-
-function pickWizAssignee(accountId, displayName, avatarUrl){
-  wiz.assignee = { accountId, displayName, avatarUrl };
-  document.getElementById('wizAsnPanel')?.classList.remove('open');
-  document.getElementById('wizAsnBtn')?.classList.remove('open');
-  renderWizStep();
-}
-
-function clearWizAssignee(){
-  wiz.assignee = null;
-  renderWizStep();
-}
-
-// Close wizard assignee dropdown on outside click
-document.addEventListener('click', e=>{
-  const wrap = document.getElementById('wizAsnWrap');
-  if(wrap && !wrap.contains(e.target)){
-    document.getElementById('wizAsnPanel')?.classList.remove('open');
-    document.getElementById('wizAsnBtn')?.classList.remove('open');
-  }
-});
-
-// ── STEP 2: App ID fetch + feature selection ──────────────────────────────────
 function renderWizAppIds(body, footer){
   document.getElementById('wizTitle').textContent = `${wiz.platform} — Enter IDs`;
   const cat       = CATALOGS[wiz.platform];
@@ -3590,7 +3400,7 @@ function renderWizAppIds(body, footer){
 
   body.innerHTML = `
     <p style="font-size:13px;color:var(--muted2);margin-bottom:16px;line-height:1.6">
-      Enter the IDs provided by the TS team after processing
+      Enter the IDs provided by the TS team for
       <a href="https://appier.atlassian.net/browse/${wiz.onboardTicketKey||''}" target="_blank"
         style="color:var(--accent);font-family:'DM Mono',monospace">${wiz.onboardTicketKey||'the onboard ticket'}</a>.
     </p>
@@ -3608,8 +3418,8 @@ function renderWizAppIds(body, footer){
 
   footer.innerHTML = `
     <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
-    <button class="wiz-save-later" onclick="saveWizAsDraft()">⏸ Save Draft</button>
-    <button class="btn-wiz-next" onclick="wizValidateIds()">Review & Create →</button>`;
+    <button class="wiz-save-later" onclick="saveWizAsDraft()">⏸ Save & Wait for IDs</button>
+    <button class="btn-wiz-next" onclick="wizValidateIds()">Select Features →</button>`;
 }
 
 
@@ -3970,6 +3780,21 @@ async function refreshObStatuses(list, user){
 }
 
 // Scan comments and auto-resume draft if App ID found
+function updateAppIdStyle(){
+  const inp = document.getElementById('wiz_appId');
+  const dot = document.getElementById('appidDot');
+  const txt = document.getElementById('appidText');
+  if(!inp) return;
+  inp.classList.toggle('filled', !!wiz.appId);
+  if(wiz.appId){
+    if(dot) dot.className='appid-dot found';
+    if(txt) txt.innerHTML='App ID: <strong style="color:var(--green)">' + esc(wiz.appId) + '</strong>';
+  } else {
+    if(dot) dot.className='appid-dot searching';
+    if(txt) txt.textContent='Not yet received from TS team';
+  }
+}
+
 async function scanAndResume(draftId, ticketKey){
   if(!ticketKey){ toast('info','No ticket key'); return; }
   toast('info','Scanning comments for App ID…');
