@@ -3505,19 +3505,17 @@ function renderWizFeatures(body, footer){
 
 function renderWizAppIds(body, footer){
   document.getElementById('wizTitle').textContent = `${wiz.platform} — Enter IDs`;
-  const cat       = CATALOGS[wiz.platform];
-  const fields    = cat?.step2Fields || [
-    { id:'appId', label:'App ID', required:true, placeholder:'Provided by TS team' },
-    { id:'projectId', label:'Project ID', required:false, placeholder:'e.g. proj-abc-123' },
+  const cat    = CATALOGS[wiz.platform];
+  const fields = cat?.step2Fields || [
+    { id:'appId',          label:'App ID',          required:true,  placeholder:'Provided by TS team' },
+    { id:'projectId',      label:'Project ID',      required:false, placeholder:'e.g. proj-abc-123' },
     { id:'organizationId', label:'Organization ID', required:false, placeholder:'e.g. org-xyz-456' },
   ];
-  const hasAppId  = fields.some(f=>f.id==='appId');
+  const hasAppId = fields.some(f=>f.id==='appId');
 
-  // App ID status indicator (only shown when appId is in fields)
   const appIdStatus = hasAppId
     ? (wiz.appId
-        ? `<div class="appid-status"><span class="appid-dot found"></span>
-            <span class="appid-text">App ID: <strong style="color:var(--green)">${esc(wiz.appId)}</strong></span></div>`
+        ? `<div class="appid-status"><span class="appid-dot found"></span><span class="appid-text">App ID: <strong style="color:var(--green)">${esc(wiz.appId)}</strong></span></div>`
         : `<div class="appid-status">
             <span class="appid-dot searching" id="appidDot"></span>
             <span class="appid-text" id="appidText">Not yet received from TS team</span>
@@ -3525,8 +3523,7 @@ function renderWizAppIds(body, footer){
            </div>`)
     : '';
 
-  // Render field inputs dynamically from step2Fields
-  const fieldHtml = fields.map(f => `
+  const fieldHtml = fields.map(f=>`
     <div class="wiz-field" style="margin-bottom:12px">
       <label class="wiz-label">${esc(f.label)} ${f.required?'<span class="wiz-req">*</span>':''}</label>
       ${f.id==='appId' ? appIdStatus : ''}
@@ -3536,26 +3533,15 @@ function renderWizAppIds(body, footer){
         oninput="wiz.${f.id}=this.value.trim();${f.id==='appId'?'updateAppIdStyle()':''}"/>
     </div>`).join('');
 
-  // Feature summary
-  const _selFeats = (cat?.features||[]).filter(f=>wiz.selectedFeatures[f.id]);
-
   body.innerHTML = `
     <p style="font-size:13px;color:var(--muted2);margin-bottom:16px;line-height:1.6">
       Enter the IDs provided by the TS team for
       <a href="https://appier.atlassian.net/browse/${wiz.onboardTicketKey||''}" target="_blank"
         style="color:var(--accent);font-family:'DM Mono',monospace">${wiz.onboardTicketKey||'the onboard ticket'}</a>.
+      If not available yet, save draft and return when ready.
     </p>
     <div class="wiz-err" id="wizErrIds"></div>
-    ${fieldHtml}
-    <div style="height:1px;background:var(--border);margin:18px 0 14px"></div>`;
-
-  body.innerHTML += `<div style="margin-bottom:8px">
-    <p style="font-size:12px;font-weight:700;color:var(--text);margin:0">Features selected (${_selFeats.length})</p>
-  </div>
-  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px">
-    ${_selFeats.map(f=>`<span style="font-family:'DM Mono',monospace;font-size:11px;padding:3px 9px;border-radius:4px;background:rgba(79,142,247,.1);color:var(--accent);border:1px solid rgba(79,142,247,.25)">${esc(f.name)}</span>`).join('')
-      ||'<span style="color:var(--muted);font-size:12px">No features selected — go back to Step 1</span>'}
-  </div>`;
+    ${fieldHtml}`;
 
   footer.innerHTML = `
     <button class="btn-wiz-back" onclick="wizBack()">← Back</button>
@@ -3567,18 +3553,14 @@ function renderWizAppIds(body, footer){
 function wizValidateIds(){
   const err    = document.getElementById('wizErrIds');
   const fields = CATALOGS[wiz.platform]?.step2Fields || [{id:'appId',required:true}];
-  // Check all required step2Fields are filled
+  // Check all required ID fields are filled (features come in the next step)
   for(const f of fields){
     if(f.required && !wiz[f.id]){
-      err.textContent=`${f.label} is required to create tickets`;
-      err.style.display='block'; return;
+      if(err){ err.textContent=f.label+' is required'; err.style.display='block'; }
+      return;
     }
   }
-  if(Object.keys(wiz.selectedFeatures).length===0){
-    err.textContent='No features selected — go back to Step 1 to select features';
-    err.style.display='block'; return;
-  }
-  err.style.display='none';
+  if(err) err.style.display='none';
   wizNext();
 }
 
@@ -3921,6 +3903,52 @@ async function refreshObStatuses(list, user){
 }
 
 // Scan comments and auto-resume draft if App ID found
+async function scanForAppId(){
+  if(!wiz.onboardTicketKey){ toast('info','No onboard ticket yet'); return; }
+  const dot  = document.getElementById('appidDot');
+  const text = document.getElementById('appidText');
+  if(dot) dot.className='appid-dot searching';
+  if(text) text.textContent='Scanning ticket and comments…';
+  try{
+    const ids = await scanTicketForIds(wiz.onboardTicketKey);
+    const s2f = (CATALOGS[wiz.platform]?.step2Fields||[]).map(f=>f.id);
+    const foundParts = [];
+
+    if(ids.appId && (!s2f.length || s2f.includes('appId'))){
+      wiz.appId = ids.appId;
+      const inp = document.getElementById('wiz_appId');
+      if(inp){ inp.value=ids.appId; inp.classList.add('filled'); }
+      updateAppIdStyle();
+      foundParts.push('App ID: '+ids.appId);
+    }
+    if(ids.projectId && (!s2f.length || s2f.includes('projectId'))){
+      wiz.projectId = ids.projectId;
+      const inp = document.getElementById('wiz_projectId');
+      if(inp){ inp.value=ids.projectId; inp.classList.add('filled'); }
+      foundParts.push('Project ID: '+ids.projectId);
+    }
+    if(ids.organizationId && (!s2f.length || s2f.includes('organizationId'))){
+      wiz.organizationId = ids.organizationId;
+      const inp = document.getElementById('wiz_organizationId');
+      if(inp){ inp.value=ids.organizationId; inp.classList.add('filled'); }
+      foundParts.push('Org ID: '+ids.organizationId);
+    }
+
+    if(foundParts.length){
+      toast('success','✓ Found: '+foundParts.join(', '));
+      if(dot) dot.className='appid-dot found';
+      if(text) text.innerHTML='<strong style="color:var(--green)">'+foundParts[0]+'</strong>';
+    } else {
+      if(dot) dot.className='appid-dot manual';
+      if(text) text.textContent='IDs not found yet — enter manually below';
+      toast('info','No IDs found in ticket yet — TS team may not have responded');
+    }
+  }catch(e){
+    if(text) text.textContent='Scan failed — enter manually';
+    toast('error','Scan failed: '+e.message);
+  }
+}
+
 function updateAppIdStyle(){
   const inp = document.getElementById('wiz_appId');
   const dot = document.getElementById('appidDot');
