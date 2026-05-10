@@ -3964,6 +3964,72 @@ function updateAppIdStyle(){
   }
 }
 
+// ── SHARED TICKET ID SCANNER ─────────────────────────────────────────────────
+// Scans ticket description + all comments for appId, projectId, organizationId.
+// Returns { appId, projectId, organizationId } — null for any not found.
+async function scanTicketForIds(ticketKey){
+  const user = getUser();
+  const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+  const [issueData, commentData] = await Promise.all([
+    apiFetch(`${base}/rest/api/3/issue/${ticketKey}?fields=description`),
+    apiFetch(`${base}/rest/api/3/issue/${ticketKey}/comment?maxResults=30&orderBy=-created`),
+  ]);
+
+  // Collect all text: description first, then comments newest-first
+  const blocks = [];
+  if(issueData.fields?.description) blocks.push(extractAdfText(issueData.fields.description));
+  for(const c of (commentData.comments||[])) blocks.push(extractAdfText(c.body));
+  const fullText = blocks.join('\n');
+
+  // Scan the combined text for all three IDs at once
+  const result = { appId:null, projectId:null, organizationId:null };
+
+  const tryMatch = (text, ...patterns) => {
+    for(const pat of patterns){
+      const m = text.match(pat);
+      if(m && m[1] && !m[1].includes('{') && !m[1].includes('[')) return m[1].trim();
+    }
+    return null;
+  };
+
+  result.appId = tryMatch(fullText,
+    /app[\s_-]*id\s*[:\-=\s]\s*([a-zA-Z0-9_\-\.]+)/i,
+    /appid\s*[:\-=\s]\s*([a-zA-Z0-9_\-\.]+)/i
+  );
+  result.projectId = tryMatch(fullText,
+    /project[\s_-]*id\s*[:\-=\s]\s*([a-zA-Z0-9_\-\.]+)/i,
+    /projectid\s*[:\-=\s]\s*([a-zA-Z0-9_\-\.]+)/i
+  );
+  result.organizationId = tryMatch(fullText,
+    /org(?:anization)?[\s_-]*id\s*[:\-=\s]\s*([a-zA-Z0-9_\-\.]+)/i,
+    /organizationid\s*[:\-=\s]\s*([a-zA-Z0-9_\-\.]+)/i
+  );
+
+  return result;
+}
+
+// ── OJM CHANNEL / FEATURE CHIP TOGGLE ────────────────────────────────────────
+function toggleOjmChip(type, value){
+  if(type === 'channel'){
+    const arr = [...(wiz.ojmSelectedChannels||[])];
+    const i = arr.indexOf(value);
+    if(i >= 0) arr.splice(i, 1); else arr.push(value);
+    wiz.ojmSelectedChannels = arr;
+    // Update chip visual state using data-ojmval attribute
+    document.querySelectorAll('[data-ojmtype="channel"]').forEach(el=>{
+      el.classList.toggle('sel', arr.includes(el.dataset.ojmval));
+    });
+  } else {
+    const arr = [...(wiz.ojmSelectedFeatures||[])];
+    const i = arr.indexOf(value);
+    if(i >= 0) arr.splice(i, 1); else arr.push(value);
+    wiz.ojmSelectedFeatures = arr;
+    document.querySelectorAll('[data-ojmtype="feature"]').forEach(el=>{
+      el.classList.toggle('sel', arr.includes(el.dataset.ojmval));
+    });
+  }
+}
+
 async function scanAndResume(draftId, ticketKey){
   if(!ticketKey){ toast('info','No ticket key'); return; }
   toast('info','Scanning comments for App ID…');
