@@ -169,6 +169,22 @@
   .done-body tr td{opacity:.58;}
   .done-body tr:hover td{opacity:.9;}
 
+  /* ── PINNED TICKETS SESSION ── */
+  .pinned-section{background:var(--surface);border:2px solid rgba(79,142,247,.35);border-radius:12px;margin-bottom:18px;overflow:hidden;box-shadow:0 0 0 1px rgba(79,142,247,.1);}
+  .pinned-header{display:flex;align-items:center;gap:10px;padding:12px 18px;background:rgba(79,142,247,.07);border-bottom:1px solid rgba(79,142,247,.2);flex-wrap:wrap;}
+  .pinned-title{font-size:14px;font-weight:700;color:var(--accent);flex:1;}
+  .pinned-add-wrap{display:flex;align-items:center;gap:8px;}
+  .pinned-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;outline:none;width:140px;transition:border-color .15s;text-transform:uppercase;}
+  .pinned-input:focus{border-color:var(--accent);}
+  .pinned-input::placeholder{color:var(--muted);text-transform:none;}
+  .pinned-add-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:6px 14px;border-radius:6px;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;}
+  .pinned-add-btn:hover{opacity:.9;}
+  .pinned-add-btn:disabled{opacity:.5;cursor:not-allowed;pointer-events:none;}
+  .pinned-empty{padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);font-style:italic;}
+  .pinned-badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px;background:rgba(79,142,247,.15);color:var(--accent);border:1px solid rgba(79,142,247,.3);}
+  .pinned-remove-btn{background:transparent;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:2px 4px;border-radius:3px;line-height:1;transition:color .15s;flex-shrink:0;}
+  .pinned-remove-btn:hover{color:var(--red);}
+
   /* Toast */
   .toast-wrap{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;flex-direction:column;gap:8px;}
   .toast{background:var(--surface2);border:1px solid var(--border);padding:11px 16px;border-radius:8px;font-size:13px;min-width:250px;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:tslide .2s ease;}
@@ -569,6 +585,23 @@
         <button class="btn-new-ob" onclick="openWizard()">🚀 New Onboarding</button>
       </div>
 
+      <!-- Pinned Tickets Session — always shown at top -->
+      <div class="pinned-section" id="pinnedSection">
+        <div class="pinned-header">
+          <span>📌</span>
+          <span class="pinned-title">Pinned Tickets</span>
+          <span class="pinned-badge" id="pinnedCount">0 tickets</span>
+          <div class="pinned-add-wrap">
+            <input class="pinned-input" id="pinnedInput" placeholder="e.g. LEG-1234"
+              onkeydown="if(event.key==='Enter')addPinnedTicket()"/>
+            <button class="pinned-add-btn" id="pinnedAddBtn" onclick="addPinnedTicket()">＋ Track</button>
+          </div>
+        </div>
+        <div id="pinnedBody">
+          <div class="pinned-empty">No pinned tickets yet — paste any Jira key above to track it here.</div>
+        </div>
+      </div>
+
       <div class="stats-row">
         <div class="stat-card c-blue"><div class="stat-label">Total Tickets</div><div class="stat-value" id="sTotal">—</div></div>
         <div class="stat-card c-green"><div class="stat-label">Done</div><div class="stat-value" id="sDone">—</div></div>
@@ -622,7 +655,7 @@
             <button class="bulk-btn" onclick="toggleTbdBulkAsnDd(event)">👤 Reassign All</button>
             <div class="inline-asn-dd" id="tbdBulkAsnDd">
               <input class="inline-asn-search" type="text" id="tbdBulkAsnSearch"
-                placeholder="Search…" oninput="filterTbdBulkAsn()" autocomplete="off"/>
+                placeholder="Type name to search members…" oninput="filterTbdBulkAsn()" autocomplete="off"/>
               <div class="inline-asn-list" id="tbdBulkAsnList"></div>
             </div>
           </div>
@@ -1052,7 +1085,7 @@ async function fetchAssignedIssues(user){
   const base=`${CONFIG.API_BASE}/ex/jira/${cloudId}`;
   const since = new Date(); since.setFullYear(since.getFullYear() - 1);
   const sinceStr = since.toISOString().slice(0,10).replace(/-/g,'/');
-  const jql=`assignee = "${accountId}" AND statusCategory != Done AND project != AIQ AND created >= "${sinceStr}" ORDER BY created ASC`;
+  const jql=`assignee = "${accountId}" AND statusCategory != Done AND created >= "${sinceStr}" ORDER BY created ASC`;
   const fields=['summary','status','assignee','reporter','created','resolutiondate'];
   let issues=[], nextPageToken=null;
 
@@ -2497,6 +2530,7 @@ async function launchDashboard(user){
     ]);
     renderDashboard(reported);
     renderTbd(assigned);
+    renderPinned();
     toast('success',`Welcome ${user.displayName} — loaded ${reported.length} reported, ${assigned.length} assigned`);
     renderOnboardingProgress();
     scheduleDaily();
@@ -2626,6 +2660,7 @@ function loadPreview(){
   document.getElementById('previewBadge').style.display = 'flex';
   renderDashboard(MOCK_REPORTED);
   renderTbd(MOCK_ASSIGNED);
+  renderPinned();
   toast('info', '🎨 Preview mode — showing mock data');
 
   // Inject mock onboardings into localStorage for preview
@@ -2761,8 +2796,8 @@ const PLATFORM_LOGOS = {
 const PLATFORMS = [
   { id:'AIQUA',      icon:'🎯', active:true,  note:'Includes Segment Agent & OJM features' },
   { id:'BotBonnie',  icon:'🤖', active:true,  noWizard:true },
+  { id:'AIRIS',      icon:'👁️',  active:true,  note:'Onboard AIRIS + Enterprise Console link' },
   { id:'AIXON',      icon:'🧠', active:false },
-  { id:'AIRIS',      icon:'👁️',  active:false },
 ];
 
 const CATALOGS = {
@@ -2786,7 +2821,7 @@ const CATALOGS = {
       { id:'edm',          category:'Channels', name:'Enable EDM Channel',   sample:'QGWL-25619', mode:'clone',
         extra:[{id:'email',label:'Email / Domain',placeholder:'e.g. noreply@client.com'}]},
       { id:'onsite',       category:'Channels', name:'On-site Experience',   sample:'QGWL-25620', mode:'clone', extra:[]},
-      { id:'product_feed', category:'Channels', name:'Onboard Product Feed', sample:'QGWL-25675', mode:'manual_clone', manual:true, extra:[]},
+      { id:'product_feed', category:'Channels', name:'Onboard Product Feed', sample:'QGWL-25675', mode:'manual_clone', manual:true, extra:[{id:'productFeedUrl',label:'Product Feed URL',placeholder:'https://example.com/feed.xml'}]},
       // ── AIQUA Audience ────────────────────────────────────────────────────
       { id:'seg_split',    category:'Audience', name:'Segment Split',        sample:'QGWL-25620', mode:'clone', extra:[]},
       { id:'new_seg',      category:'Audience', name:'New Segment UI',       sample:'QGWL-25621', mode:'clone', extra:[]},
@@ -2801,7 +2836,7 @@ const CATALOGS = {
         extra:[{id:'arName',label:'AIRIS Name',placeholder:'e.g. Mannings_AIRIS'},{id:'arId',label:'AIRIS ID',placeholder:'e.g. ar-xxx'},{id:'axId',label:'Aixon ID',placeholder:'e.g. ax-xxx'},{id:'eam_project_id',label:'EAM Project ID',placeholder:'e.g. eam-xxx'}]},
       { id:'sa_credit',    category:'Segment Agent', name:'Credit System',        sample:'AEP-6694',   mode:'clone', board:'AEP', crossBoardTask:true,
         suggestedAssignee:'Mark Chu',
-        extra:[{id:'salesforceId',label:'Salesforce ID',placeholder:'e.g. sf-xxx'},{id:'agentStartDate',label:'Agent Start Date',placeholder:'YYYY-MM-DD',type:'date'},{id:'agentEndDate',label:'Agent End Date',placeholder:'YYYY-MM-DD',type:'date'},{id:'agent',label:'Agent Name(s)',placeholder:'e.g. AgentA, AgentB'},{id:'agentCredit',label:'Agent Credit',placeholder:'e.g. 1000',type:'number'}]},
+        extra:[{id:'salesforceId',label:'Salesforce ID',placeholder:'e.g. sf-xxx'},{id:'agentStartDate',label:'Agent Start Date',placeholder:'YYYY-MM-DD (e.g. 2025-01-15)',type:'text',pattern:'\\d{4}-\\d{2}-\\d{2}'},{id:'agentEndDate',label:'Agent End Date',placeholder:'YYYY-MM-DD (e.g. 2025-12-31)',type:'text',pattern:'\\d{4}-\\d{2}-\\d{2}'},{id:'agent',label:'Agent Name(s)',placeholder:'e.g. AgentA, AgentB'},{id:'agentCredit',label:'Agent Credit',placeholder:'e.g. 1000',type:'number'}]},
       { id:'sa_config',    category:'Segment Agent', name:'Agent Config',         sample:'AGNT-814',   mode:'manual_clone', board:'AGNT', crossBoardTask:true, manual:true,
         suggestedAssignee:'Mark Chu', extra:[]},
       { id:'sa_agent',     category:'Segment Agent', name:'Onboard Agent',        sample:'AGNT-815',   mode:'clone', board:'AGNT',
@@ -2827,6 +2862,33 @@ const CATALOGS = {
     ]
   },
 
+  // AIRIS platform — Onboard AIRIS + Enterprise Console link
+  AIRIS: {
+    board: 'AIR',
+    reporterRequired: false,
+    guideline: null,
+    step2Fields: [
+      { id:'appId',          label:'App ID',          required:true,  placeholder:'Provided by TS team' },
+      { id:'projectId',      label:'Project ID',      required:false, placeholder:'e.g. proj-abc-123' },
+      { id:'organizationId', label:'Organization ID', required:false, placeholder:'e.g. org-xyz-456' },
+      { id:'arName',         label:'AIRIS Name',      required:false, placeholder:'e.g. Mannings_AIRIS' },
+      { id:'botId',          label:'Bot ID',          required:false, placeholder:'Provided by client' },
+    ],
+    onboardTicket: {
+      sampleKey: 'AIR-4473',
+      summaryTpl: '[{clientName}] AIRIS Onboarding',
+    },
+    features: [
+      { id:'airis_onboard', category:'Compulsory', name:'Onboard AIRIS', sample:'AIR-4473', board:'AIR',
+        mode:'manual_clone', manual:true, extra:[] },
+      { id:'airis_enterprise', category:'Platform link', name:'Onboard AR to Enterprise Console', sample:'PHXX-6293', board:'PHXX',
+        mode:'clone', extra:[
+          {id:'arName', label:'AIRIS Name', placeholder:'e.g. Mannings_AIRIS'},
+          {id:'botId',  label:'Bot ID',     placeholder:'Provided by client'},
+        ]},
+    ],
+  },
+
   // Legacy standalone platforms (kept for future use but features now under AIQUA)
   'Segment Agent': {
     board: 'PROJ',
@@ -2848,6 +2910,140 @@ const CATALOGS = {
     },
   },
 };
+
+// ── PINNED TICKETS ────────────────────────────────────────────────────────────
+const PINNED_KEY = 'jd_pinned_tickets';
+
+function loadPinned(){ try{ return JSON.parse(localStorage.getItem(PINNED_KEY)||'[]'); }catch(e){ console.error('[Pinned] loadPinned error:',e); return []; } }
+function savePinned(list){ try{ localStorage.setItem(PINNED_KEY, JSON.stringify(list)); }catch(e){ console.error('[Pinned] savePinned error:',e); } }
+
+async function addPinnedTicket(){
+  const input = document.getElementById('pinnedInput');
+  const btn   = document.getElementById('pinnedAddBtn');
+  const raw   = (input?.value||'').trim().toUpperCase();
+  if(!raw){ toast('info','Please enter a ticket key e.g. LEG-1234'); return; }
+  if(!/^[A-Z]+-\d+$/.test(raw)){ toast('error','Invalid key format — use e.g. LEG-1234'); return; }
+
+  const pinned = loadPinned();
+  if(pinned.find(p=>p.key===raw)){ toast('info',`${raw} is already pinned`); input.value=''; return; }
+
+  btn.disabled=true; btn.textContent='Loading…';
+  try{
+    const user = getUser();
+    if(!user){ toast('error','Please log in first'); btn.disabled=false; btn.textContent='＋ Track'; return; }
+    const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+    const data = await apiFetch(`${base}/rest/api/3/issue/${raw}?fields=summary,status,assignee,reporter,created`);
+    const f    = data.fields||{};
+    const ticket = {
+      key:      raw,
+      url:      `${user.siteUrl}/browse/${raw}`,
+      summary:  f.summary||'',
+      status:   f.status?.name||'Unknown',
+      assignee: f.assignee?.displayName||'Unassigned',
+      reporter: f.reporter?.displayName||'Unknown',
+      created:  (f.created||'').slice(0,10),
+      pinnedAt: new Date().toISOString(),
+    };
+    pinned.unshift(ticket);
+    savePinned(pinned);
+    input.value='';
+    toast('success',`✓ ${raw} pinned`);
+    renderPinned();
+  }catch(e){
+    console.error('[Pinned] addPinnedTicket error:', e);
+    toast('error',`Could not fetch ${raw}: ${e.message}`);
+  }
+  btn.disabled=false; btn.textContent='＋ Track';
+}
+
+function removePinnedTicket(key){
+  savePinned(loadPinned().filter(p=>p.key!==key));
+  toast('info',`${key} unpinned`);
+  renderPinned();
+}
+
+async function refreshPinnedTicket(key){
+  try{
+    const user = getUser();
+    if(!user) return;
+    const base = `${CONFIG.API_BASE}/ex/jira/${user.cloudId}`;
+    const data = await apiFetch(`${base}/rest/api/3/issue/${key}?fields=summary,status,assignee,reporter,created`);
+    const f    = data.fields||{};
+    const pinned = loadPinned();
+    const idx  = pinned.findIndex(p=>p.key===key);
+    if(idx>-1){
+      pinned[idx] = {...pinned[idx],
+        summary:  f.summary||pinned[idx].summary,
+        status:   f.status?.name||pinned[idx].status,
+        assignee: f.assignee?.displayName||'Unassigned',
+      };
+      savePinned(pinned);
+      renderPinned();
+    }
+  }catch(e){ console.error('[Pinned] refreshPinnedTicket error:', e); }
+}
+
+function renderPinned(){
+  const pinned  = loadPinned();
+  const body    = document.getElementById('pinnedBody');
+  const countEl = document.getElementById('pinnedCount');
+  if(!body) return;
+  if(countEl) countEl.textContent = pinned.length + ' ticket' + (pinned.length===1?'':'s');
+
+  if(!pinned.length){
+    body.innerHTML='<div class="pinned-empty">No pinned tickets yet — paste any Jira key above to track it here.</div>';
+    return;
+  }
+
+  const thead=`<thead><tr>
+    <th style="width:32px"></th>
+    <th>Ticket</th><th>Summary</th><th>Status</th><th>Assignee</th><th>Created</th><th>Lead Time</th><th>Action</th>
+  </tr></thead>`;
+
+  const rows = pinned.map(p=>{
+    const days = calcLT(p.created);
+    const sumClean = esc(normU(p.summary).replace(/\[[^\]]+\]\s*/,''));
+    const done = isDone(p.status);
+    return `<tr class="tracking-row" data-key="${p.key}" onclick="openPanel('${p.key}',event,'tracking')">
+      <td onclick="event.stopPropagation()">
+        <button class="pinned-remove-btn" title="Unpin ${p.key}" onclick="event.stopPropagation();removePinnedTicket('${p.key}')">✕</button>
+      </td>
+      <td onclick="event.stopPropagation()"><a class="ticket-key" href="${p.url}" target="_blank">${p.key}</a></td>
+      <td><div class="ticket-summary">${sumClean}</div></td>
+      <td><span class="sb ${sClass(p.status)}"><span class="sd"></span>${esc(p.status)}</span></td>
+      <td><span class="ac">${esc(p.assignee)}</span></td>
+      <td><span class="dc">${p.created}</span></td>
+      <td><span class="lt ${ltC(days)}">${days}d</span></td>
+      <td onclick="event.stopPropagation()">
+        ${!done?`<button class="btn-md" onclick="markDonePinned('${p.key}',this)">✓ Mark Done</button>`
+               :'<span style="color:var(--green);font-family:DM Mono,monospace;font-size:11px;opacity:.6">✓ done</span>'}
+      </td>
+    </tr>`;
+  }).join('');
+
+  body.innerHTML=`<div class="table-wrap"><table>${thead}<tbody>${rows}</tbody></table></div>`;
+}
+
+async function markDonePinned(key, btn){
+  btn.disabled=true; btn.innerHTML='<span class="spin">↻</span>';
+  toast('info',`Transitioning ${key} to Done…`);
+  try{
+    await markIssueDone(key);
+    const pinned = loadPinned();
+    const p = pinned.find(x=>x.key===key);
+    if(p){ p.status='Done'; savePinned(pinned); }
+    // Also update allData if present
+    const ad = allData.find(x=>x.key===key);
+    if(ad){ ad.status='Done'; ad.resolutiondate=new Date().toISOString().slice(0,10); }
+    toast('success',`✓ ${key} marked as Done`);
+    renderPinned();
+    renderDashboard(allData);
+  }catch(e){
+    console.error('[Pinned] markDonePinned error:', e);
+    toast('error',`Failed: ${e.message}`);
+    btn.disabled=false; btn.innerHTML='✓ Mark Done';
+  }
+}
 
 // ── LOCALSTORAGE ──────────────────────────────────────────────────────────────
 const OB_KEY    = 'jd_onboardings';
@@ -2976,8 +3172,8 @@ let wiz = {
 
 // ── TEMPLATE ENGINE ───────────────────────────────────────────────────────────
 // Replaces {clientName}, {appId}, {projectId}, {organizationId}, {legalTicket},
-// {opportunityLink}, {platform} in any string from sample ticket content
-function resolveTemplate(str){
+// {opportunityLink}, {platform}, {productFeedUrl}, {enableFeature}, and all extra fields
+function resolveTemplate(str, featureOverrides){
   if(!str||typeof str!=='string') return str;
   // Build {channels} and {features} lists from selected features
   const _cat = wiz.platform && CATALOGS[wiz.platform];
@@ -2988,6 +3184,9 @@ function resolveTemplate(str){
   // Build OJM channels/features strings
   const _ojmChannels = (wiz.ojmSelectedChannels||[]).join(', ') || 'None';
   const _ojmFeatures = (wiz.ojmSelectedFeatures||[]).join(', ') || 'None';
+
+  // Flatten all feature extra fields (smsQuantity, arName, salesforceId, botId, productFeedUrl, etc.)
+  const flatExtras = Object.values(wiz.extraFields||{}).reduce((acc,obj)=>({...acc,...obj}),{});
 
   const vars = {
     clientName:      wiz.clientName     || '',
@@ -3004,22 +3203,25 @@ function resolveTemplate(str){
     OJMfeatures:     _ojmFeatures,
     // People
     TS:              wiz.assignee?.displayName || '[TBD]',
-    enableFeature:   '',
-    // Flatten all feature extra fields (smsQuantity, arName, salesforceId, botId, etc.)
-    ...Object.values(wiz.extraFields||{}).reduce((acc,obj)=>({...acc,...obj}),{}),
+    // enableFeature resolved per-ticket via featureOverrides param
+    enableFeature:   featureOverrides?.enableFeature || '',
+    // All extra fields including productFeedUrl, arName, salesforceId, botId, agentStartDate, etc.
+    ...flatExtras,
+    // featureOverrides take highest priority (per-ticket values)
+    ...(featureOverrides||{}),
   };
   return str.replace(/\{(\w+)\}/g, (match, key)=> key in vars ? vars[key] : match);
 }
 
 // Recursively resolve templates in an ADF node tree
-function resolveAdfTemplates(node){
+function resolveAdfTemplates(node, featureOverrides){
   if(!node) return node;
-  if(typeof node === 'string') return resolveTemplate(node);
+  if(typeof node === 'string') return resolveTemplate(node, featureOverrides);
   if(node.type === 'text' && node.text){
-    return {...node, text: resolveTemplate(node.text)};
+    return {...node, text: resolveTemplate(node.text, featureOverrides)};
   }
   if(node.content){
-    return {...node, content: node.content.map(resolveAdfTemplates)};
+    return {...node, content: node.content.map(n=>resolveAdfTemplates(n, featureOverrides))};
   }
   return node;
 }
@@ -3267,12 +3469,15 @@ function renderFeatCategory(catName, feats){
     // Build extra fields HTML
     var extraHtml = (f.extra||[]).map(function(ex){
       var val = ((wiz.extraFields[f.id]||{})[ex.id]||'');
+      var isDate = ex.pattern && ex.pattern.includes('d{4}');
       return '<div><label class="wiz-label">'+esc(ex.label)+'</label>'
         +'<input class="wiz-input" type="'+(ex.type||'text')+'" id="fex-'+f.id+'-'+ex.id+'"'
         +' placeholder="'+esc(ex.placeholder||'')+'"'
         +' value="'+esc(val)+'"'
         +' oninput="setFeatureExtra(\''+f.id+'\',\''+ex.id+'\',this.value)"'
-        +(ex.type==='number'?' min="0"':'')+'/>'
+        +(ex.type==='number'?' min="0"':'')
+        +(ex.pattern?' pattern="'+esc(ex.pattern)+'"':'')+'/>'
+        +(isDate?'<div class="wiz-hint">Format: YYYY-MM-DD (e.g. 2025-01-15)</div>':'')
         +'</div>';
     }).join('');
 
@@ -3712,12 +3917,16 @@ function renderWizReview(body, footer){
       assigned to <strong style="color:var(--text)">${wiz.assignee?esc(wiz.assignee.displayName):'(unassigned)'}</strong>.
     </p>
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px 14px;margin-bottom:14px;display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;font-family:'DM Mono',monospace;font-size:11px;">
-      <span style="color:var(--muted)">App ID</span>
-      <span style="color:${wiz.appId?'var(--green)':'var(--yellow)'}">${wiz.appId||'⚠️ TBD'}</span>
-      <span style="color:var(--muted)">Project ID</span>
-      <span style="color:${wiz.projectId?'var(--green)':'var(--yellow)'}">${wiz.projectId||'⚠️ TBD'}</span>
-      <span style="color:var(--muted)">Org ID</span>
-      <span style="color:${wiz.organizationId?'var(--green)':'var(--yellow)'}">${wiz.organizationId||'⚠️ TBD'}</span>
+      ${(()=>{
+        const fields = CATALOGS[wiz.platform]?.step2Fields || [
+          {id:'appId',label:'App ID'},{id:'projectId',label:'Project ID'},{id:'organizationId',label:'Org ID'}
+        ];
+        return fields.map(f=>{
+          const val = wiz[f.id] || (Object.values(wiz.extraFields||{}).reduce((a,o)=>({...a,...o}),{})[f.id]) || '';
+          return `<span style="color:var(--muted)">${esc(f.label)}</span>
+          <span style="color:${val?'var(--green)':'var(--yellow)'}">${esc(val)||'⚠️ TBD'}</span>`;
+        }).join('');
+      })()}
       <span style="color:var(--muted)">Legal Ticket</span>
       <span style="color:var(--muted2)">${esc(wiz.legalTicket)}</span>
     </div>
@@ -3781,26 +3990,27 @@ async function wizCreateAllTickets(){
       const descText = `${appLine}${extraLines?'\n'+extraLines:''}\n\nOnboard Ticket: ${wiz.onboardTicketKey||'N/A'}`;
 
       // Set {enableFeature} and OJM-specific vars before resolving templates
-      wiz.extraFields['_enableFeature'] = { enableFeature: feat.name };
+      const featureOverrides = { enableFeature: feat.name };
       // For OJM feature enablement, build {OJMchannels}/{OJMfeatures} from picker selections
       if(feat.id==='ojm_feat' || feat.id==='ojm_features'){
         // OJM feature enablement — inject channel/feature selections
-        wiz.extraFields['_ojm'] = {
-          OJMchannels: (wiz.ojmSelectedChannels||[]).join(', ')||'None',
-          OJMfeatures: (wiz.ojmSelectedFeatures||[]).join(', ')||'None',
-        };
+        featureOverrides.OJMchannels = (wiz.ojmSelectedChannels||[]).join(', ')||'None';
+        featureOverrides.OJMfeatures = (wiz.ojmSelectedFeatures||[]).join(', ')||'None';
+        wiz.extraFields['_ojm'] = { OJMchannels: featureOverrides.OJMchannels, OJMfeatures: featureOverrides.OJMfeatures };
       }
+      wiz.extraFields['_enableFeature'] = { enableFeature: feat.name };
 
       // Build cloned + template-resolved description
       const clonedContent = sf.description?.content
-        ? sf.description.content.map(resolveAdfTemplates)
+        ? sf.description.content.map(n=>resolveAdfTemplates(n, featureOverrides))
         : [];
       const appendContent = [{type:'paragraph',content:[{type:'text',
         text:'\n---\n'+resolveTemplate(descText)}]}];
 
       // Apply resolveTemplate to summary (handles {clientName} etc in sample ticket)
       const resolvedSummary = resolveTemplate(
-        sf.summary?.includes('{') ? sf.summary : `[${wiz.clientName}] ${feat.name}`
+        sf.summary?.includes('{') ? sf.summary : `[${wiz.clientName}] ${feat.name}`,
+        featureOverrides
       ).replace(/\[.*?\]\s*/, `[${wiz.clientName}] `); // ensure [ClientName] is correct
 
       // Strip localId attrs from cloned ADF (they must be unique per document)
