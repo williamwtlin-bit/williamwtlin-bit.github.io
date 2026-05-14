@@ -13,6 +13,25 @@
     --accent:#4f8ef7;--accent2:#7c5cfa;--green:#34d399;--yellow:#fbbf24;
     --red:#f87171;--purple:#a78bfa;--text:#e2e8f0;--muted:#64748b;--muted2:#94a3b8;
   }
+  /* ── LIGHT MODE ── */
+  html.light {
+    --bg:#f4f5f7;--surface:#ffffff;--surface2:#f8f9fb;--border:#e2e5eb;
+    --accent:#3b6ef5;--accent2:#6c4beb;--green:#16a34a;--yellow:#d97706;
+    --red:#dc2626;--purple:#7c3aed;--text:#1a1d27;--muted:#7a8499;--muted2:#4a5166;
+  }
+  html.light body::before{background-image:linear-gradient(rgba(59,110,245,.025)1px,transparent 1px),linear-gradient(90deg,rgba(59,110,245,.025)1px,transparent 1px);}
+  html.light .card{box-shadow:0 8px 40px rgba(0,0,0,.1);}
+  html.light .client-group:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);}
+  html.light .completed-header:hover{background:#f0f2f6;}
+  html.light .client-header:hover{background:#f0f2f6;}
+  html.light .all-done-row:hover{border-color:rgba(22,163,74,.3);background:rgba(22,163,74,.03);}
+  html.light .wiz-modal{box-shadow:0 16px 48px rgba(0,0,0,.12);}
+  html.light .side-panel{box-shadow:-6px 0 32px rgba(0,0,0,.1);}
+  html.light .panel-overlay{background:rgba(0,0,0,.3);}
+  html.light .dd-panel{box-shadow:0 8px 24px rgba(0,0,0,.12);}
+  html.light .inline-asn-dd{box-shadow:0 8px 24px rgba(0,0,0,.1);}
+  .btn-theme{background:transparent;border:1px solid var(--border);color:var(--muted2);padding:5px 11px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+  .btn-theme:hover{border-color:var(--accent);color:var(--accent);}
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
   body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,142,247,.03)1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,.03)1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
@@ -548,6 +567,7 @@
         <div class="user-chip"><span class="u-dot"></span><span id="headerUser">—</span></div>
         <div class="last-updated" id="lu">Updated: —</div>
         <button class="btn-refresh" id="btnR" onclick="refresh()"><span id="rIcon">↻</span> Refresh</button>
+        <button class="btn-theme" id="btnTheme" onclick="toggleTheme()">🌙 Dark</button>
         <button class="btn-logout" onclick="logout()">Logout</button>
       </div>
     </header>
@@ -660,6 +680,7 @@
             </div>
           </div>
           <button class="bulk-btn" onclick="tbdBulkCopyKeys()">📋 Copy Keys</button>
+          <button class="bulk-btn" onclick="tbdBulkIgnoreTickets()" title="Hide from TBD view — moves to Ignored section">🚫 Ignore</button>
         </div>
       </div>
       <div class="tbd-wrap">
@@ -2070,6 +2091,30 @@ function tbdBulkCopyKeys(){
     .then(()=>toast('success',`Copied ${tbdBulkSelected.size} ticket keys`));
 }
 
+// ── TBD IGNORE ───────────────────────────────────────────────────────────────
+const TBD_IGNORE_KEY = 'jd_tbd_ignored';
+function loadTbdIgnored(){ try{ return new Set(JSON.parse(localStorage.getItem(TBD_IGNORE_KEY)||'[]')); }catch(e){ console.error('[TBD Ignore] loadTbdIgnored:',e); return new Set(); } }
+function saveTbdIgnored(s){ try{ localStorage.setItem(TBD_IGNORE_KEY, JSON.stringify([...s])); }catch(e){ console.error('[TBD Ignore] saveTbdIgnored:',e); } }
+
+function tbdBulkIgnoreTickets(){
+  if(!tbdBulkSelected.size){ toast('info','No tickets selected'); return; }
+  const ign = loadTbdIgnored();
+  const keys = [...tbdBulkSelected];
+  keys.forEach(k=>ign.add(k));
+  saveTbdIgnored(ign);
+  tbdData = tbdData.filter(i=>!ign.has(i.key));
+  toast('info',`${keys.length} ticket${keys.length===1?'':'s'} ignored — hidden from TBD view`);
+  clearTbdBulk();
+  renderTbd(tbdData);
+}
+
+function tbdUnignoreTicket(key){
+  const ign = loadTbdIgnored();
+  ign.delete(key);
+  saveTbdIgnored(ign);
+  toast('info',`${key} restored to TBD`);
+  renderTbd(tbdData);
+}
 async function tbdBulkMarkDone(){
   if(!tbdBulkSelected.size){ toast('info','No tickets selected'); return; }
   const keys = [...tbdBulkSelected];
@@ -2100,8 +2145,14 @@ async function tbdBulkMarkDone(){
 function renderTbd(issues){
   tbdData = issues;
   tbdBulkSelected.clear();
-  // Sort by lead time DESC (longest = highest priority)
-  const sorted = [...issues].sort((a,b)=>calcLT(a.created)-calcLT(b.created)).reverse();
+  const ign = loadTbdIgnored();
+
+  // Separate ignored from active
+  const active  = issues.filter(i=>!ign.has(i.key));
+  const ignored = issues.filter(i=> ign.has(i.key));
+
+  // Sort active by lead time DESC
+  const sorted = [...active].sort((a,b)=>calcLT(a.created)-calcLT(b.created)).reverse();
 
   const pending = sorted.length;
   const overdue = sorted.filter(i=>calcLT(i.created)>14).length;
@@ -2109,26 +2160,25 @@ function renderTbd(issues){
 
   document.getElementById('tbdPending').textContent = pending;
   document.getElementById('tbdOverdue').textContent = overdue;
-  document.getElementById('tbdAvg').textContent = pending ? avg+'d' : '—';
+  document.getElementById('tbdAvg').textContent = pending ? avg+'d' : '\u2014';
   document.getElementById('tc-tbd').textContent = pending;
 
-  if(pending===0){
-    document.getElementById('tbdDash').innerHTML=
-      '<div class="tbd-empty">🎉 No pending tickets assigned to you!</div>';
-    return;
-  }
+  let html = '';
 
-  const thead=`<thead><tr>
+  if(pending===0){
+    html += '<div class="tbd-empty">\uD83C\uDF89 No pending tickets assigned to you!</div>';
+  } else {
+    const thead=`<thead><tr>
     <th class="cb-th"><input type="checkbox" class="group-cb" id="tbdGroupCb" title="Select all" onchange="onTbdGroupCbChange(this)"/></th>
     <th>Ticket</th><th>Summary</th><th>Client</th><th>Status</th>
-    <th>Reporter</th><th>Created</th><th>Lead Time ↓</th><th>Action</th>
+    <th>Reporter</th><th>Created</th><th>Lead Time \u2193</th><th>Action</th>
   </tr></thead>`;
 
-  const rows = sorted.map(i=>{
-    const days=calcLT(i.created);
-    const client=extractClient(i.summary)||'—';
-    const sumClean=esc(normU(i.summary).replace(/\[[^\]]+\]\s*/,''));
-    return `<tr class="tbd-row" data-key="${i.key}" data-tbd-search="${(i.key+' '+i.summary+' '+i.status+' '+i.reporter).toLowerCase()}" onclick="openPanel('${i.key}',event,'tbd')">
+    const rows = sorted.map(i=>{
+      const days=calcLT(i.created);
+      const client=extractClient(i.summary)||'\u2014';
+      const sumClean=esc(normU(i.summary).replace(/\[[^\]]+\]\s*/,''));
+      return `<tr class="tbd-row" data-key="${i.key}" data-tbd-search="${(i.key+' '+i.summary+' '+i.status+' '+i.reporter).toLowerCase()}" onclick="openPanel('${i.key}',event,'tbd')">
       <td class="cb-td" onclick="event.stopPropagation()">
         <input type="checkbox" class="row-cb tbd-cb" data-key="${i.key}" onchange="onTbdCbChange(this)"/>
       </td>
@@ -2143,12 +2193,49 @@ function renderTbd(issues){
         <button class="btn-md btn-done-tbd" onclick="markDoneTbd('${i.key}',this)">Mark Done</button>
       </td>
     </tr>`;
-  }).join('');
+    }).join('');
 
-  document.getElementById('tbdDash').innerHTML=
-    `<div class="table-wrap"><table>${thead}<tbody>${rows}</tbody></table></div>`;
+    html += `<div class="table-wrap"><table>${thead}<tbody>${rows}</tbody></table></div>`;
+  }
+
+  // ── Ignored section ───────────────────────────────────────────────────────
+  if(ignored.length){
+    const ignRows = ignored.map(i=>{
+      const sumClean=esc(normU(i.summary).replace(/\[[^\]]+\]\s*/,''));
+      const days=calcLT(i.created);
+      return `<tr style="opacity:.5">
+      <td></td>
+      <td onclick="event.stopPropagation()"><a class="ticket-key" href="${i.url}" target="_blank">${i.key}</a></td>
+      <td><div class="ticket-summary">${sumClean}</div></td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2)">${esc(extractClient(i.summary)||'\u2014')}</span></td>
+      <td><span class="sb ${sClass(i.status)}"><span class="sd"></span>${esc(i.status)}</span></td>
+      <td><span class="ac">${esc(i.reporter)}</span></td>
+      <td><span class="dc">${i.created}</span></td>
+      <td><span class="lt ${ltC(days)}">${days}d</span></td>
+      <td onclick="event.stopPropagation()">
+        <button class="btn-md" style="color:var(--muted)" onclick="tbdUnignoreTicket('${i.key}')">&#8617; Restore</button>
+      </td>
+    </tr>`;
+    }).join('');
+
+    html += `<div class="done-section" style="margin-top:8px">
+      <div class="done-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.done-chev').classList.toggle('open')">
+        <span class="done-chev">\u25B6</span>
+        \uD83D\uDEAB Ignored Tickets
+        <span class="done-badge">${ignored.length} hidden</span>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-left:6px">Click to restore</span>
+      </div>
+      <div class="done-body">
+        <div class="table-wrap"><table><thead><tr>
+          <th></th><th>Ticket</th><th>Summary</th><th>Client</th><th>Status</th>
+          <th>Reporter</th><th>Created</th><th>Lead Time</th><th>Action</th>
+        </tr></thead><tbody>${ignRows}</tbody></table></div>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('tbdDash').innerHTML = html;
 }
-
 function applyTbdFilters(){
   const q=document.getElementById('tbdSrch').value.toLowerCase().trim();
   document.querySelectorAll('tr[data-tbd-search]').forEach(tr=>{
@@ -3045,6 +3132,30 @@ async function markDonePinned(key, btn){
   }
 }
 
+
+// ── THEME TOGGLE ─────────────────────────────────────────────────────────────
+const THEME_KEY = 'jd_theme';
+function initTheme(){
+  const saved = localStorage.getItem(THEME_KEY)||'dark';
+  applyTheme(saved);
+}
+function toggleTheme(){
+  const isLight = document.documentElement.classList.contains('light');
+  const next = isLight ? 'dark' : 'light';
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+}
+function applyTheme(mode){
+  const html = document.documentElement;
+  const btn  = document.getElementById('btnTheme');
+  if(mode==='light'){
+    html.classList.add('light');
+    if(btn){ btn.textContent='🌙 Dark'; }
+  } else {
+    html.classList.remove('light');
+    if(btn){ btn.textContent='☀️ Light'; }
+  }
+}
 // ── LOCALSTORAGE ──────────────────────────────────────────────────────────────
 const OB_KEY    = 'jd_onboardings';
 const DRAFT_KEY = 'jd_ob_drafts';   // stores incomplete wizards paused mid-flow
@@ -4546,6 +4657,7 @@ function finalizeAddObFeatures(created){
 }
 
 // ── ENTRY POINT ──────────────────────────────────────────────────────────────
+initTheme(); // Apply saved theme on load
 (async function init(){
   // Security: warn if not on HTTPS (PKCE crypto requires secure context)
   if(location.protocol==='http:' && location.hostname!=='localhost'){
