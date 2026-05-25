@@ -1,25 +1,12 @@
 {
-  "generatedAt": "2026-05-26T00:40:00.533+08:00",
+  "generatedAt": "2026-05-26T00:40:06.946+08:00",
   "accounts": [
     {
       "id": "mannings",
       "name": "Mannings",
       "health": "red",
       "insight": "AIXP-1840 in-progress 3d — 1 ticket active.",
-      "diffs": [
-        {
-          "type": "close",
-          "text": "PROJ-33301 closed"
-        },
-        {
-          "type": "close",
-          "text": "QGWL-20748 closed"
-        },
-        {
-          "type": "close",
-          "text": "PROJ-29658 closed"
-        }
-      ],
+      "diffs": [],
       "riskTags": [
         "ticket",
         "renewal"
@@ -95,16 +82,7 @@
       "name": "10/10Hope",
       "health": "green",
       "insight": "No active tickets — all clear.",
-      "diffs": [
-        {
-          "type": "close",
-          "text": "QGWL-25317 closed"
-        },
-        {
-          "type": "close",
-          "text": "QGWL-24745 closed"
-        }
-      ],
+      "diffs": [],
       "riskTags": [],
       "ticketCount": 0,
       "mtgCount": 0,
@@ -133,12 +111,7 @@
       "name": "Luxgen",
       "health": "green",
       "insight": "No active tickets — all clear.",
-      "diffs": [
-        {
-          "type": "close",
-          "text": "LEG-16090 closed"
-        }
-      ],
+      "diffs": [],
       "riskTags": [],
       "ticketCount": 0,
       "mtgCount": 0,
@@ -163,16 +136,7 @@
       "name": "55688",
       "health": "green",
       "insight": "No active tickets — all clear.",
-      "diffs": [
-        {
-          "type": "close",
-          "text": "BBT-5428 closed"
-        },
-        {
-          "type": "close",
-          "text": "QGWL-19924 closed"
-        }
-      ],
+      "diffs": [],
       "riskTags": [],
       "ticketCount": 0,
       "mtgCount": 0,
@@ -201,16 +165,7 @@
       "name": "田原香",
       "health": "green",
       "insight": "No active tickets — all clear.",
-      "diffs": [
-        {
-          "type": "close",
-          "text": "AEP-6089 closed"
-        },
-        {
-          "type": "close",
-          "text": "QGWL-25627 closed"
-        }
-      ],
+      "diffs": [],
       "riskTags": [],
       "ticketCount": 0,
       "mtgCount": 0,
