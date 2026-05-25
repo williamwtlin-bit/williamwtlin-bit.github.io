@@ -36,12 +36,6 @@
   html.light .platform-card .pc-icon img{mix-blend-mode:multiply;}
   .btn-theme{background:transparent;border:1px solid var(--border);color:var(--muted2);padding:5px 11px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
   .btn-theme:hover{border-color:var(--accent);color:var(--accent);}
-  /* ── CSM BRIEF ACCESS LOCK ── */
-  .brief-lock{position:absolute;inset:0;background:var(--bg);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;border-radius:12px;}
-  .brief-lock-icon{font-size:48px;line-height:1;}
-  .brief-lock-title{font-size:18px;font-weight:700;color:var(--text);}
-  .brief-lock-sub{font-size:13px;color:var(--muted2);text-align:center;max-width:340px;line-height:1.6;}
-  #pane-brief{position:relative;}
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
   body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,142,247,.03)1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,.03)1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
@@ -858,16 +852,6 @@
     <!-- ══ CSM BRIEF TAB PANE ══ -->
     <div class="tab-pane" id="pane-brief">
 
-      <!-- CSM Brief access lock: only william.wt.lin@appier.com can view -->
-      <div class="brief-lock" id="briefLockOverlay" style="display:none;">
-        <div class="brief-lock-icon">🔒</div>
-        <div class="brief-lock-title">Access Restricted</div>
-        <div class="brief-lock-sub">
-          The CSM Brief is only available to William Lin.<br>
-          Please log in with <strong>william.wt.lin@appier.com</strong> to view it.
-        </div>
-      </div>
-
       <!-- Stats row -->
       <div class="brief-stats-row">
         <div class="brief-stat-card c-red"><div class="stat-label">Critical</div><div class="brief-stat-val" id="bs-crit">—</div></div>
@@ -898,9 +882,7 @@
       <div class="brief-tab-pane" id="bpane-okr">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
           <div class="brief-section-title">Q OKR Summary</div>
-          <select class="okr-quarter-sel" id="okrQSel" onchange="renderOKR()">
-            <!-- populated dynamically by populateQtrSelect() -->
-          </select>
+          <select class="okr-quarter-sel" id="okrQSel" onchange="renderOKR()"><!-- dynamic --></select>
           <button class="okr-copy-btn" onclick="copyOKR()" id="okrCopyBtn">Copy Summary</button>
         </div>
         <div id="okrSections"></div>
@@ -909,9 +891,7 @@
       <!-- Sub-pane: Session Log -->
       <div class="brief-tab-pane" id="bpane-log">
         <div class="log-controls">
-          <select class="log-select" id="logQFilter" onchange="renderLog()">
-            <!-- populated dynamically by populateQtrSelectLog() -->
-          </select>
+          <select class="log-select" id="logQFilter" onchange="renderLog()"><!-- dynamic --></select>
           <select class="log-select" id="logCatFilter" onchange="renderLog()">
             <option value="all">All categories</option>
             <option value="onboard">🚀 Onboard</option>
@@ -960,9 +940,7 @@
       </div>
       <div class="log-form-row">
         <label>Quarter</label>
-        <select id="mQuarter">
-          <!-- populated dynamically by populateQtrSelectModal() -->
-        </select>
+        <select id="mQuarter"><!-- dynamic --></select>
       </div>
       <div class="log-form-row">
         <label>Category</label>
@@ -5121,51 +5099,26 @@ const PRELOADED_LOG = [
 
 
 // ── OKR QUARTER HELPERS ───────────────────────────────────────────────────────
-// Returns the 4 most recent quarters relative to today, latest first.
-// e.g. if today is May 2026 (Q2 2026) → ["Q2 2026","Q1 2026","Q4 2025","Q3 2025"]
 function getRecentQuarters(n){
-  const now  = new Date();
-  const year = now.getFullYear();
-  const q    = Math.ceil((now.getMonth()+1)/3); // current quarter (1-4)
-  const out  = [];
-  let cy = year, cq = q;
-  for(let i=0;i<n;i++){
-    out.push('Q'+cq+' '+cy);
-    cq--;
-    if(cq<1){ cq=4; cy--; }
-  }
-  return out; // newest first
+  const now=new Date(),year=now.getFullYear(),q=Math.ceil((now.getMonth()+1)/3);
+  const out=[]; let cy=year,cq=q;
+  for(let i=0;i<n;i++){out.push('Q'+cq+' '+cy);cq--;if(cq<1){cq=4;cy--;}}
+  return out;
 }
-
-// Populate a <select> with the 4 most recent quarters; select the newest one
-function populateQtrSelect(selId, defaultNewest){
-  const sel = document.getElementById(selId);
-  if(!sel) return;
-  const quarters = getRecentQuarters(4);
-  sel.innerHTML = quarters.map((q,i)=>
-    `<option value="${q}"${i===0?' selected':''}>${q}</option>`
-  ).join('');
+function populateQtrSelect(selId){
+  const sel=document.getElementById(selId); if(!sel)return;
+  const quarters=getRecentQuarters(4);
+  sel.innerHTML=quarters.map((q,i)=>`<option value="${q}"${i===0?' selected':''}>${q}</option>`).join('');
 }
-
-// Populate a log filter select: prepend "All quarters" then 4 recent quarters
 function populateQtrSelectLog(selId){
-  const sel = document.getElementById(selId);
-  if(!sel) return;
-  const quarters = getRecentQuarters(4);
-  sel.innerHTML = `<option value="all">All quarters</option>`
-    + quarters.map((q,i)=>
-        `<option value="${q}"${i===0?' selected':''}>${q}</option>`
-      ).join('');
+  const sel=document.getElementById(selId); if(!sel)return;
+  const quarters=getRecentQuarters(4);
+  sel.innerHTML=`<option value="all">All quarters</option>`+quarters.map((q,i)=>`<option value="${q}"${i===0?' selected':''}>${q}</option>`).join('');
 }
-
-// Populate the "add log" modal quarter picker
 function populateQtrSelectModal(selId){
-  const sel = document.getElementById(selId);
-  if(!sel) return;
-  const quarters = getRecentQuarters(4);
-  sel.innerHTML = quarters.map((q,i)=>
-    `<option value="${q}"${i===0?' selected':''}>${q}</option>`
-  ).join('');
+  const sel=document.getElementById(selId); if(!sel)return;
+  const quarters=getRecentQuarters(4);
+  sel.innerHTML=quarters.map((q,i)=>`<option value="${q}"${i===0?' selected':''}>${q}</option>`).join('');
 }
 
 // ── BRIEF STATE ───────────────────────────────────────────────────────────────
@@ -5182,26 +5135,28 @@ function saveLog(){ localStorage.setItem(BRIEF_LOG_KEY, JSON.stringify(logEntrie
 // ── BRIEF INIT (called once on page load) ─────────────────────────────────────
 
 // ── CSM BRIEF ACCESS CONTROL ─────────────────────────────────────────────────
+// Only william.wt.lin@appier.com may see the CSM Brief tab.
+// For everyone else the tab button and pane are removed from view entirely.
 const BRIEF_ALLOWED_EMAIL = 'william.wt.lin@appier.com';
 
 function checkBriefAccess(){
-  const user = getUser();
+  const user  = getUser();
   const email = (user?.email || '').toLowerCase().trim();
   const allowed = email === BRIEF_ALLOWED_EMAIL;
-  const lock  = document.getElementById('briefLockOverlay');
-  const stats = document.getElementById('bpane-brief');
-  if(lock){
-    lock.style.display = allowed ? 'none' : 'flex';
+
+  const tabBtn  = document.getElementById('tab-brief');
+  const tabPane = document.getElementById('pane-brief');
+  if(tabBtn)  tabBtn.style.display  = allowed ? '' : 'none';
+  if(tabPane) tabPane.style.display = allowed ? '' : 'none';
+
+  // If brief tab is active and user is not allowed, fall back to issues tab
+  if(!allowed && tabBtn && tabBtn.classList.contains('active')){
+    switchTab('issues');
   }
-  // Also hide the brief tab badge count for non-owners so they
-  // don't know how many accounts are tracked
-  const tc = document.getElementById('tc-brief');
-  if(tc) tc.style.visibility = allowed ? 'visible' : 'hidden';
   return allowed;
 }
 
 function initBrief(){
-  // Populate quarter dropdowns dynamically (4 most recent quarters)
   populateQtrSelect('okrQSel');
   populateQtrSelectLog('logQFilter');
   populateQtrSelectModal('mQuarter');
