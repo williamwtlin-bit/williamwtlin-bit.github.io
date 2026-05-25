@@ -1,1 +1,275 @@
-{"generatedAt": "2026-05-25T09:00:00+08:00", "accounts": []}
+{
+  "generatedAt": "2026-05-25T10:57:22.476829+08:00",
+  "accounts": [
+    {
+      "id": "mannings",
+      "name": "Mannings",
+      "health": "red",
+      "insight": "AIXP-1840 open 11 days — no update from Jin Chen. Bi-weekly May 28.",
+      "diffs": [
+        {
+          "type": "warn",
+          "text": "AIXP-1840 no update in 11 days"
+        }
+      ],
+      "riskTags": [
+        "mtg",
+        "ticket"
+      ],
+      "ticketCount": 1,
+      "mtgCount": 3,
+      "projects": [
+        {
+          "name": "Q3 Renewal Contract",
+          "status": "progress"
+        },
+        {
+          "name": "AIXON → AIRIS Upgrade (Q4)",
+          "status": "progress"
+        }
+      ],
+      "meetings": [
+        {
+          "date": "May 28",
+          "title": "Bi-weekly Meeting",
+          "meta": "11:00–12:00 HKT · Teams · Rola Chung"
+        },
+        {
+          "date": "Jun 1",
+          "title": "Mannings Quotation",
+          "meta": "11:15–12:00 HKT"
+        },
+        {
+          "date": "Jun 4",
+          "title": "Monthly Meeting",
+          "meta": "11:00–12:00 HKT · Teams · Rola Chung"
+        }
+      ],
+      "tickets": [
+        {
+          "key": "AIXP-1840",
+          "title": "IPA_Mannings_Meta 沒有產出 AI suggestions",
+          "status": "in-progress",
+          "assignee": "Jin Chen",
+          "pinned": true
+        }
+      ],
+      "suggestions": [
+        {
+          "priority": "high",
+          "label": "Ticket · High",
+          "text": "Chase Jin Chen on AIXP-1840 before May 28 — 11 days open with no update."
+        },
+        {
+          "priority": "high",
+          "label": "Renewal · High",
+          "text": "Prep Q3 renewal quotation now — Jun 1 meeting is approaching."
+        },
+        {
+          "priority": "medium",
+          "label": "Timeline · Medium",
+          "text": "Confirm AIRIS upgrade ETA before Jun 4 monthly — no timeline set."
+        }
+      ]
+    },
+    {
+      "id": "scmp",
+      "name": "SCMP",
+      "health": "yellow",
+      "insight": "PROJ-33328 in backlog since May 15. June renewal has no calendar event yet.",
+      "diffs": [],
+      "riskTags": [
+        "renewal",
+        "ticket"
+      ],
+      "ticketCount": 1,
+      "mtgCount": 2,
+      "projects": [
+        {
+          "name": "Segments Enablement",
+          "status": "progress"
+        },
+        {
+          "name": "Renewal (June 2026)",
+          "status": "blocked"
+        }
+      ],
+      "meetings": [
+        {
+          "date": "May 19",
+          "title": "Segment / Experiment / Insight Interview",
+          "meta": "10:30–11:00 HKT · Recurring weekly"
+        },
+        {
+          "date": "May 26",
+          "title": "Segment / Experiment / Insight Interview",
+          "meta": "10:30–11:00 HKT"
+        }
+      ],
+      "tickets": [
+        {
+          "key": "PROJ-33328",
+          "title": "Enable segment quota increase to 50",
+          "status": "backlog",
+          "assignee": "Michael Palmer",
+          "pinned": false
+        }
+      ],
+      "suggestions": [
+        {
+          "priority": "high",
+          "label": "Renewal · High",
+          "text": "June renewal has no meeting booked yet — schedule it this week."
+        },
+        {
+          "priority": "medium",
+          "label": "Ticket · Medium",
+          "text": "PROJ-33328 sitting in backlog since May 15. Follow up with Michael Palmer."
+        }
+      ]
+    },
+    {
+      "id": "1010hope",
+      "name": "10/10Hope",
+      "health": "yellow",
+      "insight": "klickngo API integration in progress. EC & POS integration has no ticket yet.",
+      "diffs": [],
+      "riskTags": [
+        "ticket"
+      ],
+      "ticketCount": 1,
+      "mtgCount": 2,
+      "projects": [
+        {
+          "name": "AIQUA Usage Tracking",
+          "status": "progress"
+        },
+        {
+          "name": "EC & POS Integration",
+          "status": "progress"
+        }
+      ],
+      "meetings": [
+        {
+          "date": "May 26",
+          "title": "10/10Hope Check-in",
+          "meta": "10:00–10:30 HKT"
+        },
+        {
+          "date": "Jun 2",
+          "title": "EC Integration Review",
+          "meta": "14:00–14:30 HKT"
+        }
+      ],
+      "tickets": [
+        {
+          "key": "BBT-7073",
+          "title": "BB Client Configuration Request",
+          "status": "open",
+          "assignee": "William Lin",
+          "pinned": false
+        }
+      ],
+      "suggestions": [
+        {
+          "priority": "medium",
+          "label": "Ticket · Medium",
+          "text": "Raise a Jira ticket for EC & POS integration — no tracking exists yet."
+        },
+        {
+          "priority": "low",
+          "label": "Health · Low",
+          "text": "Verify AIQUA usage metrics before the May 26 check-in."
+        }
+      ]
+    },
+    {
+      "id": "luxgen",
+      "name": "Luxgen",
+      "health": "green",
+      "insight": "Renewal confirmed May 19. Contract extended — monitoring period.",
+      "diffs": [
+        {
+          "type": "close",
+          "text": "Renewal confirmed May 19"
+        }
+      ],
+      "riskTags": [],
+      "ticketCount": 0,
+      "mtgCount": 1,
+      "projects": [
+        {
+          "name": "Contract Renewal",
+          "status": "done"
+        }
+      ],
+      "meetings": [
+        {
+          "date": "Jun 3",
+          "title": "Luxgen Checking",
+          "meta": "14:00–14:30 HKT"
+        }
+      ],
+      "tickets": [],
+      "suggestions": [
+        {
+          "priority": "low",
+          "label": "Follow-up · Low",
+          "text": "Confirm new contract end date and log it for renewal tracking."
+        }
+      ]
+    },
+    {
+      "id": "55688",
+      "name": "55688",
+      "health": "gray",
+      "insight": "No active tickets or meetings. Track Service Agent purchase intent.",
+      "diffs": [],
+      "riskTags": [
+        "silent"
+      ],
+      "ticketCount": 0,
+      "mtgCount": 0,
+      "projects": [
+        {
+          "name": "Service Agent Evaluation",
+          "status": "progress"
+        }
+      ],
+      "meetings": [],
+      "tickets": [],
+      "suggestions": [
+        {
+          "priority": "medium",
+          "label": "Outreach · Medium",
+          "text": "No contact in 14+ days — schedule a discovery call on Service Agent."
+        }
+      ]
+    },
+    {
+      "id": "tianxiang",
+      "name": "田原香",
+      "health": "green",
+      "insight": "Automation journey in dev. Agent usage feedback collection ongoing.",
+      "diffs": [],
+      "riskTags": [],
+      "ticketCount": 0,
+      "mtgCount": 0,
+      "projects": [
+        {
+          "name": "Automation Journey",
+          "status": "progress"
+        }
+      ],
+      "meetings": [],
+      "tickets": [],
+      "suggestions": [
+        {
+          "priority": "low",
+          "label": "Health · Low",
+          "text": "Collect agent usage feedback — no formal update since last brief."
+        }
+      ]
+    }
+  ]
+}
