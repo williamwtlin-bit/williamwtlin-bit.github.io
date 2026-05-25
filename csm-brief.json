@@ -1,18 +1,19 @@
 {
-  "generatedAt": "2026-05-26T01:12:29.280+08:00",
+  "generatedAt": "2026-05-26T01:19:04.441+08:00",
   "accounts": [
     {
       "id": "mannings",
       "name": "Mannings",
       "health": "red",
-      "insight": "AIXP-1840 in-progress 3d · renewal due Jun 2026.",
+      "insight": "AIXP-1840 in-progress 3d · Appier x Mannings Bi-weekly Meeting May 28 · renewal due Jun 2026.",
       "diffs": [],
       "riskTags": [
         "ticket",
-        "renewal"
+        "renewal",
+        "mtg"
       ],
       "ticketCount": 1,
-      "mtgCount": 0,
+      "mtgCount": 3,
       "projects": [
         {
           "name": "Q3 Renewal Contract",
@@ -23,7 +24,23 @@
           "status": "progress"
         }
       ],
-      "meetings": [],
+      "meetings": [
+        {
+          "date": "May 28",
+          "title": "Appier x Mannings Bi-weekly Meeting",
+          "meta": "11:00–12:00 HKT · Rola Chung"
+        },
+        {
+          "date": "Jun 1",
+          "title": "Mannings quotation",
+          "meta": "11:15–12:00 HKT · william.wt.lin@appier.com"
+        },
+        {
+          "date": "Jun 4",
+          "title": "Appier x Mannings Monthly Meeting",
+          "meta": "11:00–12:00 HKT · Rola Chung"
+        }
+      ],
       "tickets": [
         {
           "key": "AIXP-1840",
@@ -43,6 +60,11 @@
           "priority": "high",
           "label": "Renewal · High",
           "text": "Mannings renewal due Jun 2026 — confirm status now"
+        },
+        {
+          "priority": "medium",
+          "label": "Meeting · Medium",
+          "text": "Prep for Appier x Mannings Bi-weekly Meeting on May 28 (11:00–12:00 HKT · Rola Chung)"
         }
       ]
     },
@@ -109,37 +131,47 @@
     {
       "id": "luxgen",
       "name": "Luxgen",
-      "health": "green",
-      "insight": "No active tickets — all clear.",
+      "health": "yellow",
+      "insight": "Luxgen+MN quotation Jun 7.",
       "diffs": [],
-      "riskTags": [],
+      "riskTags": [
+        "mtg"
+      ],
       "ticketCount": 0,
-      "mtgCount": 0,
+      "mtgCount": 1,
       "projects": [
         {
           "name": "Contract Renewal 2026 (BB)",
           "status": "progress"
         }
       ],
-      "meetings": [],
+      "meetings": [
+        {
+          "date": "Jun 7",
+          "title": "Luxgen+MN quotation",
+          "meta": "09:00–09:30 HKT · william.wt.lin@appier.com"
+        }
+      ],
       "tickets": [],
       "suggestions": [
         {
-          "priority": "low",
-          "label": "Check-in · Low",
-          "text": "No active tickets — send a check-in to Luxgen"
+          "priority": "medium",
+          "label": "Meeting · Medium",
+          "text": "Prep for Luxgen+MN quotation on Jun 7 (09:00–09:30 HKT · william.wt.lin@appier.com)"
         }
       ]
     },
     {
       "id": "55688",
       "name": "55688",
-      "health": "green",
-      "insight": "No active tickets — all clear.",
+      "health": "yellow",
+      "insight": "Renew check for 55688 Jun 2.",
       "diffs": [],
-      "riskTags": [],
+      "riskTags": [
+        "mtg"
+      ],
       "ticketCount": 0,
-      "mtgCount": 0,
+      "mtgCount": 1,
       "projects": [
         {
           "name": "Service Agent RFQ",
@@ -150,25 +182,33 @@
           "status": "progress"
         }
       ],
-      "meetings": [],
+      "meetings": [
+        {
+          "date": "Jun 2",
+          "title": "Renew check for 55688",
+          "meta": "09:00–10:00 HKT · william.wt.lin@appier.com"
+        }
+      ],
       "tickets": [],
       "suggestions": [
         {
-          "priority": "low",
-          "label": "Check-in · Low",
-          "text": "No active tickets — send a check-in to 55688"
+          "priority": "medium",
+          "label": "Meeting · Medium",
+          "text": "Prep for Renew check for 55688 on Jun 2 (09:00–10:00 HKT · william.wt.lin@appier.com)"
         }
       ]
     },
     {
       "id": "tiangyuanxiang",
       "name": "田原香",
-      "health": "green",
-      "insight": "No active tickets — all clear.",
+      "health": "yellow",
+      "insight": "田原香 use case tracking May 27.",
       "diffs": [],
-      "riskTags": [],
+      "riskTags": [
+        "mtg"
+      ],
       "ticketCount": 0,
-      "mtgCount": 0,
+      "mtgCount": 2,
       "projects": [
         {
           "name": "EUU Onboarding",
@@ -179,13 +219,24 @@
           "status": "progress"
         }
       ],
-      "meetings": [],
+      "meetings": [
+        {
+          "date": "May 27",
+          "title": "田原香 use case tracking",
+          "meta": "09:30–10:00 HKT · william.wt.lin@appier.com"
+        },
+        {
+          "date": "Jun 3",
+          "title": "田原香 use case tracking",
+          "meta": "09:30–10:00 HKT · william.wt.lin@appier.com"
+        }
+      ],
       "tickets": [],
       "suggestions": [
         {
-          "priority": "low",
-          "label": "Check-in · Low",
-          "text": "No active tickets — send a check-in to 田原香"
+          "priority": "medium",
+          "label": "Meeting · Medium",
+          "text": "Prep for 田原香 use case tracking on May 27 (09:30–10:00 HKT · william.wt.lin@appier.com)"
         }
       ]
     }
