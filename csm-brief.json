@@ -1,18 +1,19 @@
 {
-  "generatedAt": "2026-05-26T00:51:02.126+08:00",
+  "generatedAt": "2026-05-26T08:55:00+08:00",
   "accounts": [
     {
       "id": "mannings",
       "name": "Mannings",
       "health": "red",
-      "insight": "AIXP-1840 in-progress 3d — 1 ticket active.",
+      "insight": "AIXP-1840 IPA no AI suggestions still in-progress (Jin Chen, 4d) — chase today before May 28 bi-weekly. Renewal due Jun 30.",
       "diffs": [],
       "riskTags": [
         "ticket",
+        "mtg",
         "renewal"
       ],
       "ticketCount": 1,
-      "mtgCount": 0,
+      "mtgCount": 3,
       "projects": [
         {
           "name": "Q3 Renewal Contract",
@@ -23,7 +24,23 @@
           "status": "progress"
         }
       ],
-      "meetings": [],
+      "meetings": [
+        {
+          "date": "May 28",
+          "title": "Appier x Mannings Bi-weekly",
+          "meta": "11:00–12:00 HKT · Teams · Rola Chung, Sandy Lau, Cherie Ng, Janice Tsui"
+        },
+        {
+          "date": "Jun 1",
+          "title": "Mannings Quotation",
+          "meta": "11:15–12:00 HKT"
+        },
+        {
+          "date": "Jun 4",
+          "title": "Appier x Mannings Monthly",
+          "meta": "11:00–12:00 HKT · Teams · Rola Chung, Sandy Lau, Cherie Ng, Janice Tsui"
+        }
+      ],
       "tickets": [
         {
           "key": "AIXP-1840",
@@ -37,12 +54,17 @@
         {
           "priority": "high",
           "label": "Ticket · High",
-          "text": "Follow up on AIXP-1840 (in-progress, 3d old)"
+          "text": "Chase Jin Chen on AIXP-1840 today — bi-weekly is May 28 and client will ask about AI suggestions status."
         },
         {
           "priority": "high",
           "label": "Renewal · High",
-          "text": "Mannings renewal due Jun 2026 — confirm status now"
+          "text": "Renewal due Jun 30 (35 days) — confirm scope and pricing at Jun 1 quotation meeting."
+        },
+        {
+          "priority": "medium",
+          "label": "Meeting · Medium",
+          "text": "Prep bi-weekly talking points: AIXP-1840 update, AIRIS upgrade Q4 timeline, renewal quotation preview."
         }
       ]
     },
@@ -50,21 +72,22 @@
       "id": "scmp",
       "name": "SCMP",
       "health": "yellow",
-      "insight": "No active tickets — all clear.",
+      "insight": "Jun 2026 renewal with no meeting booked and no active tickets — email SCMP contact this week to schedule.",
       "diffs": [],
       "riskTags": [
-        "renewal"
+        "renewal",
+        "silent"
       ],
       "ticketCount": 0,
       "mtgCount": 0,
       "projects": [
         {
           "name": "Segments Enablement",
-          "status": "progress"
+          "status": "done"
         },
         {
           "name": "Renewal (June 2026)",
-          "status": "progress"
+          "status": "blocked"
         }
       ],
       "meetings": [],
@@ -73,15 +96,20 @@
         {
           "priority": "high",
           "label": "Renewal · High",
-          "text": "SCMP renewal due Jun 2026 — confirm status now"
+          "text": "June renewal has no meeting booked — email SCMP contact this week to schedule before slots fill up."
+        },
+        {
+          "priority": "medium",
+          "label": "Outreach · Medium",
+          "text": "No touch in 14+ days — send a brief check-in to confirm relationship health and renewal intent."
         }
       ]
     },
     {
       "id": "1010hope",
       "name": "10/10Hope",
-      "health": "green",
-      "insight": "No active tickets — all clear.",
+      "health": "yellow",
+      "insight": "AIQUA onboarding and klickngo API both in progress with Mark Liu — no upcoming meetings scheduled.",
       "diffs": [],
       "riskTags": [],
       "ticketCount": 0,
@@ -100,46 +128,63 @@
       "tickets": [],
       "suggestions": [
         {
-          "priority": "low",
-          "label": "Check-in · Low",
-          "text": "No active tickets — send a check-in to 10/10Hope"
+          "priority": "medium",
+          "label": "Outreach · Medium",
+          "text": "No meetings in next 14 days — book a check-in with Mark Liu to review klickngo API and AIQUA onboarding progress."
         }
       ]
     },
     {
       "id": "luxgen",
       "name": "Luxgen",
-      "health": "green",
-      "insight": "No active tickets — all clear.",
+      "health": "yellow",
+      "insight": "LEG-16090 BB renewal submitted to legal, awaiting approval. Jun 7 quotation meeting with MN — prep pricing now.",
       "diffs": [],
-      "riskTags": [],
+      "riskTags": [
+        "mtg",
+        "renewal"
+      ],
       "ticketCount": 0,
-      "mtgCount": 0,
+      "mtgCount": 1,
       "projects": [
         {
           "name": "Contract Renewal 2026 (BB)",
           "status": "progress"
         }
       ],
-      "meetings": [],
+      "meetings": [
+        {
+          "date": "Jun 7",
+          "title": "Luxgen+MN Quotation",
+          "meta": "09:00–09:30 HKT"
+        }
+      ],
       "tickets": [],
       "suggestions": [
         {
-          "priority": "low",
-          "label": "Check-in · Low",
-          "text": "No active tickets — send a check-in to Luxgen"
+          "priority": "high",
+          "label": "Renewal · High",
+          "text": "Jun 7 quotation — confirm LEG-16090 legal approval status and prepare MN pricing for client."
+        },
+        {
+          "priority": "medium",
+          "label": "Follow-up · Medium",
+          "text": "Check LEG-16090 is progressing through approval — contract starts 2026/5/24 but approval still pending."
         }
       ]
     },
     {
       "id": "55688",
       "name": "55688",
-      "health": "green",
-      "insight": "No active tickets — all clear.",
+      "health": "yellow",
+      "insight": "Renewal check call Jun 2 — no open tickets. Clean slate for renewal discussion on Service Agent RFQ and AQ JM.",
       "diffs": [],
-      "riskTags": [],
+      "riskTags": [
+        "mtg",
+        "renewal"
+      ],
       "ticketCount": 0,
-      "mtgCount": 0,
+      "mtgCount": 1,
       "projects": [
         {
           "name": "Service Agent RFQ",
@@ -150,13 +195,24 @@
           "status": "progress"
         }
       ],
-      "meetings": [],
+      "meetings": [
+        {
+          "date": "Jun 2",
+          "title": "Renew check for 55688",
+          "meta": "09:00–10:00 HKT"
+        }
+      ],
       "tickets": [],
       "suggestions": [
         {
-          "priority": "low",
-          "label": "Check-in · Low",
-          "text": "No active tickets — send a check-in to 55688"
+          "priority": "high",
+          "label": "Renewal · High",
+          "text": "Prepare renewal talking points for Jun 2 — include Service Agent RFQ timeline and AQ JM timeout fix resolution status."
+        },
+        {
+          "priority": "medium",
+          "label": "Meeting · Medium",
+          "text": "Confirm Jun 2 agenda with internal team — align on what to propose for next contract period."
         }
       ]
     },
@@ -164,11 +220,13 @@
       "id": "tiangyuanxiang",
       "name": "田原香",
       "health": "green",
-      "insight": "No active tickets — all clear.",
+      "insight": "Use case tracking TOMORROW May 27 (09:30 HKT) — prepare EUU onboarding progress update. Next session Jun 3.",
       "diffs": [],
-      "riskTags": [],
+      "riskTags": [
+        "mtg"
+      ],
       "ticketCount": 0,
-      "mtgCount": 0,
+      "mtgCount": 2,
       "projects": [
         {
           "name": "EUU Onboarding",
@@ -179,13 +237,29 @@
           "status": "progress"
         }
       ],
-      "meetings": [],
+      "meetings": [
+        {
+          "date": "May 27",
+          "title": "田原香 use case tracking",
+          "meta": "09:30–10:00 HKT · Recurring"
+        },
+        {
+          "date": "Jun 3",
+          "title": "田原香 use case tracking",
+          "meta": "09:30–10:00 HKT · Recurring"
+        }
+      ],
       "tickets": [],
       "suggestions": [
         {
+          "priority": "medium",
+          "label": "Meeting · Medium",
+          "text": "Prepare EUU onboarding progress update for tomorrow's use case tracking (May 27, 09:30 HKT)."
+        },
+        {
           "priority": "low",
           "label": "Check-in · Low",
-          "text": "No active tickets — send a check-in to 田原香"
+          "text": "Follow up with vivian.yang on send time optimization — currently in Backlog with no ETA."
         }
       ]
     }
