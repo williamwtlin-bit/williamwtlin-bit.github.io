@@ -1,5 +1,11 @@
 {
-  "lastUpdated": "2026-05-26T01:22:11.119+08:00",
+  "lastUpdated": "2026-05-26T11:20:28.553+08:00",
+  "rules": [
+    {
+      "id": "okr-consolidate",
+      "rule": "OKR entries: consolidate by theme, never log individual ticket keys"
+    }
+  ],
   "ignoreTickets": [
     {
       "key": "QGWL-20748",
@@ -18,16 +24,28 @@
       "account": "tiangyuanxiang",
       "ignoredOn": "2026-05-25",
       "reason": "Confirmed no longer relevant"
+    },
+    {
+      "key": "AIXP-1840",
+      "account": "mannings",
+      "ignoredOn": "2026-05-26",
+      "reason": "Ticket closed — AI suggestions issue resolved by Jin Chen"
+    },
+    {
+      "key": "QGWL-19924",
+      "account": "55688",
+      "ignoredOn": "2026-05-26",
+      "reason": "AQ JM Timeout Fix closed"
     }
   ],
   "pinnedTickets": [
     {
-      "key": "AIXP-1840",
-      "account": "mannings",
-      "title": "IPA_Mannings_Meta Ã¦Â²ÂÃ¦ÂÂÃ§ÂÂ¢Ã¥ÂÂº AI suggestions",
-      "assignee": "Jin Chen",
-      "addedOn": "2026-05-18",
-      "note": "Client reported no AI suggestions since ~Apr 23. Campaign 120241282408710634, Customer ID 1004726734. AI auto-apply was turned off. You are CC'd Ã¢ÂÂ follow up with Jin Chen before May 28 bi-weekly."
+      "key": "LEG-15992",
+      "account": "citysuper",
+      "addedOn": "2026-05-26",
+      "title": "City Super legal/contract ticket",
+      "assignee": "",
+      "note": "Pinned by CSM — track progress"
     }
   ],
   "contractDates": [
@@ -35,37 +53,31 @@
       "account": "Luxgen",
       "platform": "BB",
       "endDate": "2026-11-23",
-      "note": "BB contract 2026/5/24â11/23, NTD 50,000/mo â LEG-16090 approved"
+      "note": "BB contract 2026/5/24-11/23, NTD 50,000/mo — LEG-16090 approved"
     },
     {
       "account": "SCMP",
       "platform": "AIQUA",
       "endDate": null,
-      "note": "Renewal target June 2026 Ã¢ÂÂ date unknown, likely imminent"
+      "note": "Renewal target June 2026 — arrange meeting after client feedback."
     },
     {
       "account": "Mannings",
-      "platform": "AIQUA",
-      "endDate": null,
-      "note": "Unknown Ã¢ÂÂ ask CSM to confirm"
-    },
-    {
-      "account": "Mannings",
-      "platform": "AIRIS",
-      "endDate": null,
-      "note": "Unknown Ã¢ÂÂ ask CSM to confirm"
+      "platform": "AIQUA/AIRIS",
+      "endDate": "2026-06-30",
+      "note": "Renewed AQ & AX to 2026-06-30 (Q1)"
     },
     {
       "account": "10/10Hope",
       "platform": "BotBonnie",
       "endDate": null,
-      "note": "Unknown Ã¢ÂÂ ask CSM to confirm"
+      "note": "Unknown — ask CSM to confirm"
     },
     {
-      "account": "Ã§ÂÂ°Ã¥ÂÂÃ©Â¦Â",
+      "account": "田原香",
       "platform": "BotBonnie/AIQUA",
       "endDate": null,
-      "note": "Unknown Ã¢ÂÂ ask CSM to confirm"
+      "note": "Unknown — ask CSM to confirm"
     }
   ],
   "okrLog": [
@@ -84,7 +96,7 @@
     {
       "date": "2026-Q1",
       "category": "Renewal",
-      "client": "Ã§ÂÂ°Ã¥ÂÂÃ©Â¦Â",
+      "client": "田原香",
       "description": "Renewed to 2027-02-16"
     },
     {
@@ -120,7 +132,7 @@
     {
       "date": "2026-Q1",
       "category": "Feature Enabled",
-      "client": "Ã§ÂÂ°Ã¥ÂÂÃ©Â¦Â",
+      "client": "田原香",
       "description": "Campaign agent enabled"
     },
     {
@@ -173,129 +185,9 @@
     },
     {
       "date": "2026-Q2",
-      "category": "Pitching",
-      "client": "Momax",
-      "description": "Opportunity pitched"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Pitching",
-      "client": "Mannings",
-      "description": "AIRIS opportunity pitched"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Pitching",
-      "client": "SCMP",
-      "description": "BotBonnie opportunity pitched"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Pitching",
-      "client": "17live TW",
-      "description": "Opportunity pitched"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Pitching",
-      "client": "LON",
-      "description": "Opportunity pitched"
-    },
-    {
-      "date": "2026-Q2",
       "category": "Renewal",
       "client": "Luxgen",
-      "description": "æåçºç´è³ 2026-11 (BB contract 2026/5/24â11/23)"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Ticket Resolved",
-      "client": "SCMP",
-      "description": "Segment quota increase resolved"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "client": "Internal",
-      "description": "AA UX interview"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "client": "Internal",
-      "description": "Insights report PM collaboration"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "client": "Internal",
-      "description": "LON finance team support"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "client": "Internal",
-      "description": "Template builder interview"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "client": "Mannings",
-      "description": "CrossX comms coordination"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "client": "SCMP",
-      "description": "Event speaker coordination"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "client": "Internal",
-      "description": "Eddie AQ exam support"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "client": "Mannings",
-      "description": "SEA tech Q&A"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "AI Adoption",
-      "client": "Internal",
-      "description": "eDM agent prototype built"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "AI Adoption",
-      "client": "Internal",
-      "description": "Agent testing feedback provided"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "AI Adoption",
-      "client": "Internal",
-      "description": "Slides creation skill built"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "AI Adoption",
-      "client": "Internal",
-      "description": "CSM tracking dashboard built"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "AI Adoption",
-      "client": "Internal",
-      "description": "CSM ask-anything skill built"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "AI Adoption",
-      "client": "Internal",
-      "description": "CSM task tracking tool built"
+      "description": "BB contract renewed to 2026-11-23 (LEG-16090 approved)"
     },
     {
       "date": "2026-Q2",
@@ -313,7 +205,7 @@
       "date": "2026-Q2",
       "category": "Pitching",
       "client": "SCMP",
-      "description": "SCMP BB pitching"
+      "description": "SCMP BotBonnie pitching"
     },
     {
       "date": "2026-Q2",
@@ -367,7 +259,7 @@
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "Mannings",
-      "description": "Adjusted platform communication Mannings ↔ CrossX"
+      "description": "Adjusted platform communication Mannings - CrossX"
     },
     {
       "date": "2026-Q2",
@@ -397,7 +289,7 @@
       "date": "2026-Q2",
       "category": "AI Adoption",
       "client": "Internal",
-      "description": "Built CSM tracking dashboard (this dashboard)"
+      "description": "Built CSM tracking dashboard"
     },
     {
       "date": "2026-Q2",
@@ -410,14 +302,38 @@
       "category": "AI Adoption",
       "client": "Internal",
       "description": "Built CSM task tracking automation"
+    },
+    {
+      "date": "2026-Q2",
+      "category": "Ticket Resolved",
+      "client": "SCMP",
+      "description": "Segment enablement closed — awaiting client feedback for renewal"
+    },
+    {
+      "date": "2026-Q2",
+      "category": "Ticket Resolved",
+      "client": "Mannings",
+      "description": "AIXP-1840 closed — AI suggestions issue resolved (Jin Chen)"
+    },
+    {
+      "date": "2026-Q2",
+      "category": "Ticket Resolved",
+      "client": "55688",
+      "description": "AQ JM Timeout Fix (QGWL-19924) closed"
+    },
+    {
+      "date": "2026-Q2",
+      "category": "Onboard",
+      "client": "田原香",
+      "description": "EUU onboarding completed"
+    },
+    {
+      "date": "2026-Q2",
+      "category": "Feature Enabled",
+      "client": "田原香",
+      "description": "Campaign Agent Feature delivered"
     }
   ],
-  "sessionLog": [],
   "feedbackLog": [],
-  "rules": [
-    {
-      "id": "okr-consolidate",
-      "rule": "OKR entries: consolidate by theme, never log individual ticket keys"
-    }
-  ]
+  "sessionLog": []
 }
