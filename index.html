@@ -5559,5 +5559,21 @@ initBrief(); // Initialise CSM Brief tab (static data, no auth needed)
   showLoginScreen();
 })();
 </script>
+
+<script id="csm-okr-sync">/* csm-okr-sync-v1 */
+(async()=>{
+  try{
+    const mem=await(await fetch('https://raw.githubusercontent.com/williamwtlin-bit/williamwtlin-bit.github.io/main/csm-memory.json')).json();
+    const cm={'Onboard':'onboard','Renewal':'renewal','Ticket Resolved':'ticket','Feature Enabled':'feature','Pitching':'pitching','AI Adoption':'ai','Team Contribution':'team'};
+    const toQ=d=>{const[y,q]=d.split('-');return q+' '+y;};
+    const entries=(mem.okrLog||[]).map(e=>({quarter:toQ(e.date),category:cm[e.category]||'other',client:e.client,description:e.description}));
+    localStorage.setItem('csm_session_log',JSON.stringify(entries));
+    if(typeof renderOKR==='function')renderOKR();
+    if(typeof renderLog==='function')renderLog();
+    if(typeof briefUpdateTabCounts==='function')briefUpdateTabCounts();
+    console.log('[CSM] OKR synced from GitHub:',entries.length,'entries');
+  }catch(e){console.warn('[CSM] OKR sync failed',e);}
+})();
+</script>
 </body>
 </html>
