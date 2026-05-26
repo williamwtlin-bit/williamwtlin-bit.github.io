@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T01:19:04.441+08:00",
+  "generatedAt": "2026-05-26T10:07:06.207+08:00",
   "accounts": [
     {
       "id": "mannings",
@@ -237,6 +237,54 @@
           "priority": "medium",
           "label": "Meeting · Medium",
           "text": "Prep for 田原香 use case tracking on May 27 (09:30–10:00 HKT · william.wt.lin@appier.com)"
+        }
+      ]
+    },
+    {
+      "id": "momax",
+      "name": "Momax",
+      "health": "yellow",
+      "insight": "Momax AI Marketing Proposal _Prizm/Appier May 29.",
+      "diffs": [],
+      "riskTags": [
+        "mtg"
+      ],
+      "ticketCount": 0,
+      "mtgCount": 1,
+      "projects": [],
+      "meetings": [
+        {
+          "date": "May 29",
+          "title": "Momax AI Marketing Proposal _Prizm/Appier",
+          "meta": "09:30–10:10 HKT · emily.cheng@appier.com"
+        }
+      ],
+      "tickets": [],
+      "suggestions": [
+        {
+          "priority": "medium",
+          "label": "Meeting · Medium",
+          "text": "Prep for Momax AI Marketing Proposal _Prizm/Appier on May 29 (09:30–10:10 HKT · emily.cheng@appier.com)"
+        }
+      ]
+    },
+    {
+      "id": "citysuper",
+      "name": "City Super",
+      "health": "green",
+      "insight": "No active tickets — all clear.",
+      "diffs": [],
+      "riskTags": [],
+      "ticketCount": 0,
+      "mtgCount": 0,
+      "projects": [],
+      "meetings": [],
+      "tickets": [],
+      "suggestions": [
+        {
+          "priority": "low",
+          "label": "Check-in · Low",
+          "text": "No active tickets — send a check-in to City Super"
         }
       ]
     }
