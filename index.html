@@ -5868,7 +5868,7 @@ initBrief(); // Initialise CSM Brief tab (static data, no auth needed)
     for(var ci2 = 0; ci2 < candidates.length; ci2++){
       var cn2 = arNorm(candidates[ci2]);
       for(var i2 = 0; i2 < normH.length; i2++){
-        if(normH[i2].includes(cn2) || cn2.includes(normH[i2])) return headers[i2];
+        if(normH[i2] && (normH[i2].includes(cn2) || cn2.includes(normH[i2]))) return headers[i2];
       }
     }
     return null;
