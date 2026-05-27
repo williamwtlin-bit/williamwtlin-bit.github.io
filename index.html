@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jira Team Dashboard</title>
 <!-- Security: restrict resource loading to known trusted origins -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://*.atlassian.com https://api.media.atlassian.com https://*.workers.dev; connect-src 'self' https://*.atlassian.com https://api.media.atlassian.com https://*.workers.dev; img-src blob: data: https:; media-src blob: https://api.media.atlassian.com;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://*.atlassian.com https://api.media.atlassian.com https://*.workers.dev https://accounts.google.com https://apis.google.com https://cdnjs.cloudflare.com; connect-src 'self' https://*.atlassian.com https://api.media.atlassian.com https://*.workers.dev https://www.googleapis.com https://oauth2.googleapis.com https://accounts.google.com https://lh3.googleusercontent.com; img-src blob: data: https:; media-src blob: https://api.media.atlassian.com; frame-src https://accounts.google.com;">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -36,6 +36,7 @@
   html.light .platform-card .pc-icon img{mix-blend-mode:multiply;}
   .btn-theme{background:transparent;border:1px solid var(--border);color:var(--muted2);padding:5px 11px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
   .btn-theme:hover{border-color:var(--accent);color:var(--accent);}
+  /* ── SYNC BAR ── */
   .sync-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:7px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;}
   .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s;}
   .sync-dot.ok{background:var(--green);}
@@ -322,8 +323,10 @@
   /* ── TABS ── */
   .tabs{display:flex;gap:2px;margin-bottom:24px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;}
   .tab-btn{flex:1;padding:9px 16px;border:none;border-radius:7px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--muted);background:transparent;display:flex;align-items:center;justify-content:center;gap:7px;}
-  .tab-btn:hover{color:var(--text);}
+  .tab-btn:hover{color:var(--text);background:rgba(255,255,255,.06);}
+  html.light .tab-btn:hover{color:var(--accent);background:rgba(59,110,245,.07);border-radius:7px;}
   .tab-btn.active{background:var(--surface2);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.3);}
+  html.light .tab-btn.active{background:#e8edf8;box-shadow:0 2px 8px rgba(0,0,0,.08);}
   .tab-btn .tab-count{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px;background:rgba(255,255,255,.06);color:var(--muted2);}
   .tab-draft-badge{font-size:12px;margin-left:2px;animation:pulse 1.5s ease-in-out infinite;}
   .tab-btn.active .tab-count{background:rgba(79,142,247,.15);color:var(--accent);}
@@ -675,6 +678,76 @@
   /* Brief section misc */
   .brief-section-title{font-size:15px;font-weight:700;}
   .no-accounts{text-align:center;padding:60px 20px;color:var(--muted);font-size:13px;font-family:'DM Mono',monospace;}
+
+  /* ══ CSM AR STATUS TAB ══════════════════════════════════════════════════════ */
+  .ar-connect-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:40px;text-align:center;margin-bottom:20px;}
+  .ar-connect-title{font-size:16px;font-weight:700;margin-bottom:8px;}
+  .ar-connect-sub{font-size:13px;color:var(--muted2);margin-bottom:20px;line-height:1.6;}
+  .ar-connect-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(66,133,244,.3);}
+  .ar-connect-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(66,133,244,.4);}
+  .ar-connect-btn:disabled{opacity:.5;cursor:not-allowed;pointer-events:none;transform:none;}
+  .ar-ctrl-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+  .ar-search{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;width:200px;outline:none;}
+  .ar-search:focus{border-color:var(--accent);}
+  .ar-search::placeholder{color:var(--muted);}
+  .ar-filter-sel{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;outline:none;cursor:pointer;}
+  .ar-filter-sel:focus{border-color:var(--accent);}
+  .ar-my-toggle{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted2);cursor:pointer;margin-left:auto;}
+  .ar-my-toggle input{accent-color:var(--accent);width:14px;height:14px;cursor:pointer;}
+  .ar-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+  @media(max-width:600px){.ar-stats-row{grid-template-columns:repeat(2,1fr);}}
+  .ar-stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;}
+  .ar-stat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .ar-stat.c-blue::after{background:var(--accent);}
+  .ar-stat.c-green::after{background:var(--green);}
+  .ar-stat.c-yellow::after{background:var(--yellow);}
+  .ar-stat.c-red::after{background:var(--red);}
+  .ar-stat-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px;}
+  .ar-stat-val{font-size:28px;font-weight:800;line-height:1;}
+  .ar-stat.c-blue .ar-stat-val{color:var(--accent);}
+  .ar-stat.c-green .ar-stat-val{color:var(--green);}
+  .ar-stat.c-yellow .ar-stat-val{color:var(--yellow);}
+  .ar-stat.c-red .ar-stat-val{color:var(--red);}
+  .ar-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .ar-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .ar-table th{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);padding:9px 14px;text-align:left;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
+  .ar-table th:hover{color:var(--text);}
+  .ar-table th .sort-arrow{margin-left:4px;opacity:.4;font-size:9px;}
+  .ar-table th.sorted .sort-arrow{opacity:1;color:var(--accent);}
+  .ar-table td{padding:9px 14px;border-bottom:1px solid rgba(37,42,56,.55);vertical-align:middle;}
+  .ar-table tr:last-child td{border-bottom:none;}
+  .ar-table tr:hover td{background:rgba(255,255,255,.02);}
+  .ar-amount{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;}
+  .ar-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);white-space:nowrap;}
+  .ar-opp{color:var(--muted2);font-size:12px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .ar-acct{font-weight:600;font-size:13px;}
+  .ar-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;white-space:nowrap;}
+  .ar-badge-dot{width:6px;height:6px;border-radius:50%;}
+  .ar-badge.paid{background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.22);}
+  .ar-badge.paid .ar-badge-dot{background:var(--green);}
+  .ar-badge.unpaid{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.22);}
+  .ar-badge.unpaid .ar-badge-dot{background:var(--yellow);}
+  .ar-badge.invalid{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.22);}
+  .ar-badge.invalid .ar-badge-dot{background:var(--red);}
+  .ar-badge.other{background:rgba(148,163,184,.08);color:var(--muted2);border:1px solid rgba(148,163,184,.18);}
+  .ar-badge.other .ar-badge-dot{background:var(--muted2);}
+  .ar-empty{padding:48px;text-align:center;color:var(--muted);font-size:14px;}
+  .ar-load-bar{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:16px;}
+  .ar-load-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s;}
+  .ar-load-dot.ok{background:var(--green);}
+  .ar-load-dot.spin{background:var(--yellow);animation:sdpulse 1s ease-in-out infinite;}
+  .ar-load-dot.err{background:var(--red);}
+  .ar-load-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);flex:1;}
+  .ar-load-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted2);padding:5px 12px;border-radius:6px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .ar-load-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .ar-setup-note{background:rgba(79,142,247,.06);border:1px solid rgba(79,142,247,.2);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);line-height:1.7;}
+  .ar-setup-note a{color:var(--accent);text-decoration:none;}
+  .ar-setup-note a:hover{text-decoration:underline;}
+  .ar-clientid-row{display:flex;gap:8px;margin-top:8px;}
+  .ar-clientid-input{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;outline:none;}
+  .ar-clientid-input:focus{border-color:var(--accent);}
+  .ar-save-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:7px 14px;border-radius:6px;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
+
 </style>
 </head>
 <body>
@@ -745,6 +818,9 @@
       </button>
       <button class="tab-btn" id="tab-tbd" onclick="switchTab('tbd')">
         ✅ To Be Done <span class="tab-count" id="tc-tbd">—</span>
+      </button>
+      <button class="tab-btn" id="tab-ar" onclick="switchTab('ar')">
+        💳 CSM AR Status <span class="tab-count" id="tc-ar">—</span>
       </button>
       <button class="tab-btn" id="tab-brief" onclick="switchTab('brief')">
         📊 CSM Brief <span class="tab-count" id="tc-brief">—</span>
@@ -859,6 +935,7 @@
     <!-- ══ CSM BRIEF TAB PANE ══ -->
     <div class="tab-pane" id="pane-brief">
 
+
       <!-- Sync bar -->
       <div class="sync-bar">
         <span class="sync-dot spin" id="syncDot"></span>
@@ -895,7 +972,10 @@
       <div class="brief-tab-pane" id="bpane-okr">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
           <div class="brief-section-title">Q OKR Summary</div>
-          <select class="okr-quarter-sel" id="okrQSel" onchange="renderOKR()"><!-- dynamic --></select>
+          <select class="okr-quarter-sel" id="okrQSel" onchange="renderOKR()">
+            <option>Q1 2026</option><option selected>Q2 2026</option>
+            <option>Q3 2026</option><option>Q4 2026</option>
+          </select>
           <button class="okr-copy-btn" onclick="copyOKR()" id="okrCopyBtn">Copy Summary</button>
         </div>
         <div id="okrSections"></div>
@@ -904,7 +984,13 @@
       <!-- Sub-pane: Session Log -->
       <div class="brief-tab-pane" id="bpane-log">
         <div class="log-controls">
-          <select class="log-select" id="logQFilter" onchange="renderLog()"><!-- dynamic --></select>
+          <select class="log-select" id="logQFilter" onchange="renderLog()">
+            <option value="all">All quarters</option>
+            <option value="Q1 2026">Q1 2026</option>
+            <option value="Q2 2026" selected>Q2 2026</option>
+            <option value="Q3 2026">Q3 2026</option>
+            <option value="Q4 2026">Q4 2026</option>
+          </select>
           <select class="log-select" id="logCatFilter" onchange="renderLog()">
             <option value="all">All categories</option>
             <option value="onboard">🚀 Onboard</option>
@@ -930,6 +1016,88 @@
     </div>
   </div>
 
+
+    <!-- ══ CSM AR STATUS TAB PANE ══ -->
+    <div class="tab-pane" id="pane-ar">
+
+      <!-- Google Drive connection setup -->
+      <div id="arSetupNote" class="ar-setup-note" style="display:none">
+        ⚙️ First-time setup: Enter your <strong>Google OAuth Client ID</strong> below to connect Google Drive.
+        <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Get it from Google Cloud Console →</a>
+        (Enable Drive API, create an OAuth 2.0 Web Client, add <code>https://williamwtlin-bit.github.io</code> as an authorized origin)
+        <div class="ar-clientid-row">
+          <input type="text" class="ar-clientid-input" id="arClientIdInput" placeholder="Paste Google Client ID here (e.g. 123456-abc.apps.googleusercontent.com)">
+          <button class="ar-save-btn" onclick="arSaveClientId()">Save & Connect</button>
+        </div>
+      </div>
+
+      <!-- Status / load bar (shown when connected) -->
+      <div id="arLoadBar" class="ar-load-bar" style="display:none">
+        <span class="ar-load-dot" id="arDot"></span>
+        <span class="ar-load-label" id="arLoadLabel">Ready</span>
+        <button class="ar-load-btn" id="arRefreshBtn" onclick="arLoadData()">🔄 Refresh</button>
+        <span id="arLastLoaded" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-left:4px;"></span>
+        <button class="ar-load-btn" onclick="arDisconnect()" style="border-color:rgba(248,113,113,.3);color:var(--red);margin-left:auto">Disconnect</button>
+      </div>
+
+      <!-- Connect button (shown when not connected) -->
+      <div id="arConnectBox" class="ar-connect-box">
+        <div class="ar-connect-title">📊 CSM AR Status Check</div>
+        <div class="ar-connect-sub">
+          Connect your Google Drive to automatically read the latest AR status Excel file.<br>
+          Data is filtered to show only <strong>your accounts</strong> based on your login email.
+        </div>
+        <button class="ar-connect-btn" id="arConnectBtn" onclick="arConnect()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#fff"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#fff"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#fff"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#fff"/></svg>
+          Connect Google Drive
+        </button>
+        <div style="margin-top:12px">
+          <button onclick="arShowSetup()" style="background:transparent;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;text-decoration:underline;">
+            First time? Set up Google Client ID
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="ar-stats-row" id="arStatsRow" style="display:none">
+        <div class="ar-stat c-blue"><div class="ar-stat-label">Total</div><div class="ar-stat-val" id="arStatTotal">—</div></div>
+        <div class="ar-stat c-green"><div class="ar-stat-label">Paid</div><div class="ar-stat-val" id="arStatPaid">—</div></div>
+        <div class="ar-stat c-yellow"><div class="ar-stat-label">Unpaid</div><div class="ar-stat-val" id="arStatUnpaid">—</div></div>
+        <div class="ar-stat c-red"><div class="ar-stat-label">Invalid</div><div class="ar-stat-val" id="arStatInvalid">—</div></div>
+      </div>
+
+      <!-- Controls bar -->
+      <div class="ar-ctrl-bar" id="arCtrlBar" style="display:none">
+        <input type="text" class="ar-search" id="arSearch" placeholder="🔍 Search account or opportunity…" oninput="arRender()">
+        <select class="ar-filter-sel" id="arStatusFilter" onchange="arRender()">
+          <option value="">All statuses</option>
+          <option value="Paid">✅ Paid</option>
+          <option value="Unpaid">⏳ Unpaid</option>
+          <option value="Invalid">❌ Invalid</option>
+        </select>
+        <label class="ar-my-toggle">
+          <input type="checkbox" id="arMyOnly" checked onchange="arRender()"> My accounts only
+        </label>
+      </div>
+
+      <!-- Data table -->
+      <div class="ar-table-wrap" id="arTableWrap" style="display:none">
+        <table class="ar-table">
+          <thead>
+            <tr>
+              <th onclick="arSort('account')" id="arTh-account">Account <span class="sort-arrow">↕</span></th>
+              <th onclick="arSort('opportunity')" id="arTh-opportunity">Opportunity <span class="sort-arrow">↕</span></th>
+              <th onclick="arSort('amount')" id="arTh-amount">Invoice Amount <span class="sort-arrow">↕</span></th>
+              <th onclick="arSort('status')" id="arTh-status">AR Status <span class="sort-arrow">↕</span></th>
+              <th onclick="arSort('date')" id="arTh-date">Expected Date <span class="sort-arrow">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="arTbody"></tbody>
+        </table>
+      </div>
+
+    </div>
+
   <!-- Brief account side panel (separate from Jira ticket side panel) -->
   <div class="brief-panel-overlay" id="briefPanelOverlay" onclick="closeBriefPanel()"></div>
   <div class="brief-side-panel" id="briefSidePanel">
@@ -953,7 +1121,10 @@
       </div>
       <div class="log-form-row">
         <label>Quarter</label>
-        <select id="mQuarter"><!-- dynamic --></select>
+        <select id="mQuarter">
+          <option>Q1 2026</option><option selected>Q2 2026</option>
+          <option>Q3 2026</option><option>Q4 2026</option>
+        </select>
       </div>
       <div class="log-form-row">
         <label>Category</label>
@@ -2177,12 +2348,13 @@ async function selectAssignee(accountId, displayName, el){
 let tbdData = [];
 
 function switchTab(name){
-  ['tracking','tbd','brief'].forEach(t=>{
+  ['tracking','tbd','brief','ar'].forEach(t=>{
     document.getElementById('tab-'+t).classList.toggle('active', t===name);
     document.getElementById('pane-'+t).classList.toggle('active', t===name);
   });
   if(name==='tracking') renderOnboardingProgress();
   if(name==='brief'){ renderBriefStats(); briefUpdateTabCounts(); }
+  if(name==='ar'){ arTabActivated(); }
 }
 
 // ── REASSIGN HELPERS (shared by bulk + per-row) ──────────────────────────────
@@ -5110,30 +5282,6 @@ const PRELOADED_LOG = [
   {id:17, date:'2026-Q1', quarter:'Q1 2026', category:'team',     client:'Internal',  description:'AQ recommendation sharing with Zebbie'},
 ];
 
-
-// ── OKR QUARTER HELPERS ───────────────────────────────────────────────────────
-function getRecentQuarters(n){
-  const now=new Date(),year=now.getFullYear(),q=Math.ceil((now.getMonth()+1)/3);
-  const out=[]; let cy=year,cq=q;
-  for(let i=0;i<n;i++){out.push('Q'+cq+' '+cy);cq--;if(cq<1){cq=4;cy--;}}
-  return out;
-}
-function populateQtrSelect(selId){
-  const sel=document.getElementById(selId); if(!sel)return;
-  const quarters=getRecentQuarters(4);
-  sel.innerHTML=quarters.map((q,i)=>`<option value="${q}"${i===0?' selected':''}>${q}</option>`).join('');
-}
-function populateQtrSelectLog(selId){
-  const sel=document.getElementById(selId); if(!sel)return;
-  const quarters=getRecentQuarters(4);
-  sel.innerHTML=`<option value="all">All quarters</option>`+quarters.map((q,i)=>`<option value="${q}"${i===0?' selected':''}>${q}</option>`).join('');
-}
-function populateQtrSelectModal(selId){
-  const sel=document.getElementById(selId); if(!sel)return;
-  const quarters=getRecentQuarters(4);
-  sel.innerHTML=quarters.map((q,i)=>`<option value="${q}"${i===0?' selected':''}>${q}</option>`).join('');
-}
-
 // ── BRIEF STATE ───────────────────────────────────────────────────────────────
 let logEntries = [];
 let briefNextId = 100;
@@ -5147,62 +5295,40 @@ function saveLog(){ localStorage.setItem(BRIEF_LOG_KEY, JSON.stringify(logEntrie
 
 // ── BRIEF INIT (called once on page load) ─────────────────────────────────────
 
-// ── CSM BRIEF ACCESS CONTROL ─────────────────────────────────────────────────
-// Only william.wt.lin@appier.com may see the CSM Brief tab.
-// For everyone else the tab button and pane are removed from view entirely.
-const BRIEF_ALLOWED_EMAIL = 'william.wt.lin@appier.com';
+// ── GITHUB BRIEF AUTO-SYNC ────────────────────────────────────────────────────
+// csm-brief.json lives in the repo root → served by GitHub Pages at same origin.
+// Claude pushes a new version via GitHub API after every brief generation.
+// Dashboard fetches it on every load — zero manual steps.
 
-function checkBriefAccess(){
-  const user  = getUser();
-  const email = (user?.email || '').toLowerCase().trim();
-  const allowed = email === BRIEF_ALLOWED_EMAIL;
-
-  const tabBtn  = document.getElementById('tab-brief');
-  const tabPane = document.getElementById('pane-brief');
-  if(tabBtn)  tabBtn.style.display  = allowed ? '' : 'none';
-  if(tabPane) tabPane.style.display = allowed ? '' : 'none';
-
-  // If brief tab is active and user is not allowed, fall back to issues tab
-  if(!allowed && tabBtn && tabBtn.classList.contains('active')){
-    switchTab('issues');
-  }
-  return allowed;
-}
-
-
-// GITHUB BRIEF AUTO-SYNC
 function _setSyncUI(state, text) {
-  const dot = document.getElementById("syncDot");
-  const lbl = document.getElementById("syncLabel");
-  if (dot) { dot.className = "sync-dot" + (state ? " " + state : ""); }
+  const dot = document.getElementById('syncDot');
+  const lbl = document.getElementById('syncLabel');
+  if (dot) { dot.className = 'sync-dot' + (state ? ' ' + state : ''); }
   if (lbl) { lbl.textContent = text; }
 }
 
 async function loadBriefFromGitHub() {
-  _setSyncUI("spin", "Loading brief from GitHub…");
+  _setSyncUI('spin', 'Loading brief from GitHub…');
   try {
-    const res = await fetch("/csm-brief.json?_=" + Date.now());
-    if (!res.ok) throw new Error(res.status === 404 ? "No brief pushed yet — ask Claude to generate your brief." : "HTTP " + res.status);
+    // Cache-bust so we always get the latest commit, not a CDN-cached copy
+    const res = await fetch('/csm-brief.json?_=' + Date.now());
+    if (!res.ok) throw new Error(res.status === 404 ? 'No brief pushed yet — ask Claude to generate your brief.' : 'HTTP ' + res.status);
     const data = await res.json();
-    if (!Array.isArray(data.accounts) || data.accounts.length === 0) throw new Error("Brief is empty.");
+    if (!Array.isArray(data.accounts) || data.accounts.length === 0) throw new Error('Brief is empty — ask Claude to generate your brief.');
     ACCOUNTS = data.accounts;
     renderBriefCards();
     renderBriefStats();
     briefUpdateTabCounts();
     const ts = data.generatedAt
-      ? new Date(data.generatedAt).toLocaleString("en-HK", { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit", hour12:false, timeZone:"Asia/Hong_Kong" })
-      : "?";
-    _setSyncUI("ok", "Brief synced · " + ts + " HKT · auto-updated by Claude each morning");
+      ? new Date(data.generatedAt).toLocaleString('en-HK', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Hong_Kong' })
+      : '?';
+    _setSyncUI('ok', 'Brief synced · ' + ts + ' HKT · auto-updated by Claude each morning');
   } catch (e) {
-    _setSyncUI("err", e.message || "Could not load brief");
+    _setSyncUI('err', e.message || 'Could not load brief');
   }
 }
 
 function initBrief(){
-  populateQtrSelect('okrQSel');
-  populateQtrSelectLog('logQFilter');
-  populateQtrSelectModal('mQuarter');
-  checkBriefAccess();
   loadBriefFromGitHub();
   logEntries = loadLog();
   briefNextId = Math.max(briefNextId, ...logEntries.map(e=>e.id||0)) + 1;
@@ -5560,20 +5686,391 @@ initBrief(); // Initialise CSM Brief tab (static data, no auth needed)
 })();
 </script>
 
-<script id="csm-okr-sync">/* csm-okr-sync-v1 */
-(async()=>{
-  try{
-    const mem=await(await fetch('https://raw.githubusercontent.com/williamwtlin-bit/williamwtlin-bit.github.io/main/csm-memory.json')).json();
-    const cm={'Onboard':'onboard','Renewal':'renewal','Ticket Resolved':'ticket','Feature Enabled':'feature','Pitching':'pitching','AI Adoption':'ai','Team Contribution':'team'};
-    const toQ=d=>{const[y,q]=d.split('-');return q+' '+y;};
-    const entries=(mem.okrLog||[]).map(e=>({quarter:toQ(e.date),category:cm[e.category]||'other',client:e.client,description:e.description}));
-    localStorage.setItem('csm_session_log',JSON.stringify(entries));
-    if(typeof renderOKR==='function')renderOKR();
-    if(typeof renderLog==='function')renderLog();
-    if(typeof briefUpdateTabCounts==='function')briefUpdateTabCounts();
-    console.log('[CSM] OKR synced from GitHub:',entries.length,'entries');
-  }catch(e){console.warn('[CSM] OKR sync failed',e);}
-})();
-</script>
-</body>
-</html>
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- SheetJS for Excel parsing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+// ══ CSM AR STATUS CHECK ══════════════════════════════════════════════════════
+(function(){
+  'use strict';
+
+  const AR_FOLDER_ID   = '1m-G1ZWDft_WWi0JvAcMvsHQxnRNbuH6G';
+  const AR_SCOPE       = 'https://www.googleapis.com/auth/drive.readonly';
+  const AR_STORAGE_KEY = 'ar_google_token';
+  const AR_CLIENTID_KEY= 'ar_google_client_id';
+
+  let arRawData     = [];   // full parsed rows from Excel
+  let arSortCol     = 'date';
+  let arSortAsc     = false;
+  let arTokenClient = null;
+  let arLastFile    = null; // track which file was last loaded
+
+  // ── helpers ─────────────────────────────────────────────────────────────
+  function arGetClientId(){
+    return localStorage.getItem(AR_CLIENTID_KEY) || '';
+  }
+
+  function arGetToken(){
+    try{ return JSON.parse(localStorage.getItem(AR_STORAGE_KEY)); }catch(e){ return null; }
+  }
+
+  function arSaveToken(t){
+    localStorage.setItem(AR_STORAGE_KEY, JSON.stringify({
+      token: t.access_token,
+      expires: Date.now() + (t.expires_in - 60) * 1000
+    }));
+  }
+
+  function arClearToken(){
+    localStorage.removeItem(AR_STORAGE_KEY);
+  }
+
+  function arTokenValid(){
+    const t = arGetToken();
+    return t && t.token && Date.now() < t.expires;
+  }
+
+  function arGetCurrentEmail(){
+    // Try real user from session, then preview mock
+    try{
+      const u = JSON.parse(sessionStorage.getItem('jt_user'));
+      if(u && u.email) return u.email.toLowerCase();
+    }catch(e){}
+    // Fallback: read from header chip
+    const chip = document.querySelector('#headerSub');
+    if(chip){
+      const m = chip.textContent.match(/([\w.+\-]+@[\w.\-]+\.[\w]+)/);
+      if(m) return m[1].toLowerCase();
+    }
+    return '';
+  }
+
+  // ── Setup/Connect UI ────────────────────────────────────────────────────
+  window.arShowSetup = function(){
+    const note = document.getElementById('arSetupNote');
+    if(note) note.style.display = 'block';
+    const input = document.getElementById('arClientIdInput');
+    if(input) input.value = arGetClientId();
+  };
+
+  window.arSaveClientId = function(){
+    const input = document.getElementById('arClientIdInput');
+    const cid = (input ? input.value : '').trim();
+    if(!cid){ alert('Please enter a valid Google Client ID.'); return; }
+    localStorage.setItem(AR_CLIENTID_KEY, cid);
+    const note = document.getElementById('arSetupNote');
+    if(note) note.style.display = 'none';
+    arConnect();
+  };
+
+  window.arDisconnect = function(){
+    arClearToken();
+    arTokenClient = null;
+    arRawData = [];
+    arShowConnect();
+    arSetLoadStatus('', 'muted', 'Disconnected');
+  };
+
+  function arShowConnect(){
+    document.getElementById('arConnectBox').style.display  = '';
+    document.getElementById('arLoadBar').style.display     = 'none';
+    document.getElementById('arStatsRow').style.display    = 'none';
+    document.getElementById('arCtrlBar').style.display     = 'none';
+    document.getElementById('arTableWrap').style.display   = 'none';
+  }
+
+  function arShowData(){
+    document.getElementById('arConnectBox').style.display  = 'none';
+    document.getElementById('arLoadBar').style.display     = '';
+    document.getElementById('arStatsRow').style.display    = '';
+    document.getElementById('arCtrlBar').style.display     = '';
+    document.getElementById('arTableWrap').style.display   = '';
+  }
+
+  function arSetLoadStatus(dotClass, color, msg){
+    const dot   = document.getElementById('arDot');
+    const label = document.getElementById('arLoadLabel');
+    if(dot){ dot.className = 'ar-load-dot' + (dotClass ? ' '+dotClass : ''); }
+    if(label){ label.textContent = msg; label.style.color = dotClass==='err' ? 'var(--red)' : ''; }
+  }
+
+  // ── OAuth via Google Identity Services ──────────────────────────────────
+  window.arConnect = function(){
+    const cid = arGetClientId();
+    if(!cid){
+      arShowSetup();
+      return;
+    }
+    // If we already have a valid token, go straight to loading
+    if(arTokenValid()){
+      arShowData();
+      arLoadData();
+      return;
+    }
+    // Init token client
+    if(!window.google || !window.google.accounts){
+      arSetLoadStatus('err', 'red', 'Google Identity Services not loaded. Check internet connection.');
+      arShowData();
+      return;
+    }
+    arTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: cid,
+      scope: AR_SCOPE,
+      callback: (resp) => {
+        if(resp.error){ arSetLoadStatus('err','red','Auth failed: '+resp.error); return; }
+        arSaveToken(resp);
+        arShowData();
+        arLoadData();
+      }
+    });
+    arShowData();
+    arSetLoadStatus('spin','yellow','Connecting to Google…');
+    arTokenClient.requestAccessToken({ prompt: '' });
+  };
+
+  // ── Load files from Drive ────────────────────────────────────────────────
+  // Always fetches the latest-modified file — safe to call on every Refresh click
+  window.arLoadData = async function(){
+    arRawData = []; // clear stale data so Refresh always re-fetches
+    const t = arGetToken();
+    if(!t || !t.token){
+      if(!arTokenValid()) { arConnect(); return; }
+      return;
+    }
+    arSetLoadStatus('spin','yellow','Searching Drive for AR report…');
+    document.getElementById('arRefreshBtn').disabled = true;
+    try{
+      // List xlsx files in the folder, newest first
+      const listUrl = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(
+        `'${AR_FOLDER_ID}' in parents and mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' and trashed=false`
+      )}&orderBy=modifiedTime desc&pageSize=10&fields=files(id,name,modifiedTime)`;
+
+      const listResp = await fetch(listUrl, {
+        headers: { Authorization: 'Bearer ' + t.token }
+      });
+      if(!listResp.ok){
+        const err = await listResp.json().catch(()=>({}));
+        if(listResp.status === 401){ arClearToken(); arConnect(); return; }
+        throw new Error(err.error?.message || ('HTTP '+listResp.status));
+      }
+      const listData = await listResp.json();
+      const files = listData.files || [];
+
+      if(files.length === 0){
+        // Try Google Sheets files as fallback
+        const sheetUrl = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(
+          `'${AR_FOLDER_ID}' in parents and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`
+        )}&orderBy=modifiedTime desc&pageSize=10&fields=files(id,name,modifiedTime)`;
+        const sheetResp = await fetch(sheetUrl, { headers: { Authorization: 'Bearer ' + t.token } });
+        const sheetData = await sheetResp.json().catch(()=>({files:[]}));
+        if((sheetData.files||[]).length === 0){
+          arSetLoadStatus('err','red','No Excel or Sheets files found in the Drive folder.');
+          document.getElementById('arRefreshBtn').disabled = false;
+          return;
+        }
+        await arLoadGoogleSheet(t.token, sheetData.files[0]);
+        return;
+      }
+
+      // Download the latest xlsx
+      const file = files[0];
+      arLastFile = file;
+      arSetLoadStatus('spin','yellow',`Downloading: ${file.name}…`);
+      const dlUrl = `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`;
+      const dlResp = await fetch(dlUrl, { headers: { Authorization: 'Bearer ' + t.token } });
+      if(!dlResp.ok) throw new Error('Download failed: HTTP '+dlResp.status);
+      const blob = await dlResp.arrayBuffer();
+      arParseExcel(blob, file.name);
+    }catch(e){
+      arSetLoadStatus('err','red','Error: ' + e.message);
+      document.getElementById('arRefreshBtn').disabled = false;
+    }
+  };
+
+  async function arLoadGoogleSheet(token, file){
+    // Export Google Sheet as xlsx
+    arSetLoadStatus('spin','yellow',`Exporting Sheet: ${file.name}…`);
+    const exportUrl = `https://www.googleapis.com/drive/v3/files/${file.id}/export?mimeType=application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`;
+    const resp = await fetch(exportUrl, { headers: { Authorization: 'Bearer ' + token } });
+    if(!resp.ok) throw new Error('Sheet export failed: HTTP '+resp.status);
+    const buf = await resp.arrayBuffer();
+    arParseExcel(buf, file.name);
+  }
+
+  // ── Parse Excel with SheetJS ─────────────────────────────────────────────
+  // Expected columns from Salesforce AR report:
+  //   Account | Opportunity: Opportunity Name | Issued Invoice Amount |
+  //   CSM Email | AR Status | Expected Sending Date
+  function arNorm(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,''); }
+
+  function arFindCol(headers, ...candidates){
+    for(const c of candidates){
+      const cn = arNorm(c);
+      const hit = headers.find(h => arNorm(h) === cn);
+      if(hit !== undefined) return hit;
+    }
+    for(const c of candidates){
+      const cn = arNorm(c);
+      const hit = headers.find(h => arNorm(h).includes(cn) || cn.includes(arNorm(h)));
+      if(hit !== undefined) return hit;
+    }
+    return null;
+  }
+
+  function arParseExcel(arrayBuffer, fileName){
+    try{
+      if(typeof XLSX === 'undefined'){
+        arSetLoadStatus('err','red','SheetJS not loaded. Check Content Security Policy settings.');
+        document.getElementById('arRefreshBtn').disabled = false;
+        return;
+      }
+      const wb = XLSX.read(new Uint8Array(arrayBuffer), {type:'array', cellDates:true});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {defval:''});
+      if(!rows.length){
+        arSetLoadStatus('err','red','No data rows found in the file.');
+        document.getElementById('arRefreshBtn').disabled = false;
+        return;
+      }
+
+      // Discover actual column headers
+      const headers = Object.keys(rows[0]);
+      const colAccount  = arFindCol(headers, 'Account', 'Client');
+      const colOpp      = arFindCol(headers, 'Opportunity: Opportunity Name', 'Opportunity Name', 'OpportunityName', 'Opportunity');
+      const colAmount   = arFindCol(headers, 'Issued Invoice Amount', 'Invoice Amount', 'Amount');
+      const colCsmEmail = arFindCol(headers, 'CSM Email', 'CSM_Email', 'CsmEmail', 'Email');
+      const colStatus   = arFindCol(headers, 'AR Status', 'ARStatus', 'Status');
+      const colDate     = arFindCol(headers, 'Expected Sending Date', 'Expected Date', 'Sending Date', 'Date');
+
+      console.log('[AR] Detected columns:', {colAccount,colOpp,colAmount,colCsmEmail,colStatus,colDate});
+
+      arRawData = rows.map(r => ({
+        account:     String(colAccount  ? r[colAccount]  : '').trim(),
+        opportunity: String(colOpp      ? r[colOpp]      : '').trim(),
+        amount:      String(colAmount   ? r[colAmount]   : '').trim(),
+        csmEmail:    String(colCsmEmail ? r[colCsmEmail] : '').trim().toLowerCase(),
+        status:      String(colStatus   ? r[colStatus]   : '').trim(),
+        date:        String(colDate     ? r[colDate]     : '').trim(),
+      })).filter(r => r.account || r.opportunity);
+
+      const modTime = arLastFile ? ' · file: '+new Date(arLastFile.modifiedTime).toLocaleDateString() : '';
+      arSetLoadStatus('ok','green', arRawData.length+' invoices loaded from "'+fileName+'"'+modTime);
+      const ts = document.getElementById('arLastLoaded');
+      if(ts) ts.textContent = 'Refreshed '+new Date().toLocaleTimeString();
+      document.getElementById('arRefreshBtn').disabled = false;
+      arRender();
+    }catch(e){
+      arSetLoadStatus('err','red','Parse error: '+e.message);
+      console.error('[AR]', e);
+      document.getElementById('arRefreshBtn').disabled = false;
+    }
+  }
+  // ── Render table ─────────────────────────────────────────────────────────
+  window.arRender = function(){
+    const myEmail    = arGetCurrentEmail();
+    const myOnly     = document.getElementById('arMyOnly')?.checked;
+    const search     = (document.getElementById('arSearch')?.value||'').toLowerCase();
+    const statusFilt = (document.getElementById('arStatusFilter')?.value||'');
+
+    let rows = arRawData.slice();
+
+    // Filter: my accounts only
+    if(myOnly && myEmail){
+      rows = rows.filter(r => r.csmEmail.toLowerCase() === myEmail);
+    }
+
+    // Filter: status
+    if(statusFilt){
+      rows = rows.filter(r => r.status.toLowerCase() === statusFilt.toLowerCase());
+    }
+
+    // Filter: search
+    if(search){
+      rows = rows.filter(r =>
+        r.account.toLowerCase().includes(search) ||
+        r.opportunity.toLowerCase().includes(search)
+      );
+    }
+
+    // Sort
+    rows.sort((a,b) => {
+      let va = a[arSortCol]||'', vb = b[arSortCol]||'';
+      if(arSortCol==='amount'){
+        va = parseFloat(va.replace(/[^0-9.]/g,''))||0;
+        vb = parseFloat(vb.replace(/[^0-9.]/g,''))||0;
+      }
+      if(va < vb) return arSortAsc ? -1 : 1;
+      if(va > vb) return arSortAsc ? 1 : -1;
+      return 0;
+    });
+
+    // Stats (based on pre-filter my-only data)
+    const base = myOnly && myEmail ? arRawData.filter(r=>r.csmEmail.toLowerCase()===myEmail) : arRawData;
+    const paid    = base.filter(r=>r.status.toLowerCase()==='paid').length;
+    const unpaid  = base.filter(r=>r.status.toLowerCase()==='unpaid').length;
+    const invalid = base.filter(r=>r.status.toLowerCase()==='invalid').length;
+    document.getElementById('arStatTotal').textContent  = base.length;
+    document.getElementById('arStatPaid').textContent   = paid;
+    document.getElementById('arStatUnpaid').textContent = unpaid;
+    document.getElementById('arStatInvalid').textContent= invalid;
+
+    // Update tab count
+    const tcEl = document.getElementById('tc-ar');
+    if(tcEl) tcEl.textContent = rows.length || '—';
+
+    // Render table body
+    const tbody = document.getElementById('arTbody');
+    if(!tbody) return;
+
+    if(rows.length === 0){
+      tbody.innerHTML = `<tr><td colspan="5" class="ar-empty">
+        ${myOnly && myEmail ? 'No AR records for <strong>'+esc(myEmail)+'</strong>' : 'No records match your filters'}
+        ${arRawData.length===0 ? '<br><small style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">Load data using Refresh above</small>' : ''}
+      </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rows.map(r => {
+      const statusKey = (r.status||'').toLowerCase();
+      const badgeClass = statusKey==='paid' ? 'paid' : statusKey==='unpaid' ? 'unpaid' : statusKey==='invalid' ? 'invalid' : 'other';
+      return `<tr>
+        <td><span class="ar-acct">${esc(r.account)}</span></td>
+        <td><span class="ar-opp" title="${esc(r.opportunity)}">${esc(r.opportunity)}</span></td>
+        <td><span class="ar-amount">${esc(r.amount)}</span></td>
+        <td><span class="ar-badge ${badgeClass}"><span class="ar-badge-dot"></span>${esc(r.status||'—')}</span></td>
+        <td><span class="ar-date">${esc(r.date)}</span></td>
+      </tr>`;
+    }).join('');
+
+    // Update sort arrows
+    ['account','opportunity','amount','status','date'].forEach(col => {
+      const th = document.getElementById('arTh-'+col);
+      if(!th) return;
+      const arrow = th.querySelector('.sort-arrow');
+      th.classList.toggle('sorted', col===arSortCol);
+      if(arrow) arrow.textContent = col===arSortCol ? (arSortAsc ? '↑' : '↓') : '↕';
+    });
+  };
+
+  window.arSort = function(col){
+    if(arSortCol===col) arSortAsc = !arSortAsc;
+    else { arSortCol=col; arSortAsc=true; }
+    arRender();
+  };
+
+  // ── Called when tab is activated ─────────────────────────────────────────
+  window.arTabActivated = function(){
+    if(arTokenValid() && arRawData.length===0){
+      arShowData();
+      arLoadData();
+    } else if(arTokenValid()){
+      arShowData();
+      arRender();
+    } else {
+      arShowConnect();
+    }
+  };
+
+  // ─
