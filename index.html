@@ -715,7 +715,7 @@
   .ar-stat.c-yellow .ar-stat-val{color:var(--yellow);}
   .ar-stat.c-red .ar-stat-val{color:var(--red);}
   .ar-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
-  .ar-mono{font-family:'DM Mono',monospace}.ar-mono-right{font-family:'DM Mono',monospace;text-align:right}.ar-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .ar-table{width:100%;border-collapse:collapse;font-size:13px;}
   .ar-table th{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);padding:9px 14px;text-align:left;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
   .ar-table th:hover{color:var(--text);}
   .ar-table th .sort-arrow{margin-left:4px;opacity:.4;font-size:9px;}
@@ -5775,42 +5775,64 @@ initBrief(); // Initialise CSM Brief tab (static data, no auth needed)
   window.arLoadData = async function(){
     var savedUrl = arGetSavedUrl();
     if(!savedUrl){ arShowConnect(); return; }
-    var fetchUrl = arToCsvUrl(savedUrl);
-    arSetStatus('loading', 'Loading…');
+    arSetStatus('spin', 'Loading…');
     var btn = document.getElementById('arRefreshBtn');
     if(btn) btn.disabled = true;
     try{
-      var resp = await fetch(fetchUrl, {cache:'no-store'});
-      if(!resp.ok) throw new Error('HTTP ' + resp.status + ' — make sure the sheet is shared as Anyone with the link.');
-      var ct = resp.headers.get('content-type') || '';
-      var buf = await resp.arrayBuffer();
-      var isExcel = ct.includes('spreadsheet') || ct.includes('officedocument') ||
-                    ct.includes('excel') || fetchUrl.endsWith('.xlsx') || fetchUrl.endsWith('.xls');
-      if(isExcel && typeof XLSX !== 'undefined'){
-        var wb = XLSX.read(buf, {type:'array', cellDates:true});
-        var ws = wb.Sheets[wb.SheetNames[0]];
-        arFinalize(XLSX.utils.sheet_to_json(ws, {defval:''}), 'excel');
-      } else {
-        var text = new TextDecoder('utf-8').decode(buf);
-        var lines = text.split('\n').filter(function(l){ return l.trim(); });
-        if(lines.length < 2) throw new Error('Empty or unreadable file.');
-        var headers = arParseCsvLine(lines[0]);
-        var rows = [];
-        for(var i = 1; i < lines.length; i++){
-          var vals = arParseCsvLine(lines[i]);
-          var obj = {};
-          headers.forEach(function(h, idx){ obj[h] = vals[idx] || ''; });
-          rows.push(obj);
+      var isAppsScript = /script\.google\.com\/macros\/s\//i.test(savedUrl);
+      if(isAppsScript){
+        // ── Apps Script path: fetch JSON ──────────────────────────────────────────────────────
+        var myEmail = arGetCurrentEmail();
+        var sep = savedUrl.includes('?') ? '&' : '?';
+        var fetchUrl = savedUrl + sep + 'action=ar' + (myEmail ? '&email=' + encodeURIComponent(myEmail) : '');
+        var resp = await fetch(fetchUrl, {redirect:'follow', cache:'no-store'});
+        if(!resp.ok) throw new Error('HTTP ' + resp.status + ' from Apps Script — check deployment settings.');
+        var json;
+        try{ json = await resp.json(); }
+        catch(e){ throw new Error('Apps Script did not return valid JSON. Ensure it is deployed as a web app with execute access for \'Anyone\'.'); }
+        if(json && json.error) throw new Error(json.error);
+        var rows = (json && json.data) ? json.data : (Array.isArray(json) ? json : null);
+        if(!rows) throw new Error('Unexpected JSON shape from Apps Script.');
+        if(json.source){
+          var tsEl = document.getElementById('arLastLoaded');
+          if(tsEl) tsEl.textContent = '📄 ' + json.source;
         }
-        arFinalize(rows, 'csv');
+        arFinalize(rows, 'json');
+      } else {
+        // ── Direct Sheets / CSV path ────────────────────────────────────────────────────
+        var fetchUrl = arToCsvUrl(savedUrl);
+        var resp = await fetch(fetchUrl, {cache:'no-store'});
+        if(!resp.ok) throw new Error('HTTP ' + resp.status + ' — make sure the sheet is shared as Anyone with the link.');
+        var ct = resp.headers.get('content-type') || '';
+        var buf = await resp.arrayBuffer();
+        var isExcel = ct.includes('spreadsheet') || ct.includes('officedocument') ||
+                      ct.includes('excel') || fetchUrl.endsWith('.xlsx') || fetchUrl.endsWith('.xls');
+        if(isExcel && typeof XLSX !== 'undefined'){
+          var wb = XLSX.read(buf, {type:'array', cellDates:true});
+          var ws = wb.Sheets[wb.SheetNames[0]];
+          arFinalize(XLSX.utils.sheet_to_json(ws, {defval:''}), 'excel');
+        } else {
+          var text = new TextDecoder('utf-8').decode(buf);
+          var lines = text.split('\n').filter(function(l){ return l.trim(); });
+          if(lines.length < 2) throw new Error('Empty or unreadable file — make sure the sheet is shared publicly.');
+          var headers = arParseCsvLine(lines[0]);
+          var rows2 = [];
+          for(var i = 1; i < lines.length; i++){
+            var vals = arParseCsvLine(lines[i]);
+            var obj = {};
+            headers.forEach(function(h, idx){ obj[h] = vals[idx] || ''; });
+            rows2.push(obj);
+          }
+          arFinalize(rows2, 'csv');
+          var ts = new Date().toLocaleString('en-HK',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Hong_Kong'});
+          var tsEl = document.getElementById('arLastLoaded');
+          if(tsEl) tsEl.textContent = 'Updated ' + ts;
+        }
       }
-      var ts = new Date().toLocaleString('en-HK',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Hong_Kong'});
-      var tsEl = document.getElementById('arLastLoaded');
-      if(tsEl) tsEl.textContent = 'Updated ' + ts;
       arSetStatus('ok', 'Loaded');
       arRender();
     }catch(err){
-      arSetStatus('error', 'Error: ' + err.message);
+      arSetStatus('err', 'Error: ' + err.message);
       console.error('[AR]', err);
     }finally{
       if(btn) btn.disabled = false;
@@ -5927,16 +5949,16 @@ initBrief(); // Initialise CSM Brief tab (static data, no auth needed)
       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:32px">No records match.</td></tr>';
       return;
     }
-    var scMap = {Paid:'ar-status-paid',Unpaid:'ar-status-unpaid',Invalid:'ar-status-invalid'};
+    var scMap = {Paid:'paid',Unpaid:'unpaid',Invalid:'invalid'};
     tbody.innerHTML = rows.map(function(r){
       var sc = scMap[r.status] || '';
       var amtN = parseFloat(String(r.amount).replace(/[^0-9.\-]/g,''));
       var amtStr = isNaN(amtN) ? (r.amount||'—')
         : amtN.toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
       return '<tr><td>'+_esc(r.account)+'</td><td>'+_esc(r.opportunity)+'</td>'+
-        '<td class="ar-mono-right">'+_esc(amtStr)+'</td>'+
-        '<td><span class="ar-status-badge '+sc+'">'+_esc(r.status||'—')+'</span></td>'+
-        '<td class="ar-mono">'+_esc(r.date)+'</td></tr>';
+        '<td style="font-family:'DM Mono',monospace;text-align:right">'+_esc(amtStr)+'</td>'+
+        '<td><span class="ar-badge '+sc+'">'+_esc(r.status||'—')+'</span></td>'+
+        '<td style="font-family:'DM Mono',monospace">'+_esc(r.date)+'</td></tr>';
     }).join('');
   };
 
