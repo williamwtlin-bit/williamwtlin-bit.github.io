@@ -715,7 +715,7 @@
   .ar-stat.c-yellow .ar-stat-val{color:var(--yellow);}
   .ar-stat.c-red .ar-stat-val{color:var(--red);}
   .ar-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
-  .ar-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .ar-mono{font-family:'DM Mono',monospace}.ar-mono-right{font-family:'DM Mono',monospace;text-align:right}.ar-table{width:100%;border-collapse:collapse;font-size:13px;}
   .ar-table th{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);padding:9px 14px;text-align:left;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
   .ar-table th:hover{color:var(--text);}
   .ar-table th .sort-arrow{margin-left:4px;opacity:.4;font-size:9px;}
@@ -5934,9 +5934,9 @@ initBrief(); // Initialise CSM Brief tab (static data, no auth needed)
       var amtStr = isNaN(amtN) ? (r.amount||'—')
         : amtN.toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
       return '<tr><td>'+_esc(r.account)+'</td><td>'+_esc(r.opportunity)+'</td>'+
-        '<td style="font-family:'DM Mono',monospace;text-align:right">'+_esc(amtStr)+'</td>'+
+        '<td class="ar-mono-right">'+_esc(amtStr)+'</td>'+
         '<td><span class="ar-status-badge '+sc+'">'+_esc(r.status||'—')+'</span></td>'+
-        '<td style="font-family:'DM Mono',monospace">'+_esc(r.date)+'</td></tr>';
+        '<td class="ar-mono">'+_esc(r.date)+'</td></tr>';
     }).join('');
   };
 
