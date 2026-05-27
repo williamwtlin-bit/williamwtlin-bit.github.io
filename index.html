@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jira Team Dashboard</title>
 <!-- Security: restrict resource loading to known trusted origins -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://*.atlassian.com https://api.media.atlassian.com https://*.workers.dev https://cdnjs.cloudflare.com; connect-src 'self' https://*.atlassian.com https://api.media.atlassian.com https://*.workers.dev https://docs.google.com https://drive.google.com https://script.google.com https://script.googleusercontent.com https://lh3.googleusercontent.com; img-src blob: data: https:; media-src blob: https://api.media.atlassian.com;">
+<meta http-equiv="Content-Security-Policy" contenht="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://*.atlassian.com https://api.media.atlassian.com https://*.workers.dev https://cdnjs.cloudflare.com; connect-src 'self' https://*.atlassian.com https://api.media.atlassian.com https://*.workers.dev https://docs.google.com https://drive.google.com https://script.google.com https://script.googleusercontent.com https://lh3.googleusercontent.com; img-src blob: data: https:; media-src blob: https://api.media.atlassian.com;">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -1072,7 +1072,7 @@
           <option value="">All statuses</option>
           <option value="Paid">✅ Paid</option>
           <option value="Unpaid">⏳ Unpaid</option>
-          <option value="Invalid">❌ Invalid</option>
+          <option value="Invalid">❌ Invalid</option>          <option value="Scheduled">📅 Scheduled</option>          <option value="Draft">📝 Draft</option>
         </select>
         <label class="ar-my-toggle">
           <input type="checkbox" id="arMyOnly" checked onchange="arRender()"> My accounts only
@@ -5815,9 +5815,9 @@ initBrief(); // Initialise CSM Brief tab (static data, no auth needed)
           var text = new TextDecoder('utf-8').decode(buf);
           var lines = text.split('\n').filter(function(l){ return l.trim(); });
           if(lines.length < 2) throw new Error('Empty or unreadable file — make sure the sheet is shared publicly.');
-          var headers = arParseCsvLine(lines[0]);
+          var headerIdx=0;for(var hi=0;hi<Math.min(lines.length,30);hi++){var th=arParseCsvLine(lines[hi]);if(th.some(function(c){return c.toLowerCase().includes('account');})){headerIdx=hi;break;}}var headers=arParseCsvLine(lines[headerIdx]);
           var rows2 = [];
-          for(var i = 1; i < lines.length; i++){
+          for(var i = headerIdx+1; i < lines.length; i++){
             var vals = arParseCsvLine(lines[i]);
             var obj = {};
             headers.forEach(function(h, idx){ obj[h] = vals[idx] || ''; });
