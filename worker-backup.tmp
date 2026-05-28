@@ -1,0 +1,625 @@
+--e232cbed7599906d4d2cc8a111e1ad759e77723a67a0daf4b192b9fdd7d9
+Content-Disposition: form-data; name="worker.js"
+
+/**
+ * CSM Brief Worker — Cloudflare Worker with Cron Trigger
+ * Runs daily at 01:00 UTC (09:00 HKT)
+ *
+ * Required env vars (Cloudflare Dashboard → Worker → Settings → Variables):
+ *   JIRA_API_TOKEN        — Jira API token for william.wt.lin@appier.com
+ *   GITHUB_TOKEN          — GitHub PAT with repo write access
+ *   GOOGLE_CLIENT_ID      — Google OAuth2 client ID
+ *   GOOGLE_CLIENT_SECRET  — Google OAuth2 client secret
+ *   GOOGLE_REFRESH_TOKEN  — OAuth2 refresh token (calendar.readonly scope)
+ *
+ * Output: writes csm-brief.json to GitHub Pages repo every run.
+ * Reads:  csm-memory.json for ignore list, pinned tickets, contract dates.
+ */
+
+const GITHUB_OWNER = 'williamwtlin-bit';
+const GITHUB_REPO  = 'williamwtlin-bit.github.io';
+const GITHUB_API   = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents`;
+
+const ACCOUNTS = [
+  {
+    id: 'mannings',
+    name: 'Mannings',
+    keywords: ['Mannings'],
+    calendarKeyword: 'Mannings',
+    pinnedTickets: ['AIXP-1840'],
+    projects: ['Q3 Renewal Contract', 'AIXON → AIRIS Upgrade (Q4)'],
+    contractRenewal: 'Jun 2026',
+  },
+  {
+    id: 'scmp',
+    name: 'SCMP',
+    keywords: ['SCMP'],
+    calendarKeyword: 'SCMP',
+    pinnedTickets: [],
+    projects: ['Segments Enablement', 'Renewal (June 2026)'],
+    contractRenewal: 'Jun 2026',
+  },
+  {
+    id: '1010hope',
+    name: '10/10Hope',
+    keywords: ['10/10Hope'],
+    calendarKeyword: '10/10Hope',
+    pinnedTickets: [],
+    projects: ['AIQUA Onboarding', 'klickngo API Integration'],
+    contractRenewal: null,
+  },
+  {
+    id: 'luxgen',
+    name: 'Luxgen',
+    keywords: ['Luxgen'],
+    calendarKeyword: 'Luxgen',
+    pinnedTickets: [],
+    projects: ['Contract Renewal 2026 (BB)'],
+    contractRenewal: '2026-11-23',
+  },
+  {
+    id: '55688',
+    name: '55688',
+    keywords: ['55688'],
+    calendarKeyword: '55688',
+    pinnedTickets: [],
+    projects: ['Service Agent RFQ', 'AQ JM Timeout Fix'],
+    contractRenewal: null,
+  },
+  {
+    id: 'tiangyuanxiang',
+    name: '田原香',
+    keywords: ['田原香'],
+    calendarKeyword: '田原香',
+    pinnedTickets: [],
+    projects: ['EUU Onboarding', 'Campaign Agent Feature'],
+    contractRenewal: 'Feb 2027',
+  },
+  {
+    id: 'momax',
+    name: 'Momax',
+    keywords: ['Momax'],
+    calendarKeyword: 'Momax',
+    pinnedTickets: [],
+    projects: [],
+    contractRenewal: null,
+  },
+  {
+    id: 'citysuper',
+    name: 'City Super',
+    keywords: ['City Super', 'CitySuper', 'Prizm', 'city super'],
+    calendarKeyword: 'City Super',
+    pinnedTickets: [],
+    projects: [],
+    contractRenewal: null,
+  },
+];
+
+// Covers standard Jira statuses + common approval/review workflow statuses
+const ACTIVE_STATUSES = '"Open","In Progress","To Do","Backlog","Reopened","Waiting for Approval","Pending","In Review","Under Review","On Hold","Waiting","Submitted","Pending Review","Awaiting Approval"';
+const JIRA_CLOUD_ID   = 'b405d57e-0421-4eaa-bd68-06ef11fa7337';
+const JIRA_EMAIL      = 'william.wt.lin@appier.com'; // used for Basic auth header
+
+// ── ENTRY POINTS ──────────────────────────────────────────────────────────────
+
+export default {
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(runDailyBrief(env));
+  },
+
+  async fetch(request, env, ctx) {
+    const path = new URL(request.url).pathname;
+    if (path === '/run') {
+      ctx.waitUntil(runDailyBrief(env));
+      return new Response('Brief triggered — csm-brief.json will update in ~30s', {
+        headers: { 'Content-Type': 'text/plain' },
+      });
+    }
+    if (path === '/run-sync') {
+      try {
+        await runDailyBrief(env);
+        return new Response(JSON.stringify({ status: 'ok', time: new Date().toISOString() }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } catch (err) {
+        return new Response(JSON.stringify({ status: 'error', message: err.message, stack: err.stack }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    }
+    if (path === '/health') {
+      return new Response(JSON.stringify({ status: 'ok', time: new Date().toISOString() }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    if (path === '/update-memory' && request.method === 'POST') {
+      // Accepts full csm-memory.json body and writes it to GitHub
+      // Called by Claude via Chrome when corporate proxy blocks direct GitHub PUT
+      try {
+        const corsHeaders = {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        };
+        const newMemory = await request.json();
+        newMemory.lastUpdated = new Date(Date.now() + 8 * 3600000).toISOString().replace('Z', '+08:00');
+        await writeGitHubJSON('csm-memory.json', newMemory, 'chore: csm-memory update via Claude', env);
+        return new Response(JSON.stringify({ status: 'ok', time: newMemory.lastUpdated }), { headers: corsHeaders });
+      } catch (err) {
+        return new Response(JSON.stringify({ status: 'error', message: err.message }), {
+          status: 500, headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+        });
+      }
+    }
+    if (path === '/update-memory' && request.method === 'OPTIONS') {
+      return new Response(null, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        },
+      });
+    }
+    if (path === '/patch-dashboard' && request.method === 'POST') {
+      // Injects OKR sync script into index.html so dashboard always loads fresh data from csm-memory.json
+      // Safe to call multiple times — checks for existing injection marker before patching
+      const cors = { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' };
+      try {
+        // Read current index.html
+        const r = await fetch(`${GITHUB_API}/index.html`, {
+          headers: { Authorization: `token ${env.GITHUB_TOKEN}`, Accept: 'application/vnd.github.v3+json', 'User-Agent': 'csm-brief-worker/1.0' },
+        });
+        if (!r.ok) throw new Error(`GitHub read failed: ${r.status}`);
+        const d = await r.json();
+        const sha = d.sha;
+        const html = decodeURIComponent(escape(atob(d.content.replace(/\n/g, ''))));
+
+        // Idempotency: skip if already patched
+        const MARKER = '/* csm-okr-sync-v1 */';
+        if (html.includes(MARKER)) {
+          return new Response(JSON.stringify({ status: 'already-patched' }), { headers: cors });
+        }
+
+        const syncScript = `
+<script id="csm-okr-sync">${MARKER}
+(async()=>{
+  try{
+    const mem=await(await fetch('https://raw.githubusercontent.com/williamwtlin-bit/williamwtlin-bit.github.io/main/csm-memory.json')).json();
+    const cm={'Onboard':'onboard','Renewal':'renewal','Ticket Resolved':'ticket','Feature Enabled':'feature','Pitching':'pitching','AI Adoption':'ai','Team Contribution':'team'};
+    const toQ=d=>{const[y,q]=d.split('-');return q+' '+y;};
+    const entries=(mem.okrLog||[]).map(e=>({quarter:toQ(e.date),category:cm[e.category]||'other',client:e.client,description:e.description}));
+    localStorage.setItem('csm_session_log',JSON.stringify(entries));
+    if(typeof renderOKR==='function')renderOKR();
+    if(typeof renderLog==='function')renderLog();
+    if(typeof briefUpdateTabCounts==='function')briefUpdateTabCounts();
+    console.log('[CSM] OKR synced from GitHub:',entries.length,'entries');
+  }catch(e){console.warn('[CSM] OKR sync failed',e);}
+})();
+<\/script>`;
+
+        const patched = html.replace('</body>', syncScript + '\n</body>');
+        if (patched === html) throw new Error('</body> tag not found in index.html');
+
+        // Write back
+        const content = btoa(unescape(encodeURIComponent(patched)));
+        const wr = await fetch(`${GITHUB_API}/index.html`, {
+          method: 'PUT',
+          headers: { Authorization: `token ${env.GITHUB_TOKEN}`, 'Content-Type': 'application/json', Accept: 'application/vnd.github.v3+json', 'User-Agent': 'csm-brief-worker/1.0' },
+          body: JSON.stringify({ message: 'feat: sync OKR from csm-memory.json on page load', content, sha }),
+        });
+        if (!wr.ok) throw new Error(`GitHub write failed: ${wr.status} ${await wr.text()}`);
+        return new Response(JSON.stringify({ status: 'ok', message: 'index.html patched — OKR will sync from GitHub on every page load' }), { headers: cors });
+      } catch (err) {
+        return new Response(JSON.stringify({ status: 'error', message: err.message }), { status: 500, headers: cors });
+      }
+    }
+    if (path === '/patch-dashboard' && request.method === 'OPTIONS') {
+      return new Response(null, { headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' } });
+    }
+    if (path === '/test-calendar') {
+      try {
+        const token = await getGoogleAccessToken(env);
+        const now = new Date();
+        const twoWeeks = new Date(now.getTime() + 14 * 24 * 3600 * 1000);
+        const params = new URLSearchParams({
+          q: 'Mannings',
+          timeMin: now.toISOString(),
+          timeMax: twoWeeks.toISOString(),
+          singleEvents: 'true',
+          orderBy: 'startTime',
+          maxResults: '5',
+        });
+        const r = await fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/primary/events?${params}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const d = await r.json();
+        // Return full raw response so we can see errors or data
+        return new Response(JSON.stringify({ httpStatus: r.status, body: d }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } catch (err) {
+        return new Response(JSON.stringify({ status: 'error', message: err.message }), {
+          status: 500, headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    }
+    return new Response('CSM Brief Worker\nGET /run            — trigger brief (async)\nGET /run-sync       — trigger brief + wait for result\nGET /health         — status check\nGET /test-calendar  — test Google Calendar credentials');
+  },
+};
+
+// ── MAIN ──────────────────────────────────────────────────────────────────────
+
+async function runDailyBrief(env) {
+  try {
+    const generatedAt = getHKTTimestamp();
+
+    // 1. Load persistent memory (ignore list, pinned tickets, contract dates)
+    const memory = await readGitHubJSON('csm-memory.json', env);
+    const ignoreSet = new Set((memory.ignoreTickets || []).map(t => t.key));
+
+    // Merge memory pinned tickets into ACCOUNTS
+    const accounts = ACCOUNTS.map(acct => {
+      const memPinned = (memory.pinnedTickets || [])
+        .filter(p => p.account === acct.id)
+        .map(p => p.key);
+      return { ...acct, pinnedTickets: [...new Set([...acct.pinnedTickets, ...memPinned])] };
+    });
+
+    // 2. Fetch previous brief for diff detection
+    const prevBrief = await readGitHubJSON('csm-brief.json', env);
+    const prevAccounts = {};
+    for (const a of (prevBrief.accounts || [])) prevAccounts[a.id] = a;
+
+    // 3. Fetch live Jira data and Google Calendar in parallel
+    const [accountData, calendarByAccount] = await Promise.all([
+      Promise.all(accounts.map(acct => fetchAccountData(acct, ignoreSet, env))),
+      fetchAllCalendarMeetings(accounts, env),
+    ]);
+
+    // 4. Build rule-based insight per account
+    const withInsights = accountData.map(data => ({
+      ...data,
+      meetings: calendarByAccount[data.id] || [],
+      insight: buildInsight(data, calendarByAccount[data.id] || []),
+    }));
+
+    // 5. Build diffs vs previous brief
+    const withDiffs = withInsights.map(data => ({
+      ...data,
+      diffs: buildDiffs(data, prevAccounts[data.id]),
+    }));
+
+    // 6. Assemble csm-brief.json
+    const brief = {
+      generatedAt,
+      accounts: withDiffs.map(a => ({
+        id:          a.id,
+        name:        a.name,
+        health:      getHealth(a.tickets, a, a.meetings),
+        insight:     a.insight,
+        diffs:       a.diffs,
+        riskTags:    getRiskTags(a),
+        ticketCount: a.tickets.length,
+        mtgCount:    a.meetings.length,
+        projects:    a.projects.map(p => ({ name: p, status: 'progress' })),
+        meetings:    a.meetings,
+        tickets:     a.tickets.map(t => ({
+          key:      t.key,
+          title:    t.title,
+          status:   t.status,
+          assignee: t.assignee,
+          pinned:   t.pinned,
+        })),
+        suggestions: buildSuggestions(a),
+      })),
+    };
+
+    // 7. Upload csm-brief.json to GitHub
+    await writeGitHubJSON('csm-brief.json', brief, 'chore: csm-brief daily update', env);
+
+    console.log('[CSM Brief] Done:', generatedAt);
+  } catch (err) {
+    console.error('[CSM Brief] Error:', err.message, err.stack);
+    throw err;
+  }
+}
+
+// ── GOOGLE CALENDAR ───────────────────────────────────────────────────────────
+
+async function getGoogleAccessToken(env) {
+  const r = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id:     env.GOOGLE_CLIENT_ID,
+      client_secret: env.GOOGLE_CLIENT_SECRET,
+      refresh_token: env.GOOGLE_REFRESH_TOKEN,
+      grant_type:    'refresh_token',
+    }),
+  });
+  const d = await r.json();
+  if (!d.access_token) throw new Error(`Google token error: ${JSON.stringify(d)}`);
+  return d.access_token;
+}
+
+async function fetchAllCalendarMeetings(accounts, env) {
+  // If Google creds not set, return empty — brief still works without calendar
+  if (!env.GOOGLE_REFRESH_TOKEN || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+    console.log('[CSM Brief] Google creds not set — skipping calendar');
+    return {};
+  }
+
+  let accessToken;
+  try {
+    accessToken = await getGoogleAccessToken(env);
+  } catch (e) {
+    console.error('[CSM Brief] Calendar auth failed:', e.message);
+    return {};
+  }
+
+  const now      = new Date();
+  const twoWeeks = new Date(now.getTime() + 14 * 24 * 3600 * 1000);
+  const timeMin  = now.toISOString();
+  const timeMax  = twoWeeks.toISOString();
+
+  const results = await Promise.all(
+    accounts.map(acct => fetchAccountMeetings(acct, accessToken, timeMin, timeMax))
+  );
+
+  const out = {};
+  accounts.forEach((acct, i) => { out[acct.id] = results[i]; });
+  return out;
+}
+
+async function fetchAccountMeetings(acct, accessToken, timeMin, timeMax) {
+  try {
+    const params = new URLSearchParams({
+      q:            acct.calendarKeyword,
+      timeMin,
+      timeMax,
+      singleEvents: 'true',
+      orderBy:      'startTime',
+      maxResults:   '10',
+    });
+    const r = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/primary/events?${params}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    const d = await r.json();
+    return (d.items || [])
+      .filter(e => e.status === 'confirmed')
+      .map(e => {
+        const start   = new Date(e.start?.dateTime || e.start?.date);
+        const end     = new Date(e.end?.dateTime   || e.end?.date);
+        const dateStr = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Asia/Hong_Kong' });
+        const t0      = start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Hong_Kong' });
+        const t1      = end.toLocaleTimeString  ('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Hong_Kong' });
+        const org     = e.organizer?.displayName || e.organizer?.email || '';
+        return {
+          date:  dateStr,
+          title: e.summary || '(no title)',
+          meta:  `${t0}–${t1} HKT${org ? ' · ' + org : ''}`,
+        };
+      });
+  } catch (e) {
+    console.error(`[CSM Brief] Calendar fetch failed for ${acct.id}:`, e.message);
+    return [];
+  }
+}
+
+// ── GITHUB ────────────────────────────────────────────────────────────────────
+
+async function readGitHubJSON(path, env) {
+  try {
+    const r = await fetch(`${GITHUB_API}/${path}`, {
+      headers: {
+        Authorization: `token ${env.GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github.v3+json',
+        'User-Agent': 'csm-brief-worker/1.0',
+      },
+    });
+    if (!r.ok) return {};
+    const d = await r.json();
+    return JSON.parse(atob(d.content.replace(/\n/g, '')));
+  } catch (_) {
+    return {};
+  }
+}
+
+async function writeGitHubJSON(path, obj, message, env) {
+  let sha;
+  try {
+    const r = await fetch(`${GITHUB_API}/${path}`, {
+      headers: {
+        Authorization: `token ${env.GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github.v3+json',
+        'User-Agent': 'csm-brief-worker/1.0',
+      },
+    });
+    if (r.ok) { const d = await r.json(); sha = d.sha; }
+  } catch (_) {}
+
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2))));
+  const body = { message, content };
+  if (sha) body.sha = sha;
+
+  const r = await fetch(`${GITHUB_API}/${path}`, {
+    method: 'PUT',
+    headers: {
+      Authorization: `token ${env.GITHUB_TOKEN}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/vnd.github.v3+json',
+      'User-Agent': 'csm-brief-worker/1.0',
+    },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) {
+    const err = await r.text();
+    throw new Error(`GitHub write failed for ${path}: ${r.status} ${err}`);
+  }
+  return r.json();
+}
+
+// ── JIRA ──────────────────────────────────────────────────────────────────────
+
+async function fetchAccountData(acct, ignoreSet, env) {
+  const base = `https://api.atlassian.com/ex/jira/${JIRA_CLOUD_ID}/rest/api/3`;
+  const auth = btoa(`${JIRA_EMAIL}:${env.JIRA_API_TOKEN}`);
+  const headers = { Authorization: `Basic ${auth}`, Accept: 'application/json' };
+
+  // Support multiple keywords per account (case/space insensitive via Jira's ~ operator)
+  const keywordList = acct.keywords || [acct.keyword];
+  const jqlParts    = keywordList.map(k => `summary ~ "${k}"`).join(' OR ');
+  const jql         = `(${jqlParts}) AND status in (${ACTIVE_STATUSES}) ORDER BY updated DESC`;
+  const res = await fetch(
+    `${base}/search?jql=${encodeURIComponent(jql)}&maxResults=15&fields=summary,status,assignee,updated`,
+    { headers }
+  );
+  const data = await res.json();
+
+  const liveTickets = (data.issues || [])
+    .filter(i => !ignoreSet.has(i.key))
+    .map(i => ({
+      key:      i.key,
+      title:    i.fields.summary,
+      status:   normalizeStatus(i.fields.status?.name),
+      assignee: i.fields.assignee?.displayName || 'Unassigned',
+      daysOld:  daysSince(i.fields.updated),
+      pinned:   acct.pinnedTickets.includes(i.key),
+    }));
+
+  // Fetch pinned tickets not in JQL results
+  const liveKeys    = new Set(liveTickets.map(t => t.key));
+  const missingPins = acct.pinnedTickets.filter(k => !liveKeys.has(k) && !ignoreSet.has(k));
+  const pinnedExtra = (await Promise.all(missingPins.map(async key => {
+    try {
+      const r = await fetch(`${base}/issue/${key}?fields=summary,status,assignee,updated`, { headers });
+      const d = await r.json();
+      const st = d.fields?.status?.name || '';
+      if (/done|closed|resolved|won.t fix|duplicate/i.test(st)) return null;
+      return {
+        key,
+        title:    d.fields?.summary || key,
+        status:   normalizeStatus(st),
+        assignee: d.fields?.assignee?.displayName || 'Unassigned',
+        daysOld:  daysSince(d.fields?.updated),
+        pinned:   true,
+      };
+    } catch (_) { return null; }
+  }))).filter(Boolean);
+
+  const tickets = [...pinnedExtra, ...liveTickets.filter(t => !acct.pinnedTickets.includes(t.key))];
+  return { ...acct, tickets };
+}
+
+function normalizeStatus(s = '') {
+  const l = s.toLowerCase();
+  if (l.includes('progress'))         return 'in-progress';
+  if (l.includes('backlog'))          return 'backlog';
+  if (/blocked|impediment/.test(l))   return 'blocked';
+  return 'open';
+}
+
+function daysSince(iso) {
+  if (!iso) return null;
+  return Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+}
+
+// ── HEALTH ────────────────────────────────────────────────────────────────────
+
+function getHealth(tickets, acct, meetings = []) {
+  if (tickets.some(t => t.status === 'blocked'))                          return 'red';
+  if (tickets.some(t => t.pinned && t.status === 'in-progress'))          return 'red';
+  if (tickets.some(t => t.daysOld != null && t.daysOld > 7))             return 'yellow';
+  if (tickets.length > 0)                                                 return 'yellow';
+  if (['Jun 2026', 'May 2026'].includes(acct.contractRenewal))            return 'yellow';
+  if (meetings.length > 0)                                                return 'yellow';
+  return 'green';
+}
+
+// ── DIFFS ─────────────────────────────────────────────────────────────────────
+
+function buildDiffs(current, prev) {
+  if (!prev) return [];
+  const diffs = [];
+  const prevKeys = new Set((prev.tickets || []).map(t => t.key));
+  const currKeys = new Set(current.tickets.map(t => t.key));
+
+  for (const t of current.tickets) {
+    if (!prevKeys.has(t.key))
+      diffs.push({ type: 'new', text: `${t.key} ${t.title.substring(0, 60)}` });
+  }
+  for (const t of (prev.tickets || [])) {
+    if (!currKeys.has(t.key))
+      diffs.push({ type: 'close', text: `${t.key} closed` });
+  }
+  for (const t of current.tickets) {
+    if (t.status === 'blocked' && (prev.tickets || []).find(p => p.key === t.key && p.status !== 'blocked'))
+      diffs.push({ type: 'warn', text: `${t.key} now Blocked` });
+  }
+  const healthRank = { green: 0, yellow: 1, red: 2 };
+  if ((healthRank[current.health] ?? 0) > (healthRank[prev.health] ?? 0))
+    diffs.push({ type: 'warn', text: `Health changed ${prev.health} → ${current.health}` });
+
+  return diffs;
+}
+
+// ── RISK TAGS ─────────────────────────────────────────────────────────────────
+
+function getRiskTags(data) {
+  const tags = [];
+  if (data.tickets.length > 0)                                                         tags.push('ticket');
+  if (['Jun 2026', 'May 2026', 'TBD'].includes(data.contractRenewal))                  tags.push('renewal');
+  if (data.tickets.some(t => t.status === 'blocked' || (t.daysOld != null && t.daysOld > 14))) tags.push('stale');
+  if (data.meetings && data.meetings.length > 0)                                        tags.push('mtg');
+  return tags;
+}
+
+// ── SUGGESTIONS ───────────────────────────────────────────────────────────────
+
+function buildSuggestions(data) {
+  const s = [];
+  for (const t of data.tickets) {
+    if (t.pinned && (t.status === 'in-progress' || t.status === 'blocked')) {
+      s.push({ priority: 'high', label: 'Ticket · High', text: `Follow up on ${t.key} (${t.status}, ${t.daysOld ?? '?'}d old)` });
+    }
+  }
+  if (['Jun 2026', 'May 2026'].includes(data.contractRenewal)) {
+    s.push({ priority: 'high', label: 'Renewal · High', text: `${data.name} renewal due ${data.contractRenewal} — confirm status now` });
+  }
+  if (data.meetings && data.meetings.length > 0) {
+    const next = data.meetings[0];
+    s.push({ priority: 'medium', label: 'Meeting · Medium', text: `Prep for ${next.title} on ${next.date} (${next.meta})` });
+  }
+  if (!s.length && data.tickets.length === 0) {
+    s.push({ priority: 'low', label: 'Check-in · Low', text: `No active tickets — send a check-in to ${data.name}` });
+  }
+  return s.slice(0, 3);
+}
+
+// ── INSIGHT ───────────────────────────────────────────────────────────────────
+
+function buildInsight(data, meetings = []) {
+  const parts = [];
+  if (data.tickets.length > 0) {
+    const t = data.tickets[0];
+    parts.push(`${t.key} ${t.status} ${t.daysOld ?? '?'}d`);
+    if (data.tickets.length > 1) parts.push(`+${data.tickets.length - 1} more`);
+  }
+  if (meetings.length > 0) {
+    parts.push(`${meetings[0].title} ${meetings[0].date}`);
+  }
+  if (['Jun 2026', 'May 2026'].includes(data.contractRenewal)) {
+    parts.push(`renewal due ${data.contractRenewal}`);
+  }
+  return parts.length > 0 ? parts.join(' · ') + '.' : 'No active tickets — all clear.';
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+
+function getHKTTimestamp() {
+  const hkt = new Date(Date.now() + 8 * 3600000);
+  return hkt.toISOString().replace('Z', '+08:00');
+}
+--e232cbed7599906d4d2cc8a111e1ad759e77723a67a0daf4b192b9fdd7d9--
