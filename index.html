@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jira Team Dashboard</title>
+<title>Jira Team Dashboard</title>X
 <!-- Security: restrict resource loading to known trusted origins -->
 <meta http-equiv="Content-Security-Policy" contenht="default-src 'self' 'unsafe-inlhine' https://fonts.googleapis.com https://fonts.gstatic.com https://*.atlassian.com https://api.media.atlassian.com https://*.workers.dev https://cdnjs.cloudflare.com; connect-src 'self' https://*.atlassian.com https://api.media.atlassian.com https://*.workers.dev https://docs.google.com https://drive.google.com https://script.google.com https://script.googleusercontent.com https://lh3.googleusercontent.com; img-src blob: data: https:; media-src blob: https://api.media.atlassian.com;">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -3090,6 +3090,8 @@ async function launchDashboard(user){
     renderTbd(assigned);
     renderPinned();
     toast('success',`Welcome ${user.displayName} — loaded ${reported.length} reported, ${assigned.length} assigned`);
+    // Strip any stale mock records left over from a preview session (ob_mock_*)
+    saveOnboardings(loadOnboardings().filter(function(o){ return !o.id.startsWith('ob_mock_'); }));
     renderOnboardingProgress();
     scheduleDaily();
   }catch(e){
