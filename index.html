@@ -5917,6 +5917,7 @@ initBrief(); // Initialise CSM Brief tab (static data, no auth needed)
         _sd.appendChild(o);
       });
       if(_pv && _sd.querySelector('option[value="'+_pv+'"]')) _sd.value=_pv;
+      else { var _me=arGetCurrentEmail(); if(_me && _sd.querySelector('option[value="'+_me+'"]')) _sd.value=_me; }
     }
     arRender();
   }
