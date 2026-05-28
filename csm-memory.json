@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-05-26T11:20:28.553+08:00",
+  "lastUpdated": "2026-05-28T16:11:40.670+08:00",
   "rules": [
     {
       "id": "okr-consolidate",
@@ -36,6 +36,12 @@
       "account": "55688",
       "ignoredOn": "2026-05-26",
       "reason": "AQ JM Timeout Fix closed"
+    },
+    {
+      "key": "AEP-6089",
+      "account": "tiangyuanxiang",
+      "ignoredOn": "2026-05-28",
+      "reason": "EUU onboarding confirmed complete — dropped per CSM"
     }
   ],
   "pinnedTickets": [
