@@ -733,6 +733,8 @@
   .ar-badge.paid .ar-badge-dot{background:var(--green);}
   .ar-badge.unpaid{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.22);}
   .ar-badge.unpaid .ar-badge-dot{background:var(--yellow);}
+  .ar-badge.draft{background:rgba(124,92,250,.1);color:var(--purple);border:1px solid rgba(124,92,250,.22);}
+  .ar-badge.draft .ar-badge-dot{background:var(--purple);}
   .ar-badge.invalid{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.22);}
   .ar-badge.invalid .ar-badge-dot{background:var(--red);}
   .ar-badge.other{background:rgba(148,163,184,.08);color:var(--muted2);border:1px solid rgba(148,163,184,.18);}
@@ -1072,6 +1074,7 @@
           <option value="">All statuses</option>
           <option value="Paid">✅ Paid</option>
           <option value="Unpaid">⏳ Unpaid</option>
+          <option value="Billed">🧾 Billed</option>
           <option value="Invalid">❌ Invalid</option>          <option value="Scheduled">📅 Scheduled</option>          <option value="Draft">📝 Draft</option>
         </select>
         <label class="ar-my-toggle">
@@ -5877,22 +5880,29 @@ initBrief(); // Initialise CSM Brief tab (static data, no auth needed)
   function arFinalize(rows, fmt){
     if(!rows || !rows.length){ arRawData = []; arRender(); return; }
     var headers = Object.keys(rows[0]);
-    var colAccount  = arFindCol(headers,'Account','Account Name');
-    var colOpp      = arFindCol(headers,'Opportunity: Opportunity Name','Opportunity Name','Opportunity');
-    var colAmount   = arFindCol(headers,'Issued Invoice Amount','Invoice Amount','Amount');
-    var colCsmEmail = arFindCol(headers,'CSM Email','CSM','Owner Email');
-    var colStatus   = arFindCol(headers,'AR Status','Status');
-    var colDate     = arFindCol(headers,'Expected Sending Date','Expected Date','Due Date','Date');
-    arRawData = rows.map(function(r){
+    var colAccount  = arFindCol(headers,`Account`,`Account Name`);
+    var colOpp      = arFindCol(headers,`Opportunity: Opportunity Name`,`Opportunity Name`,`Opportunity`);
+    var colAmount   = arFindCol(headers,`Issued Invoice Amount`,`Invoice Amount`,`Amount`);
+    var colCsmEmail = arFindCol(headers,`CSM Email`,`CSM`,`Owner Email`);
+    var colStatus   = arFindCol(headers,`AR Status`,`Status`);
+    var colDate     = arFindCol(headers,`Expected Sending Date`,`Expected Date`,`Due Date`,`Date`);
+    var mapped = rows.map(function(r){
       return {
-        account:     String(r[colAccount]  || '').trim(),
-        opportunity: String(r[colOpp]      || '').trim(),
-        amount:      r[colAmount] || '',
-        csmEmail:    String(r[colCsmEmail] || '').trim().toLowerCase(),
-        status:      String(r[colStatus]   || '').trim(),
-        date:        String(r[colDate]     || '').trim(),
+        account:     String(r[colAccount]  || ``).trim(),
+        opportunity: String(r[colOpp]      || ``).trim(),
+        amount:      r[colAmount] || ``,
+        csmEmail:    String(r[colCsmEmail] || ``).trim().toLowerCase(),
+        status:      String(r[colStatus]   || ``).trim(),
+        date:        String(r[colDate]     || ``).trim(),
       };
-    }).filter(function(r){ return r.account || r.opportunity; });
+    });
+    var _la=``,_lo=``,_le=``;
+    mapped.forEach(function(r){
+      if(r.account) _la=r.account; else r.account=_la;
+      if(r.opportunity) _lo=r.opportunity; else r.opportunity=_lo;
+      if(r.csmEmail) _le=r.csmEmail; else r.csmEmail=_le;
+    });
+    arRawData = mapped.filter(function(r){ return r.opportunity || r.account; });
     arRender();
   }
 
@@ -5910,56 +5920,77 @@ initBrief(); // Initialise CSM Brief tab (static data, no auth needed)
 
   window.arRender = function(){
     var myEmail = arGetCurrentEmail();
-    var myOnlyEl = document.getElementById('arMyOnly');
-    var searchEl = document.getElementById('arSearch');
-    var statusEl = document.getElementById('arStatusFilter');
+    var myOnlyEl = document.getElementById(`arMyOnly`);
+    var searchEl = document.getElementById(`arSearch`);
+    var statusEl = document.getElementById(`arStatusFilter`);
     var useMyOnly = myOnlyEl ? myOnlyEl.checked : true;
-    var search    = searchEl ? searchEl.value.toLowerCase() : '';
-    var statusF   = statusEl ? statusEl.value : '';
-
+    var search    = searchEl ? searchEl.value.toLowerCase() : ``;
+    var statusF   = statusEl ? statusEl.value : ``;
     var rows = arRawData.slice();
     if(useMyOnly && myEmail) rows = rows.filter(function(r){ return r.csmEmail === myEmail; });
     if(search) rows = rows.filter(function(r){
       return r.account.toLowerCase().includes(search) || r.opportunity.toLowerCase().includes(search);
     });
     if(statusF) rows = rows.filter(function(r){ return r.status === statusF; });
-
-    rows.sort(function(a,b){
-      var av = a[_arSortBy]||'', bv = b[_arSortBy]||'';
-      if(_arSortBy === 'amount'){
-        av = parseFloat(String(av).replace(/[^0-9.\-]/g,''))||0;
-        bv = parseFloat(String(bv).replace(/[^0-9.\-]/g,''))||0;
-        return _arSortAsc ? av-bv : bv-av;
-      }
-      return _arSortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
-    });
-
     var total   = rows.length;
-    var paid    = rows.filter(function(r){ return /paid/i.test(r.status); }).length;
-    var unpaid  = rows.filter(function(r){ return /unpaid/i.test(r.status) && !/^paid/i.test(r.status); }).length;
-    var invalid = rows.filter(function(r){ return /invalid/i.test(r.status); }).length;
+    var paid    = rows.filter(function(r){ return /^paid$/i.test(r.status); }).length;
+    var invalid = rows.filter(function(r){ return /^invalid$/i.test(r.status); }).length;
+    var unpaid  = rows.filter(function(r){ return /^(billed|draft|unpaid|scheduled)$/i.test(r.status); }).length;
     function _set(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
-    _set('arStatTotal',total); _set('arStatPaid',paid);
-    _set('arStatUnpaid',unpaid); _set('arStatInvalid',invalid);
-    _set('tc-ar', total||'—');
-
-    var tbody = document.getElementById('arTbody');
+    _set(`arStatTotal`,total); _set(`arStatPaid`,paid);
+    _set(`arStatUnpaid`,unpaid); _set(`arStatInvalid`,invalid);
+    _set(`tc-ar`, total||`—`);
+    var tbody = document.getElementById(`arTbody`);
     if(!tbody) return;
     if(!rows.length){
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:32px">No records match.</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">No records match.</td></tr>`;
       return;
     }
-    var scMap = {Paid:'paid',Unpaid:'unpaid',Invalid:'invalid'};
-    tbody.innerHTML = rows.map(function(r){
-      var sc = scMap[r.status] || '';
-      var amtN = parseFloat(String(r.amount).replace(/[^0-9.\-]/g,''));
-      var amtStr = isNaN(amtN) ? (r.amount||'—')
-        : amtN.toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
-      return '<tr><td>'+_esc(r.account)+'</td><td>'+_esc(r.opportunity)+'</td>'+
-        '<td style="font-family:\'DM Mono\',monospace;text-align:right">'+_esc(amtStr)+'</td>'+
-        '<td><span class="ar-badge '+sc+'">'+_esc(r.status||'—')+'</span></td>'+
-        '<td style="font-family:\'DM Mono\',monospace">'+_esc(r.date)+'</td></tr>';
-    }).join('');
+    function _pa(s){ return parseFloat(String(s).replace(/[^0-9.\-]/g,``))||0; }
+    function _sc(st){
+      var s=(st||``).toLowerCase();
+      if(s===`paid`) return `paid`; if(s===`invalid`) return `invalid`;
+      if(s===`billed`||s===`unpaid`) return `unpaid`; if(s===`draft`) return `draft`;
+      if(s===`scheduled`) return `scheduled`; return ``;
+    }
+    var acctMap={}, acctOrder=[];
+    rows.forEach(function(r){
+      var a=r.account||`(No Account)`, o=r.opportunity||`(No Opportunity)`;
+      if(!acctMap[a]){ acctMap[a]={}; acctOrder.push(a); }
+      if(!acctMap[a][o]) acctMap[a][o]=[];
+      acctMap[a][o].push(r);
+    });
+    var html=``;
+    acctOrder.forEach(function(acct){
+      var oppMap=acctMap[acct], opps=Object.keys(oppMap);
+      var aTotal=0, aCur=``;
+      opps.forEach(function(o){ oppMap[o].forEach(function(r){
+        var m=String(r.amount).match(/([A-Z]{3})/); if(m) aCur=m[1]; aTotal+=_pa(r.amount);
+      }); });
+      html+=`<tr style="background:var(--surface2)"><td colspan="5" style="padding:8px 14px;border-top:2px solid var(--accent);border-bottom:1px solid var(--border)">`;
+      html+=`<div style="display:flex;justify-content:space-between;align-items:center">`;
+      html+=`<span style="font-weight:600;font-size:13px">🏢 `+_esc(acct)+`</span>`;
+      html+=`<span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent)">`+(aCur?_esc(aCur+` `+Math.round(aTotal).toLocaleString()):`—`)+`</span>`;
+      html+=`</div></td></tr>`;
+      opps.forEach(function(opp){
+        var oRows=oppMap[opp], oTotal=0, oCur=``;
+        oRows.forEach(function(r){
+          var m=String(r.amount).match(/([A-Z]{3})/); if(m) oCur=m[1]; oTotal+=_pa(r.amount);
+        });
+        html+=`<tr style="background:var(--surface)"><td colspan="5" style="padding:5px 14px 5px 28px;border-bottom:1px solid var(--border)">`;
+        html+=`<div style="display:flex;justify-content:space-between;align-items:center">`;
+        html+=`<span style="font-size:12px;color:var(--text)">📋 `+_esc(opp)+`</span>`;
+        html+=`<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2)">`+(oCur?_esc(oCur+` `+Math.round(oTotal).toLocaleString()):`—`)+`</span>`;
+        html+=`</div></td></tr>`;
+        oRows.forEach(function(r){
+          html+=`<tr style="background:var(--bg)"><td style="padding:4px 8px 4px 44px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">`+_esc(r.date)+`</td>`;
+          html+=`<td></td><td style="padding:4px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:12px">`+_esc(r.amount)+`</td>`;
+          html+=`<td style="padding:4px 8px"><span class="ar-badge `+_sc(r.status)+`">`+_esc(r.status||`—`)+`</span></td>`;
+          html+=`<td style="padding:4px 12px;font-size:11px;color:var(--muted)">`+_esc(r.csmEmail.split(`@`)[0])+`</td></tr>`;
+        });
+      });
+    });
+    tbody.innerHTML = html;
   };
 
   function _esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
