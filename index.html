@@ -5993,7 +5993,7 @@ initBrief(); // Initialise CSM Brief tab (static data, no auth needed)
         html+=`<tr style="background:var(--surface)"><td colspan="5" style="padding:5px 14px 5px 28px;border-bottom:1px solid var(--border)">`;
         html+=`<div style="display:flex;justify-content:space-between;align-items:center">`;
         html+=`<span style="font-size:12px;color:var(--text)">📋 `+_esc(opp)+`</span>`;
-        html+=`<span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin:0 auto;white-space:nowrap">`+(oRows[0]&&(oRows[0].startDate||oRows[0].endDate)?(oRows[0].startDate?_esc(oRows[0].startDate)+` `:``)+`→`+(oRows[0].endDate?` `+_esc(oRows[0].endDate):``):``)+`</span>`;
+        (function(){var _ed=oRows[0]&&oRows[0].endDate||``;var _ec=`var(--muted)`;if(_ed){var _dl=Math.round((new Date(_ed)-new Date(new Date().setHours(0,0,0,0)))/86400000);if(_dl<=0)_ec=`#ef4444`;else if(_dl<=30)_ec=`#f97316`;}html+=`<span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin:0 auto;white-space:nowrap">`+(oRows[0]&&(oRows[0].startDate||oRows[0].endDate)?(oRows[0].startDate?_esc(oRows[0].startDate)+` `:``)+`→`+(oRows[0].endDate?` `+`<span style="color:`+_ec+`">`+_esc(oRows[0].endDate)+`</span>`:``):``)+`</span>`;})();;
         html+=`<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2)">`+(oCur?_esc(oCur+` `+Math.round(oTotal).toLocaleString()):`—`)+`</span>`;
         html+=`</div></td></tr>`;
         oRows.forEach(function(r){
