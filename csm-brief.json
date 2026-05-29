@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-05-29T17:19:48.759+08:00",
+  "generatedAt": "2026-05-29T17:25:30.484+08:00",
   "accounts": [
     {
       "id": "mannings",
       "name": "Mannings",
-      "health": "yellow",
-      "insight": "Contract expires in 32 days (2026-06-30) · Appier x Mannings Monthly Meeting Jun 4.",
+      "health": "red",
+      "insight": "⚠️ CONTRACT EXPIRES in 32 days (2026-06-30) · Appier x Mannings Monthly Meeting Jun 4.",
       "diffs": [],
       "riskTags": [
         "renewal",
@@ -17,8 +17,8 @@
         "daysLeft": 32,
         "endDate": "2026-06-30",
         "platform": "AIQUA/AIRIS",
-        "tier": "soon",
-        "label": "Contract expires in 32 days (2026-06-30)"
+        "tier": "urgent",
+        "label": "⚠️ CONTRACT EXPIRES in 32 days (2026-06-30)"
       },
       "projects": [
         {
@@ -45,9 +45,9 @@
       "tickets": [],
       "suggestions": [
         {
-          "priority": "medium",
-          "label": "Renewal · Medium 🟡",
-          "text": "Contract expires in 32 days (2026-06-30) — open renewal discussion now to avoid last-minute pressure."
+          "priority": "high",
+          "label": "Renewal · High 🟠",
+          "text": "⚠️ CONTRACT EXPIRES in 32 days (2026-06-30) — confirm renewal terms and get signature this week."
         },
         {
           "priority": "medium",
@@ -59,8 +59,8 @@
     {
       "id": "scmp",
       "name": "SCMP",
-      "health": "yellow",
-      "insight": "Contract expires in 32 days (2026-06-30) · Appier / SCMP Hearst catchup Jun 2.",
+      "health": "red",
+      "insight": "⚠️ CONTRACT EXPIRES in 32 days (2026-06-30) · Appier / SCMP Hearst catchup Jun 2.",
       "diffs": [],
       "riskTags": [
         "renewal",
@@ -72,8 +72,8 @@
         "daysLeft": 32,
         "endDate": "2026-06-30",
         "platform": "AIQUA",
-        "tier": "soon",
-        "label": "Contract expires in 32 days (2026-06-30)"
+        "tier": "urgent",
+        "label": "⚠️ CONTRACT EXPIRES in 32 days (2026-06-30)"
       },
       "projects": [
         {
@@ -95,9 +95,9 @@
       "tickets": [],
       "suggestions": [
         {
-          "priority": "medium",
-          "label": "Renewal · Medium 🟡",
-          "text": "Contract expires in 32 days (2026-06-30) — open renewal discussion now to avoid last-minute pressure."
+          "priority": "high",
+          "label": "Renewal · High 🟠",
+          "text": "⚠️ CONTRACT EXPIRES in 32 days (2026-06-30) — confirm renewal terms and get signature this week."
         },
         {
           "priority": "medium",
