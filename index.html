@@ -1085,15 +1085,6 @@
       <!-- Data table -->
       <div class="ar-table-wrap" id="arTableWrap" style="display:none">
         <table class="ar-table">
-          <thead>
-            <tr>
-              <th id="arTh-account">Account</th>
-              <th id="arTh-opportunity">Opportunity</th>
-              <th id="arTh-amount">Invoice Amount</th>
-              <th id="arTh-status">AR Status</th>
-              <th id="arTh-date">Expected Date</th>
-            </tr>
-          </thead>
           <tbody id="arTbody"></tbody>
         </table>
       </div>
@@ -6002,7 +5993,7 @@ initBrief(); // Initialise CSM Brief tab (static data, no auth needed)
         html+=`<tr style="background:var(--surface)"><td colspan="5" style="padding:5px 14px 5px 28px;border-bottom:1px solid var(--border)">`;
         html+=`<div style="display:flex;justify-content:space-between;align-items:center">`;
         html+=`<span style="font-size:12px;color:var(--text)">📋 `+_esc(opp)+`</span>`;
-        html+=`<span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin:0 auto;white-space:nowrap">`+(oRows[0]&&oRows[0].startDate?_esc(oRows[0].startDate)+` → `+_esc(oRows[0].endDate):``)+`</span>`;
+        html+=`<span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin:0 auto;white-space:nowrap">`+(oRows[0]&&(oRows[0].startDate||oRows[0].endDate)?(oRows[0].startDate?_esc(oRows[0].startDate)+` `:``)+`→`+(oRows[0].endDate?` `+_esc(oRows[0].endDate):``):``)+`</span>`;
         html+=`<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2)">`+(oCur?_esc(oCur+` `+Math.round(oTotal).toLocaleString()):`—`)+`</span>`;
         html+=`</div></td></tr>`;
         oRows.forEach(function(r){
