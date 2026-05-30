@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-05-29T17:25:30.484+08:00",
+  "generatedAt": "2026-05-30T09:00:53.903+08:00",
   "accounts": [
     {
       "id": "mannings",
       "name": "Mannings",
       "health": "red",
-      "insight": "⚠️ CONTRACT EXPIRES in 32 days (2026-06-30) · Appier x Mannings Monthly Meeting Jun 4.",
+      "insight": "⚠️ CONTRACT EXPIRES in 31 days (2026-06-30) · Appier x Mannings Monthly Meeting Jun 4.",
       "diffs": [],
       "riskTags": [
         "renewal",
@@ -14,11 +14,11 @@
       "ticketCount": 0,
       "mtgCount": 2,
       "contractAlert": {
-        "daysLeft": 32,
+        "daysLeft": 31,
         "endDate": "2026-06-30",
         "platform": "AIQUA/AIRIS",
         "tier": "urgent",
-        "label": "⚠️ CONTRACT EXPIRES in 32 days (2026-06-30)"
+        "label": "⚠️ CONTRACT EXPIRES in 31 days (2026-06-30)"
       },
       "projects": [
         {
@@ -47,7 +47,7 @@
         {
           "priority": "high",
           "label": "Renewal · High 🟠",
-          "text": "⚠️ CONTRACT EXPIRES in 32 days (2026-06-30) — confirm renewal terms and get signature this week."
+          "text": "⚠️ CONTRACT EXPIRES in 31 days (2026-06-30) — confirm renewal terms and get signature this week."
         },
         {
           "priority": "medium",
@@ -60,7 +60,7 @@
       "id": "scmp",
       "name": "SCMP",
       "health": "red",
-      "insight": "⚠️ CONTRACT EXPIRES in 32 days (2026-06-30) · Appier / SCMP Hearst catchup Jun 2.",
+      "insight": "⚠️ CONTRACT EXPIRES in 31 days (2026-06-30) · Appier / SCMP Hearst catchup Jun 2.",
       "diffs": [],
       "riskTags": [
         "renewal",
@@ -69,11 +69,11 @@
       "ticketCount": 0,
       "mtgCount": 1,
       "contractAlert": {
-        "daysLeft": 32,
+        "daysLeft": 31,
         "endDate": "2026-06-30",
         "platform": "AIQUA",
         "tier": "urgent",
-        "label": "⚠️ CONTRACT EXPIRES in 32 days (2026-06-30)"
+        "label": "⚠️ CONTRACT EXPIRES in 31 days (2026-06-30)"
       },
       "projects": [
         {
@@ -97,7 +97,7 @@
         {
           "priority": "high",
           "label": "Renewal · High 🟠",
-          "text": "⚠️ CONTRACT EXPIRES in 32 days (2026-06-30) — confirm renewal terms and get signature this week."
+          "text": "⚠️ CONTRACT EXPIRES in 31 days (2026-06-30) — confirm renewal terms and get signature this week."
         },
         {
           "priority": "medium",
