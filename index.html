@@ -839,7 +839,7 @@
       <button class="tab-btn" id="tab-ar" onclick="switchTab('ar')">
         💳 CSM AR Status <span class="tab-count" id="tc-ar">—</span>
       </button>
-      <button class="tab-btn" id="tab-brief" onclick="switchTab('brief')">
+      <button class="tab-btn" id="tab-brief" onclick="switchTab('brief')" style="display:none">
         📊 CSM Brief <span class="tab-count" id="tc-brief">—</span>
       </button>
     </div>
@@ -3077,6 +3077,7 @@ function logout(){
 
 async function launchDashboard(user){
   showScreen('app');
+  document.getElementById('tab-brief').style.display=user.email==='william.wt.lin@appier.com'?'':'none';
   document.getElementById('headerUser').textContent=user.displayName;
   document.getElementById('headerSub').textContent=
     `${user.email} · ${user.siteName||user.siteUrl} · Reporter view`;
