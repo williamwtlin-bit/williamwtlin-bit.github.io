@@ -976,9 +976,7 @@
         <button class="brief-tab-btn" id="btab-okr" onclick="briefSwitchTab('okr')">
           ð OKR Log <span class="brief-tab-count" id="btc-okr">â</span>
         </button>
-        <button class="brief-tab-btn" id="btab-log" onclick="briefSwitchTab('log')">
-          ð Session Log <span class="brief-tab-count" id="btc-log">â</span>
-        </button>
+        
       </div>
 
       <!-- Sub-pane: Account Brief -->
@@ -1000,36 +998,7 @@
       </div>
 
       <!-- Sub-pane: Session Log -->
-      <div class="brief-tab-pane" id="bpane-log">
-        <div class="log-controls">
-          <select class="log-select" id="logQFilter" onchange="renderLog()">
-            <option value="all">All quarters</option>
-            <option value="Q1 2026">Q1 2026</option>
-            <option value="Q2 2026" selected>Q2 2026</option>
-            <option value="Q3 2026">Q3 2026</option>
-            <option value="Q4 2026">Q4 2026</option>
-          </select>
-          <select class="log-select" id="logCatFilter" onchange="renderLog()">
-            <option value="all">All categories</option>
-            <option value="onboard">ð Onboard</option>
-            <option value="renewal">ð Renewal</option>
-            <option value="ticket">ð« Ticket Resolved</option>
-            <option value="feature">â¡ Feature Enabled</option>
-            <option value="pitching">ð¯ Pitching</option>
-            <option value="ai">ð¤ AI Adoption</option>
-            <option value="team">ð¤ Team Contribution</option>
-            <option value="other">ð Other</option>
-          </select>
-          <select class="log-select" id="logClientFilter" onchange="renderLog()">
-            <option value="all">All accounts</option>
-            <option>Mannings</option><option>SCMP</option><option>10/10Hope</option>
-            <option>Luxgen</option><option>55688</option><option>ç°åé¦</option>
-            <option>Internal</option><option>Other</option>
-          </select>
-          <button class="add-log-btn" onclick="openAddModal()">ï¼ Log Activity</button>
-        </div>
-        <div id="logList"></div>
-      </div>
+      
 
     </div>
   </div>
@@ -5368,7 +5337,7 @@ function initBrief(){
 
 // ââ BRIEF SUB-TAB SWITCH ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function briefSwitchTab(name){
-  ['brief','okr','log'].forEach(t=>{
+  ['brief','okr'].forEach(t=>{
     const btn  = document.getElementById('btab-'+t);
     const pane = document.getElementById('bpane-'+t);
     if(btn)  btn.classList.toggle('active',  t===name);
@@ -5393,7 +5362,6 @@ function briefUpdateTabCounts(){
   const set = (id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
   set('btc-brief', ACCOUNTS.length);
   set('btc-okr',   logEntries.length);
-  set('btc-log',   logEntries.length);
   set('tc-brief',  ACCOUNTS.length);
 }
 
