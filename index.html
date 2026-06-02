@@ -805,7 +805,411 @@
 <!-- ══════════════════════════════════════════════════
      SCREEN 3: MAIN DASHBOARD
      ══════════════════════════════════════════════════ -->
+<div id="appScreen" style="display:none">
+  <!-- Preview mode badge — only visible when using mock data -->
+  <div class="preview-badge" id="previewBadge" style="display:none">
+    🎨 Preview Mode — mock data
+    <button onclick="exitPreview()" title="Exit preview">✕</button>
+  </div>
+  <div class="container">
+    <header>
+      <div class="header-left">
+        <h1>🎯 Jira Ticket Dashboard</h1>
+        <p id="headerSub">Loading…</p>
+      </div>
+      <div class="header-right">
+        <div class="user-chip"><span class="u-dot"></span><span id="headerUser">—</span></div>
+        <div class="last-updated" id="lu">Updated: —</div>
+        <button class="btn-refresh" id="btnR" onclick="refresh()"><span id="rIcon">↻</span> Refresh</button>
+        <button class="btn-theme" id="btnTheme" onclick="toggleTheme()">🌙 Dark</button>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </div>
+    </header>
 
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-tracking" onclick="switchTab('tracking')">
+        📋 Issue Tracking <span class="tab-count" id="tc-tracking">—</span>
+        <span class="tab-draft-badge" id="tabDraftBadge" style="display:none" title="Onboarding drafts waiting for App ID">⏸</span>
+      </button>
+      <button class="tab-btn" id="tab-tbd" onclick="switchTab('tbd')">
+        ✅ To Be Done <span class="tab-count" id="tc-tbd">—</span>
+      </button>
+      <button class="tab-btn" id="tab-ar" onclick="switchTab('ar')">
+        💳 CSM AR Status <span class="tab-count" id="tc-ar">—</span>
+      </button>
+      <button class="tab-btn" id="tab-brief" onclick="switchTab('brief')" style="display:none">
+        📊 CSM Brief <span class="tab-count" id="tc-brief">—</span>
+      </button>
+    </div>
+
+    <!-- TAB: ISSUE TRACKING -->
+    <div class="tab-pane active" id="pane-tracking">
+
+      <!-- Onboarding progress cards -->
+      <div class="ob-progress-section" id="obProgressSection" style="display:none">
+        <div class="ob-progress-header">
+          <div>
+            <span class="ob-progress-title">🚀 Onboarding Progress</span>
+            <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px">
+              Drafts awaiting App ID can be resumed below
+            </p>
+          </div>
+          <button class="btn-new-ob" onclick="openWizard()">＋ New Onboarding</button>
+        </div>
+        <div class="ob-cards" id="obCards"></div>
+      </div>
+
+      <!-- New Onboarding button when no onboardings exist -->
+      <div id="obNewWrap" style="margin-bottom:16px;display:flex;justify-content:flex-end;">
+        <button class="btn-new-ob" onclick="openWizard()">🚀 New Onboarding</button>
+      </div>
+
+      <!-- Pinned Tickets Session — always shown at top -->
+      <div class="pinned-section" id="pinnedSection">
+        <div class="pinned-header">
+          <span>📌</span>
+          <span class="pinned-title">Pinned Tickets</span>
+          <span class="pinned-badge" id="pinnedCount">0 tickets</span>
+          <div class="pinned-add-wrap">
+            <input class="pinned-input" id="pinnedInput" placeholder="e.g. LEG-1234"
+              onkeydown="if(event.key==='Enter')addPinnedTicket()"/>
+            <button class="pinned-add-btn" id="pinnedAddBtn" onclick="addPinnedTicket()">＋ Track</button>
+          </div>
+        </div>
+        <div id="pinnedBody">
+          <div class="pinned-empty">No pinned tickets yet — paste any Jira key above to track it here.</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card c-blue"><div class="stat-label">Total Tickets</div><div class="stat-value" id="sTotal">—</div></div>
+        <div class="stat-card c-green"><div class="stat-label">Done</div><div class="stat-value" id="sDone">—</div></div>
+        <div class="stat-card c-gray"><div class="stat-label">Not Started</div><div class="stat-value" id="sNS">—</div></div>
+        <div class="stat-card c-yellow"><div class="stat-label">Active</div><div class="stat-value" id="sActive">—</div></div>
+      </div>
+      <div class="controls-bar">
+        <button class="btn-sm" onclick="expandAll()">Expand All</button>
+        <button class="btn-sm" onclick="collapseAll()">Collapse All</button>
+        <input class="search-input" type="text" id="srch" placeholder="Search tickets…" oninput="applyFilters()"/>
+        <div class="dd-wrap" id="asnWrap">
+          <button class="dd-btn" id="asnBtn" onclick="ddToggle('asn',event)">
+            <span id="asnLabel">👤 All Assignees</span><span style="color:var(--muted)">▾</span>
+          </button>
+          <div class="dd-panel" id="asnPanel">
+            <input class="dd-search" type="text" id="asnSrch" placeholder="Search assignees…" oninput="ddFilter('asn')"/>
+            <div class="dd-list" id="asnList"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Bulk action bar (appears when checkboxes selected) -->
+      <div class="bulk-bar" id="bulkBar">
+        <button class="bulk-deselect" onclick="clearBulkSelection()" title="Clear selection">✕</button>
+        <span class="bulk-count" id="bulkCount"><strong>0</strong> selected</span>
+        <div class="bulk-actions">
+          <button class="bulk-btn success-btn" onclick="bulkMarkDone()">✓ Mark All Done</button>
+          <button class="bulk-btn" onclick="bulkIgnoreTickets()" title="Hide from active view — moves to Archive section">🚫 Ignore</button>
+          <button class="bulk-btn" onclick="bulkCopyKeys()">📋 Copy Keys</button>
+        </div>
+      </div>
+      <div id="dash"></div>
+    </div>
+
+    <!-- TAB: TO BE DONE -->
+    <div class="tab-pane" id="pane-tbd">
+      <div class="tbd-stats stats-row">
+        <div class="stat-card c-yellow"><div class="stat-label">Pending</div><div class="stat-value" id="tbdPending">—</div></div>
+        <div class="stat-card c-red" style="--red:#f87171" ><div class="stat-label">Overdue (&gt;14d)</div><div class="stat-value" id="tbdOverdue" style="color:var(--red)">—</div></div>
+        <div class="stat-card c-green"><div class="stat-label">Avg Lead Time</div><div class="stat-value" id="tbdAvg" style="font-size:22px;padding-top:4px">—</div></div>
+      </div>
+      <div class="controls-bar">
+        <input class="search-input" type="text" id="tbdSrch" placeholder="Search tickets…" oninput="applyTbdFilters()" style="width:240px"/>
+      </div>
+      <!-- TBD Bulk action bar -->
+      <div class="bulk-bar" id="tbdBulkBar">
+        <button class="bulk-deselect" onclick="clearTbdBulk()" title="Clear selection">✕</button>
+        <span class="bulk-count" id="tbdBulkCount"><strong>0</strong> selected</span>
+        <div class="bulk-actions">
+          <button class="bulk-btn success-btn" onclick="tbdBulkMarkDone()">✓ Mark All Done</button>
+          <div class="inline-asn-wrap" id="tbdBulkAsnWrap">
+            <button class="bulk-btn" onclick="toggleTbdBulkAsnDd(event)">👤 Reassign All</button>
+            <div class="inline-asn-dd" id="tbdBulkAsnDd">
+              <input class="inline-asn-search" type="text" id="tbdBulkAsnSearch"
+                placeholder="Type name to search members…" oninput="filterTbdBulkAsn()" autocomplete="off"/>
+              <div class="inline-asn-list" id="tbdBulkAsnList"></div>
+            </div>
+          </div>
+          <button class="bulk-btn" onclick="tbdBulkCopyKeys()">📋 Copy Keys</button>
+          <button class="bulk-btn" onclick="tbdBulkIgnoreTickets()" title="Hide from TBD view — moves to Ignored section">🚫 Ignore</button>
+        </div>
+      </div>
+      <div class="tbd-wrap">
+        <div id="tbdDash"></div>
+      </div>
+    </div>
+
+    <!-- ══ CSM BRIEF TAB PANE ══ -->
+    <div class="tab-pane" id="pane-brief">
+
+
+      <!-- Sync bar -->
+      <div class="sync-bar">
+        <span class="sync-dot spin" id="syncDot"></span>
+        <span class="sync-label" id="syncLabel">Loading brief from GitHub…</span>
+      </div>
+
+      <!-- Stats row -->
+      <div class="brief-stats-row">
+        <div class="brief-stat-card c-red"><div class="stat-label">Critical</div><div class="brief-stat-val" id="bs-crit">—</div></div>
+        <div class="brief-stat-card c-yellow"><div class="stat-label">At Risk</div><div class="brief-stat-val" id="bs-risk">—</div></div>
+        <div class="brief-stat-card c-green"><div class="stat-label">On Track</div><div class="brief-stat-val" id="bs-ok">—</div></div>
+        <div class="brief-stat-card c-blue"><div class="stat-label">Meetings (14d)</div><div class="brief-stat-val" id="bs-mtg">—</div></div>
+      </div>
+
+      <!-- Sub-tabs -->
+      <div class="brief-tabs">
+        <button class="brief-tab-btn active" id="btab-brief" onclick="briefSwitchTab('brief')">
+          📋 Account Brief <span class="brief-tab-count" id="btc-brief">—</span>
+        </button>
+        <button class="brief-tab-btn" id="btab-okr" onclick="briefSwitchTab('okr')">
+          📊 OKR Log <span class="brief-tab-count" id="btc-okr">—</span>
+        </button>
+        
+      </div>
+
+      <!-- Sub-pane: Account Brief -->
+      <div class="brief-tab-pane active" id="bpane-brief">
+        <div class="account-grid" id="accountGrid"></div>
+      </div>
+
+      <!-- Sub-pane: OKR Log -->
+      <div class="brief-tab-pane" id="bpane-okr">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+          <div class="brief-section-title">Q OKR Summary</div>
+          <select class="okr-quarter-sel" id="okrQSel" onchange="renderOKR()">
+            <option>Q1 2026</option><option selected>Q2 2026</option>
+            <option>Q3 2026</option><option>Q4 2026</option>
+          </select>
+          <button class="okr-copy-btn" onclick="copyOKR()" id="okrCopyBtn">Copy Summary</button>
+        </div>
+        <div id="okrSections"></div>
+      </div>
+
+      <!-- Sub-pane: Session Log -->
+      
+
+    </div>
+  </div>
+
+
+    <!-- ══ CSM AR STATUS TAB PANE ══ -->
+    <div class="tab-pane" id="pane-ar">
+
+      <!-- help note (hidden, not used in simple mode) -->
+      <div id="arSetupNote" style="display:none"></div>
+
+      <!-- Status / load bar (shown when connected) -->
+      <div id="arLoadBar" class="ar-load-bar" style="display:none">
+        <span class="ar-load-dot" id="arDot"></span>
+        <span class="ar-load-label" id="arLoadLabel">Ready</span>
+        <button class="ar-load-btn" id="arRefreshBtn" onclick="arLoadData()">🔄 Refresh</button>
+        <span id="arLastLoaded" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-left:4px;"></span>
+        <button class="ar-load-btn" onclick="arDisconnect()" style="border-color:rgba(248,113,113,.3);color:var(--red);margin-left:auto">Disconnect</button>
+      </div>
+
+      <!-- Connect button (shown when not connected) -->
+      <div id="arConnectBox" class="ar-connect-box">
+        <div class="ar-connect-title">📊 CSM AR Status Check</div>
+        <div class="ar-connect-sub">
+          Paste the <strong>Apps Script URL</strong> below (one-time setup by admin).<br>
+          The script reads the <em>latest AR file</em> from your shared Drive folder automatically.<br>
+          Your accounts are filtered by your login email — no sign-in popup needed.
+        </div>
+        <div class="ar-url-row">
+          <input type="text" class="ar-url-input" id="arUrlInput"
+            placeholder="https://script.google.com/macros/s/…/exec">
+          <button class="ar-save-btn" onclick="arSaveUrl()">Connect ➜</button>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">
+          💡 URL saved in your browser. All CSMs use the same script URL.
+          Need setup help? Ask your admin to follow the instructions in the README.
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="ar-stats-row" id="arStatsRow" style="display:none">
+        <div class="ar-stat c-blue"><div class="ar-stat-label">Total</div><div class="ar-stat-val" id="arStatTotal">—</div></div>
+        <div class="ar-stat c-green"><div class="ar-stat-label">Paid</div><div class="ar-stat-val" id="arStatPaid">—</div></div>
+        <div class="ar-stat c-yellow"><div class="ar-stat-label">Unpaid</div><div class="ar-stat-val" id="arStatUnpaid">—</div></div>
+        <div class="ar-stat c-red"><div class="ar-stat-label">Invalid</div><div class="ar-stat-val" id="arStatInvalid">—</div></div>
+      </div>
+
+      <!-- Controls bar -->
+      <div class="ar-ctrl-bar" id="arCtrlBar" style="display:none">
+        <input type="text" class="ar-search" id="arSearch" placeholder="🔍 Search account or opportunity…" oninput="arRender()">
+        <select class="ar-filter-sel" id="arStatusFilter" onchange="arRender()">
+          <option value="">All statuses</option>
+          <option value="Paid">✅ Paid</option>
+          <option value="Unpaid">⏳ Unpaid</option>
+          <option value="Billed">🧾 Billed</option>
+          <option value="Invalid">❌ Invalid</option>          <option value="Scheduled">📅 Scheduled</option>          <option value="Draft">📝 Draft</option>
+        </select>
+        <select id="arCsmFilter" onchange="arRender()" style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;cursor:pointer;min-width:160px">
+          <option value="">All CSMs</option>
+        </select>
+      </div>
+
+      <!-- Data table -->
+      <div class="ar-table-wrap" id="arTableWrap" style="display:none">
+        <table class="ar-table">
+          <tbody id="arTbody"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+  <!-- Brief account side panel (separate from Jira ticket side panel) -->
+  <div class="brief-panel-overlay" id="briefPanelOverlay" onclick="closeBriefPanel()"></div>
+  <div class="brief-side-panel" id="briefSidePanel">
+    <div class="brief-panel-head">
+      <div>
+        <div class="brief-panel-title" id="briefPanelTitle">—</div>
+        <div class="brief-panel-sub" id="briefPanelSub">—</div>
+      </div>
+      <button class="brief-panel-close" onclick="closeBriefPanel()">✕</button>
+    </div>
+    <div class="brief-panel-body" id="briefPanelBody"></div>
+  </div>
+
+  <!-- Add Log Modal -->
+  <div class="log-modal-overlay" id="addModal">
+    <div class="log-modal">
+      <h3>Log Activity</h3>
+      <div class="log-form-row">
+        <label>Date</label>
+        <input type="text" id="mDate" placeholder="YYYY-MM-DD">
+      </div>
+      <div class="log-form-row">
+        <label>Quarter</label>
+        <select id="mQuarter">
+          <option>Q1 2026</option><option selected>Q2 2026</option>
+          <option>Q3 2026</option><option>Q4 2026</option>
+        </select>
+      </div>
+      <div class="log-form-row">
+        <label>Category</label>
+        <select id="mCat">
+          <option value="onboard">🚀 Onboard</option>
+          <option value="renewal">🔄 Renewal</option>
+          <option value="ticket">🎫 Ticket Resolved</option>
+          <option value="feature">⚡ Feature Enabled</option>
+          <option value="pitching">🎯 Pitching</option>
+          <option value="ai">🤖 AI Adoption</option>
+          <option value="team">🤝 Team Contribution</option>
+          <option value="other">📌 Other</option>
+        </select>
+      </div>
+      <div class="log-form-row">
+        <label>Account</label>
+        <select id="mClient">
+          <option>Mannings</option><option>SCMP</option><option>10/10Hope</option>
+          <option>Luxgen</option><option>55688</option><option>田原香</option>
+          <option>Internal</option><option>Other</option>
+        </select>
+      </div>
+      <div class="log-form-row">
+        <label>Description</label>
+        <textarea id="mDesc" placeholder="What did you do? e.g. Enabled AIRIS for Mannings…"></textarea>
+      </div>
+      <div class="log-modal-btns">
+        <button class="log-modal-cancel" onclick="closeModal()">Cancel</button>
+        <button class="log-modal-save" id="mSaveBtn" onclick="saveEntry()" disabled>Add to Log</button>
+      </div>
+    </div>
+  </div>
+  <div class="wiz-overlay" id="wizOverlay" style="display:none" onclick="wizOverlayClick(event)">
+    <div class="wiz-modal">
+      <div class="wiz-progress"><div class="wiz-progress-bar" id="wizProgressBar" style="width:0%"></div></div>
+      <div class="wiz-header">
+        <span class="wiz-title" id="wizTitle">New Onboarding</span>
+        <span class="wiz-step-indicator" id="wizStepInd"></span>
+        <button class="wiz-close" onclick="closeWizard()">✕</button>
+      </div>
+      <div class="wiz-body" id="wizBody"></div>
+      <div class="wiz-footer" id="wizFooter"></div>
+    </div>
+  </div>
+
+  <!-- ── SIDE PANEL ── -->
+  <div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+  <div class="side-panel" id="sidePanel">
+    <div class="panel-header">
+      <div class="panel-title-wrap">
+        <a class="panel-key" id="panelKey" href="#" target="_blank">—</a>
+        <span class="panel-status-badge" id="panelStatus"></span>
+      </div>
+      <button class="panel-close" onclick="closePanel()">✕</button>
+    </div>
+
+    <div class="panel-body">
+      <!-- Summary + meta -->
+      <div class="panel-summary" id="panelSummary"></div>
+      <div class="panel-meta">
+        <div class="panel-meta-row"><span class="pm-label">Assignee</span><span class="pm-val" id="panelAssignee">—</span></div>
+        <div class="panel-meta-row"><span class="pm-label">Reporter</span><span class="pm-val" id="panelReporter">—</span></div>
+        <div class="panel-meta-row"><span class="pm-label">Created</span><span class="pm-val" id="panelCreated">—</span></div>
+        <div class="panel-meta-row"><span class="pm-label">Lead Time</span><span class="pm-val" id="panelLT">—</span></div>
+      </div>
+
+      <!-- Description (both modes) -->
+      <div class="panel-section">
+        <div class="panel-section-title">Description</div>
+        <div class="panel-description" id="panelDescription">
+          <span class="panel-loading">Loading…</span>
+        </div>
+      </div>
+
+      <!-- ACTION SECTIONS — To Be Done mode only -->
+      <div id="panelActions">
+        <!-- Status transitions -->
+        <div class="panel-section">
+          <div class="panel-section-title">Change Status</div>
+          <div class="panel-transitions" id="panelTransitions">
+            <span class="panel-loading">Loading transitions…</span>
+          </div>
+        </div>
+
+        <!-- Reassign -->
+        <div class="panel-section">
+          <div class="panel-section-title">Reassign To</div>
+          <div class="panel-reassign-wrap">
+            <input class="panel-input" type="text" id="panelAssigneeSearch"
+              placeholder="Search by name…" oninput="searchAssignees()"
+              autocomplete="off"/>
+            <div class="panel-user-results" id="panelUserResults" style="display:none"></div>
+            <div class="panel-assigned-to" id="panelAssignedTo"></div>
+          </div>
+        </div>
+
+        <!-- Comment box -->
+        <div class="panel-section">
+          <div class="panel-section-title">Add Comment</div>
+          <textarea class="panel-textarea" id="panelComment"
+            placeholder="Write a comment… (e.g. Reassigning to you — please review the API config)"></textarea>
+          <button class="panel-btn-submit" id="panelCommentBtn" onclick="submitComment()">
+            Send Comment
+          </button>
+        </div>
+      </div>
+
+      <!-- Recent comments (both modes, limit differs) -->
+      <div class="panel-section">
+        <div class="panel-section-title" id="panelCommentTitle">Recent Comments</div>
+        <div id="panelCommentList"><span class="panel-loading">Loading…</span></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 'use strict';
