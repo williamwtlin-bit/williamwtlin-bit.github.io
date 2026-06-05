@@ -29,13 +29,13 @@
       "key": "AIXP-1840",
       "account": "mannings",
       "ignoredOn": "2026-05-26",
-      "reason": "Ticket closed â AI suggestions issue resolved by Jin Chen"
+      "reason": "Ticket closed Ã¢ÂÂ AI suggestions issue resolved by Jin Chen"
     },
     {
       "key": "AEP-6089",
       "account": "tiangyuanxiang",
       "ignoredOn": "2026-05-28",
-      "reason": "EUU onboarding confirmed complete â dropped per CSM"
+      "reason": "EUU onboarding confirmed complete Ã¢ÂÂ dropped per CSM"
     }
   ],
   "pinnedTickets": [
@@ -45,7 +45,7 @@
       "addedOn": "2026-05-26",
       "title": "City Super legal/contract ticket",
       "assignee": "",
-      "note": "Pinned by CSM â track progress"
+      "note": "Pinned by CSM Ã¢ÂÂ track progress"
     }
   ],
   "contractDates": [
@@ -54,14 +54,14 @@
       "platform": "BB",
       "startDate": "2026-05-24",
       "endDate": "2026-11-23",
-      "note": "BB contract 2026/5/24-11/23, NTD 50,000/mo — LEG-16090 approved"
+      "note": "BB contract 2026/5/24-11/23, NTD 50,000/mo â LEG-16090 approved"
     },
     {
       "account": "SCMP",
       "platform": "AIQUA",
       "startDate": "2025-07-01",
       "endDate": "2026-06-30",
-      "note": "Renewal target June 2026 — arrange meeting after client feedback."
+      "note": "Renewal target June 2026 â arrange meeting after client feedback."
     },
     {
       "account": "Mannings",
@@ -75,10 +75,10 @@
       "platform": "BotBonnie",
       "startDate": null,
       "endDate": null,
-      "note": "Unknown — ask CSM to confirm"
+      "note": "Unknown â ask CSM to confirm"
     },
     {
-      "account": "田原香",
+      "account": "ç°åé¦",
       "platform": "BotBonnie/AIQUA",
       "startDate": "2026-02-17",
       "endDate": "2027-02-16",
@@ -108,7 +108,7 @@
     {
       "date": "2026-Q1",
       "category": "Renewal",
-      "client": "ç°åé¦",
+      "client": "Ã§ÂÂ°Ã¥ÂÂÃ©Â¦Â",
       "description": "Renewed to 2027-02-16"
     },
     {
@@ -144,7 +144,7 @@
     {
       "date": "2026-Q1",
       "category": "Feature Enabled",
-      "client": "ç°åé¦",
+      "client": "Ã§ÂÂ°Ã¥ÂÂÃ©Â¦Â",
       "description": "Campaign agent enabled"
     },
     {
@@ -319,13 +319,13 @@
       "date": "2026-Q2",
       "category": "Ticket Resolved",
       "client": "SCMP",
-      "description": "Segment enablement closed â awaiting client feedback for renewal"
+      "description": "Segment enablement closed Ã¢ÂÂ awaiting client feedback for renewal"
     },
     {
       "date": "2026-Q2",
       "category": "Ticket Resolved",
       "client": "Mannings",
-      "description": "AIXP-1840 closed â AI suggestions issue resolved (Jin Chen)"
+      "description": "AIXP-1840 closed Ã¢ÂÂ AI suggestions issue resolved (Jin Chen)"
     },
     {
       "date": "2026-Q2",
@@ -336,13 +336,13 @@
     {
       "date": "2026-Q2",
       "category": "Onboard",
-      "client": "ç°åé¦",
+      "client": "Ã§ÂÂ°Ã¥ÂÂÃ©Â¦Â",
       "description": "EUU onboarding completed"
     },
     {
       "date": "2026-Q2",
       "category": "Feature Enabled",
-      "client": "ç°åé¦",
+      "client": "Ã§ÂÂ°Ã¥ÂÂÃ©Â¦Â",
       "description": "Campaign Agent Feature delivered"
     }
   ],
@@ -352,31 +352,41 @@
     {
       "id": "mannings-monthly-quotation",
       "account": "mannings",
-      "label": "Mannings 月結流程",
+      "label": "Mannings æçµæµç¨",
       "steps": [
-        "準備 Quotation",
-        "開 Invoice",
-        "上傳 GEP"
+        "æºå Quotation",
+        "é Invoice",
+        "ä¸å³ GEP"
       ],
       "frequency": "monthly",
       "reminderDay": 1,
       "status": "pending",
       "lastCompletedMonth": null,
-      "note": "每月1日開始 tracking，完成後由 William 確認"
+      "note": "æ¯æ1æ¥éå§ trackingï¼å®æå¾ç± William ç¢ºèª"
     },
     {
       "id": "55688-lon-quarterly",
       "account": "55688",
-      "label": "55688-潔衣家 LON 費用",
+      "label": "55688-æ½è¡£å®¶ LON è²»ç¨",
       "steps": [
-        "開 LON 費用"
+        "é LON è²»ç¨"
       ],
       "frequency": "quarterly",
       "intervalDays": 90,
       "lastDoneDate": "2026-04-21",
       "nextDueDate": "2026-07-21",
       "status": "pending",
-      "note": "每季一次，上次 2026-04-21，下次 2026-07-21"
+      "note": "æ¯å­£ä¸æ¬¡ï¼ä¸æ¬¡ 2026-04-21ï¼ä¸æ¬¡ 2026-07-21"
+    }
+  ],
+  "pendingActions": [
+    {
+      "id": "mannings-slide-rec-review",
+      "account": "mannings",
+      "addedOn": "2026-06-05",
+      "label": "Prepare Mannings recommendation review slide",
+      "status": "pending",
+      "note": "Recurring item — appears in daily brief until marked done. Context: renewal due 2026-06-30."
     }
   ]
 }
