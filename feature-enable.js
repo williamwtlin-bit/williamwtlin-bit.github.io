@@ -260,4 +260,147 @@
     var platforms = [
       ['AIQUA', 'Customer Engagement',   '🎯', false],
       ['AIRIS', 'Customer Data Platform', '🔮', false],
-      ['BB',    'BotBonnie',              '🤖',
+      ['BB',    'BotBonnie',              '🤖', true ]
+    ];
+    var cards = platforms.map(function(p) {
+      var dis = p[3];
+      var sel = feW.platform === p[0] ? ' fe-selected' : '';
+      return '<div class="fe-platform-card' + sel + (dis ? ' fe-disabled' : '') + '" data-p="' + p[0] + '"'
+        + (dis ? '' : ' onclick="window.fePickPlatform(\'' + p[0] + '\')"') + '>'
+        + '<div style="font-size:1.8rem;margin-bottom:8px">' + p[2] + '</div>'
+        + '<div style="font-weight:700">' + p[0] + '</div>'
+        + '<div style="font-size:.75rem;color:var(--muted);margin-top:4px">' + p[1] + '</div>'
+        + (dis ? '<div style="font-size:.7rem;color:var(--muted);margin-top:6px;font-weight:600">Coming soon</div>' : '')
+        + '</div>';
+    }).join('');
+    document.getElementById('feBody').innerHTML =
+      '<p style="color:var(--muted);font-size:.87rem;margin-bottom:16px">Select the platform to enable features for.</p>'
+      + '<div class="fe-platform-grid">' + cards + '</div>';
+    document.getElementById('feFooter').innerHTML =
+      '<button class="wiz-btn-sec" onclick="closeFeWizard()">Cancel</button>'
+      + '<button class="wiz-btn-pri" onclick="feNext()"' + (feW.platform ? '' : ' disabled') + '>Next →</button>';
+  }
+
+  function feDetailsStep() {
+    document.getElementById('feBody').innerHTML =
+      '<div class="wiz-field-group" style="margin-bottom:18px">'
+      + '<label class="wiz-label">Client Name <span style="color:var(--red)">*</span></label>'
+      + '<input class="wiz-input" id="feClientName" placeholder="e.g. Mannings HK" value="' + esc(feW.clientName) + '" oninput="window.feSetClientName(this.value)">'
+      + '</div>'
+      + '<div class="wiz-field-group">'
+      + '<label class="wiz-label">App ID <span style="color:var(--red)">*</span></label>'
+      + '<input class="wiz-input" id="feAppId" placeholder="e.g. 12345" value="' + esc(feW.appId) + '" oninput="window.feSetAppId(this.value)">'
+      + '</div>';
+    document.getElementById('feFooter').innerHTML =
+      '<button class="wiz-btn-sec" onclick="feBack()">← Back</button>'
+      + '<button class="wiz-btn-pri" onclick="feNext()">Next →</button>';
+    setTimeout(function(){ var el = document.getElementById('feClientName'); if(el) el.focus(); }, 50);
+  }
+
+  function buildFeatItem(f) {
+    var sel      = !!feW.sel[f.id];
+    var isManual = f.mode === 'manual' || f.mode === 'manual_clone';
+    var badge    = isManual
+      ? '<span class="fe-badge-manual">⚠ manual</span>'
+      : '<span class="fe-badge-clone">clone</span>';
+    var extraHtml = '';
+    if (f.extra && f.extra.length) {
+      extraHtml = f.extra.map(function(ex) {
+        var val = ((feW.extraFields[f.id] || {})[ex.id] || '');
+        return '<div>'
+          + '<label class="wiz-label" style="font-size:.72rem;margin-bottom:3px">' + esc(ex.label) + '</label>'
+          + '<input class="wiz-input" type="' + (ex.type || 'text') + '"'
+          + ' placeholder="' + esc(ex.placeholder || '') + '"'
+          + ' value="' + esc(val) + '"'
+          + ' oninput="window.setFeatExtra(\'' + f.id + '\',\'' + ex.id + '\',this.value)"'
+          + (ex.type === 'number' ? ' min="0"' : '')
+          + '></div>';
+      }).join('');
+    }
+    var hintHtml = '';
+    if (f.sample) {
+      var link = '<a href="https://appier.atlassian.net/browse/' + f.sample + '" target="_blank">' + f.sample + '</a>';
+      hintHtml += isManual
+        ? '<p class="fe-hint">⚠️ Manual update required after creation — clone from ' + link + '.</p>'
+        : '<p class="fe-hint">📋 Will clone from ' + link + '.</p>';
+    }
+    if (f.suggestedAssignee) {
+      hintHtml += '<p class="fe-hint" style="color:var(--accent)">💡 Suggested assignee: <strong>' + esc(f.suggestedAssignee) + '</strong></p>';
+    }
+    var hasExtra = !!(extraHtml || hintHtml);
+    return '<div class="fe-feat-item' + (sel ? ' fe-row-on' : '') + '" data-id="' + f.id + '">'
+      + '<div class="fe-feat-row" onclick="window.feToggleFeat(\'' + f.id + '\')">'
+      + '<div class="fe-feat-cb' + (sel ? ' fe-cb-on' : '') + '">' + (sel ? '✓' : '') + '</div>'
+      + '<span class="fe-feat-name">' + esc(f.name) + '</span>'
+      + badge
+      + '</div>'
+      + (hasExtra ? '<div class="fe-feat-extra">' + extraHtml + hintHtml + '</div>' : '')
+      + '</div>';
+  }
+
+  function feFeaturesStep() {
+    var cats = FE_CATALOG[feW.platform] || [];
+    var html = cats.map(function(cat) {
+      return '<div class="fe-cat-header">' + esc(cat.cat) + '</div>'
+        + cat.items.map(buildFeatItem).join('');
+    }).join('');
+    document.getElementById('feBody').innerHTML =
+      '<p style="color:var(--muted);font-size:.82rem;margin-bottom:10px">Enabling for <strong>'
+      + esc(feW.clientName) + '</strong> · App <strong>' + esc(feW.appId) + '</strong></p>'
+      + '<div class="fe-feat-list">' + html + '</div>';
+    document.getElementById('feFooter').innerHTML =
+      '<button class="wiz-btn-sec" onclick="feBack()">← Back</button>'
+      + '<button class="wiz-btn-pri" onclick="feNext()">Review & Create →</button>';
+  }
+
+  function fePreviewStep() {
+    var selected = getSelected(feW.platform);
+    var featRows = selected.map(function(f) {
+      var extras     = feW.extraFields[f.id] || {};
+      var isManual   = f.mode === 'manual' || f.mode === 'manual_clone';
+      var badge      = isManual
+        ? '<span class="fe-badge-manual" style="font-size:.65rem">⚠ manual</span>'
+        : '<span class="fe-badge-clone" style="font-size:.65rem">clone</span>';
+      var extraLines = (f.extra || []).filter(function(ex){ return extras[ex.id]; }).map(function(ex){
+        return '<div>' + esc(ex.label) + ': <strong>' + esc(extras[ex.id]) + '</strong></div>';
+      }).join('');
+      return '<div class="fe-preview-feat-row">'
+        + '<div class="fe-preview-feat-title">' + esc(f.name) + badge + '</div>'
+        + (extraLines ? '<div class="fe-preview-feat-extra">' + extraLines + '</div>' : '')
+        + '</div>';
+    }).join('');
+    document.getElementById('feBody').innerHTML =
+      '<div class="fe-preview-card">'
+      + '<div class="fe-preview-row"><span class="fe-preview-label">Platform</span><span class="fe-preview-val">' + esc(feW.platform) + '</span></div>'
+      + '<div class="fe-preview-row"><span class="fe-preview-label">Client</span><span class="fe-preview-val">' + esc(feW.clientName) + '</span></div>'
+      + '<div class="fe-preview-row"><span class="fe-preview-label">App ID</span><span class="fe-preview-val">' + esc(feW.appId) + '</span></div>'
+      + '</div>'
+      + '<p style="color:var(--muted);font-size:.76rem;margin:14px 0 8px"><strong>' + selected.length
+      + ' feature' + (selected.length !== 1 ? 's' : '') + '</strong> selected:</p>'
+      + '<div class="fe-feat-list fe-feat-list-preview">' + featRows + '</div>'
+      + '<p style="color:var(--muted);font-size:.76rem;margin-top:12px">One Jira ticket per feature. Track in the Issue Tracking tab.</p>';
+    document.getElementById('feFooter').innerHTML =
+      '<button class="wiz-btn-sec" onclick="feBack()">← Back</button>'
+      + '<button class="wiz-btn-pri" id="feCreateBtn" onclick="feCreate()">🎫 Create '
+      + selected.length + ' Ticket' + (selected.length !== 1 ? 's' : '') + '</button>';
+  }
+
+  function feShowResult(created, failed) {
+    document.getElementById('feBody').innerHTML =
+      '<div style="text-align:center;padding:24px">'
+      + '<div style="font-size:2.5rem;margin-bottom:12px">' + (created.length ? '✅' : '⚠️') + '</div>'
+      + '<div style="font-weight:700;font-size:1.05rem;margin-bottom:8px">'
+      + created.length + ' ticket' + (created.length !== 1 ? 's' : '') + ' created'
+      + (failed.length ? ' · ' + failed.length + ' failed' : '') + '</div>'
+      + '<div style="color:var(--accent);font-weight:600;margin-bottom:16px">' + created.join(' · ') + '</div>'
+      + (failed.length ? '<div style="color:var(--red);font-size:.8rem;margin-bottom:12px">Failed: ' + failed.join(', ') + '</div>' : '')
+      + '<div style="color:var(--muted);font-size:.82rem">Track progress for <strong>'
+      + esc(feW.clientName) + '</strong> in the Issue Tracking tab.</div>'
+      + '</div>';
+    document.getElementById('feFooter').innerHTML =
+      '<button class="wiz-btn-sec" onclick="closeFeWizard()">Close</button>'
+      + '<button class="wiz-btn-pri" onclick="closeFeWizard();var t=document.getElementById(\'tab-tracking\');if(t)t.click()">📋 Go to Tracking</button>';
+    if (window.loadTickets) window.loadTickets();
+  }
+
+}());
