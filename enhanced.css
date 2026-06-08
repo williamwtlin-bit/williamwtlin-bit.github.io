@@ -2,11 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap');
 
 :root {
+  --border-hi: #222840;
+}
+
+html:not(.light) {
   --bg: #07080f !important;
   --surface: #0c0e18 !important;
   --surface2: #10131f !important;
   --border: #181d2e !important;
-  --border-hi: #222840;
   --accent: #5b9ef8 !important;
   --accent2: #8b6ff7 !important;
   --green: #0fd98a !important;
