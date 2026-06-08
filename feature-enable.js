@@ -1,27 +1,44 @@
-/* Feature Enable Wizard — CSM Dashboard */
+/* Feature Enable Wizard v2 — CSM Dashboard */
 (function () {
   'use strict';
 
-  var FE_FEATS = {
+  // Feature catalog matching the onboarding wizard
+  var FE_CATALOG = {
     AIQUA: [
-      { id: 'push',      label: '📲 Push Notification', desc: 'Mobile & web push campaigns' },
-      { id: 'inapp',     label: '💬 In-App Message',    desc: 'In-app banners and overlays' },
-      { id: 'email',     label: '📧 Email Campaign',    desc: 'Automated email flows' },
-      { id: 'sms',       label: '📱 SMS',               desc: 'Text message campaigns' },
-      { id: 'webpush',   label: '🌐 Web Push',          desc: 'Browser push notifications' },
-      { id: 'line',      label: '💚 LINE Message',       desc: 'LINE channel integration' },
-      { id: 'segment',   label: '🎯 Segment Builder',   desc: 'Advanced audience segmentation' },
-      { id: 'journey',   label: '🗺️ Journey Builder',   desc: 'Multi-step automation flows' },
-      { id: 'abt',       label: '🧪 A/B Testing',       desc: 'Campaign variant testing' },
-      { id: 'recommend', label: '✨ Recommendations',   desc: 'AI-powered product suggestions' }
+      { cat: 'Channels', items: [
+        { id: 'sms',          name: 'Enable SMS',              mode: 'clone'  },
+        { id: 'edm',          name: 'Enable EDM Channel',      mode: 'clone'  },
+        { id: 'onsite',       name: 'On-site Experience',      mode: 'clone'  },
+        { id: 'product_feed', name: 'Onboard Product Feed',    mode: 'manual' }
+      ]},
+      { cat: 'Audience', items: [
+        { id: 'seg_split',    name: 'Segment Split',           mode: 'clone'  },
+        { id: 'new_seg',      name: 'New Segment UI',          mode: 'clone'  }
+      ]},
+      { cat: 'Campaign', items: [
+        { id: 'creative',     name: 'Creative Studio',         mode: 'clone'  },
+        { id: 'inapp',        name: 'In-app Creative Studio',  mode: 'clone'  },
+        { id: 'content_asst', name: 'Content Assistant',       mode: 'clone'  },
+        { id: 'feed_trigger', name: 'Feed Trigger',            mode: 'manual' }
+      ]},
+      { cat: 'Segment Agent', items: [
+        { id: 'sa_onboard',   name: 'Agent Onboard Ticket',    mode: 'clone'  },
+        { id: 'sa_credit',    name: 'Credit System',           mode: 'clone'  },
+        { id: 'sa_config',    name: 'Agent Config',            mode: 'manual' },
+        { id: 'sa_agent',     name: 'Onboard Agent',           mode: 'clone'  }
+      ]},
+      { cat: 'OJM', items: [
+        { id: 'ojm_enable',   name: 'Enable OJM',              mode: 'manual' },
+        { id: 'ojm_feat',     name: 'OJM Feature Enablement',  mode: 'clone'  }
+      ]}
     ],
     AIRIS: [
-      { id: 'datasrc',  label: '🔌 Data Source Connect', desc: 'Connect external data sources' },
-      { id: 'segment',  label: '🎯 Audience Segmentation', desc: 'CDP-powered audience building' },
-      { id: 'c360',     label: '👤 Customer 360',        desc: 'Unified customer profile view' },
-      { id: 'analytics',label: '📊 Analytics Dashboard', desc: 'Reporting and insights' },
-      { id: 'export',   label: '📤 Data Export API',     desc: 'Programmatic data access' },
-      { id: 'tracking', label: '🔍 Behavioral Tracking', desc: 'Event and action tracking' }
+      { cat: 'Compulsory', items: [
+        { id: 'airis_onboard',     name: 'Onboard AIRIS',                      mode: 'manual' }
+      ]},
+      { cat: 'Platform Link', items: [
+        { id: 'airis_enterprise',  name: 'Onboard AR to Enterprise Console',   mode: 'clone'  }
+      ]}
     ]
   };
 
@@ -33,28 +50,31 @@
 
   /* public API */
   window.openFeatureEnableWizard = function () {
-    feW = { step: 0, platform: null, clientName: '', appId: '', selectedFeatures: {} };
+    feW = { step: 0, platform: null, clientName: '', appId: '', sel: {} };
     document.getElementById('feOverlay').style.display = 'flex';
     feRender();
   };
-  window.closeFeWizard    = function () { document.getElementById('feOverlay').style.display = 'none'; };
-  window.fePickPlatform   = function (p) { feW.platform = p; fePlatformStep(); };
-  window.feSetClientName  = function (v) { feW.clientName = v; };
-  window.feSetAppId       = function (v) { feW.appId = v; };
-  window.feToggleFeat     = function (id) {
-    feW.selectedFeatures[id] = !feW.selectedFeatures[id];
-    var el = document.querySelector('.fe-feat-item[data-id="' + id + '"]');
-    if (el) { el.classList.toggle('fe-active', !!feW.selectedFeatures[id]); }
+  window.closeFeWizard   = function () { document.getElementById('feOverlay').style.display = 'none'; };
+  window.fePickPlatform  = function (p) { feW.platform = p; fePlatformStep(); };
+  window.feSetClientName = function (v) { feW.clientName = v; };
+  window.feSetAppId      = function (v) { feW.appId = v; };
+  window.feToggleFeat    = function (id) {
+    feW.sel[id] = !feW.sel[id];
+    var row = document.querySelector('.fe-feat-row[data-id="' + id + '"]');
+    var cb  = document.querySelector('.fe-feat-cb[data-id="' + id + '"]');
+    if (row) row.classList.toggle('fe-row-on', !!feW.sel[id]);
+    if (cb)  cb.classList.toggle('fe-cb-on',  !!feW.sel[id]);
   };
   window.feNext = function () {
     if (feW.step === 1 && (!feW.clientName.trim() || !feW.appId.trim())) { alert('Please fill in Client Name and App ID.'); return; }
-    if (feW.step === 2 && !Object.keys(feW.selectedFeatures).some(function (k) { return feW.selectedFeatures[k]; })) { alert('Please select at least one feature.'); return; }
+    if (feW.step === 2 && !Object.keys(feW.sel).some(function (k) { return feW.sel[k]; })) { alert('Select at least one feature.'); return; }
     if (feW.step < 3) { feW.step++; feRender(); }
   };
-  window.feBack = function () { if (feW.step > 0) { feW.step--; feRender(); } };
+  window.feBack   = function () { if (feW.step > 0) { feW.step--; feRender(); } };
   window.feCreate = function () {
-    var feats = FE_FEATS[feW.platform] || [];
-    var selected = feats.filter(function (f) { return feW.selectedFeatures[f.id]; });
+    var cats = FE_CATALOG[feW.platform] || [];
+    var allItems = []; cats.forEach(function(g){ allItems = allItems.concat(g.items); });
+    var selected = allItems.filter(function (f) { return feW.sel[f.id]; });
     if (!selected.length) { alert('No features selected.'); return; }
     var btn = document.getElementById('feCreateBtn');
     if (btn) { btn.disabled = true; btn.textContent = '⏳ Creating...'; }
@@ -67,26 +87,21 @@
         });
       })
       .then(function (auth) {
-        var tok = auth.tok;
-        var cloudId = auth.cloudId;
         var chain = Promise.resolve();
         selected.forEach(function (f) {
           chain = chain.then(function () {
-            var cleanLabel = f.label.replace(/^\S+\s/, '');
-            var summary = '[Feature Enable] ' + feW.clientName + ' \u00b7 ' + feW.platform + ' \u00b7 ' + cleanLabel;
+            var summary = '[Feature Enable] ' + feW.clientName + ' \u00b7 ' + feW.platform + ' \u00b7 ' + f.name;
+            var bodyTxt = 'Feature enable request for ' + feW.clientName + ' (App ID: ' + feW.appId + ').\n\nPlatform: ' + feW.platform + '\nFeature: ' + f.name + '\nMode: ' + f.mode + '\n\nRequested via CSM Dashboard Feature Enable wizard.';
             var body = { fields: { project: { key: 'LEG' }, summary: summary,
-              description: { type: 'doc', version: 1, content: [{ type: 'paragraph', content: [{
-                type: 'text',
-                text: 'Feature enable request for ' + feW.clientName + ' (App ID: ' + feW.appId + ').\n\nPlatform: ' + feW.platform + '\nFeature: ' + f.label + '\n' + f.desc + '\n\nRequested via CSM Dashboard Feature Enable wizard.'
-              }] }] },
+              description: { type: 'doc', version: 1, content: [{ type: 'paragraph', content: [{ type: 'text', text: bodyTxt }] }] },
               issuetype: { name: 'Task' } } };
-            return fetch('https://api.atlassian.com/ex/jira/' + cloudId + '/rest/api/3/issue', {
+            return fetch('https://api.atlassian.com/ex/jira/' + auth.cloudId + '/rest/api/3/issue', {
               method: 'POST',
-              headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json', Accept: 'application/json' },
+              headers: { Authorization: 'Bearer ' + auth.tok, 'Content-Type': 'application/json', Accept: 'application/json' },
               body: JSON.stringify(body)
             }).then(function (r) { return r.json(); })
-              .then(function (d) { if (d.key) { created.push(d.key); } else { failed.push(f.label); } })
-              .catch(function () { failed.push(f.label); });
+              .then(function (d) { if (d.key) { created.push(d.key); } else { failed.push(f.name); } })
+              .catch(function () { failed.push(f.name); });
           });
         });
         return chain;
@@ -98,10 +113,14 @@
       });
   };
 
+  /* render ─────────────────────────────── */
   function feRender() {
     var steps = [fePlatformStep, feDetailsStep, feFeaturesStep, fePreviewStep];
     var pct   = [12, 37, 63, 88];
-    var titles = ['Select Platform', 'Client Details', 'Select Features', 'Preview & Create'];
+    var titles = [feW.platform ? feW.platform + ' \u2014 Select Platform' : 'Select Platform',
+                  feW.platform ? feW.platform + ' \u2014 Client Details'  : 'Client Details',
+                  feW.platform ? feW.platform + ' \u2014 Select Features' : 'Select Features',
+                  'Preview & Create'];
     var labels = ['Step 1 / 4', 'Step 2 / 4', 'Step 3 / 4', 'Step 4 / 4'];
     document.getElementById('feProgressBar').style.width = pct[feW.step] + '%';
     document.getElementById('feTitle').textContent = titles[feW.step];
@@ -109,7 +128,7 @@
     steps[feW.step]();
   }
 
-  function mkPlatformCard(id, name, sub, emoji, disabled) {
+  function mkPlatCard(id, name, sub, emoji, disabled) {
     var sel = feW.platform === id ? ' fe-selected' : '';
     var dis = disabled ? ' fe-disabled' : '';
     var click = disabled ? '' : 'onclick="fePickPlatform(\'' + id + '\')"';
@@ -117,7 +136,7 @@
       '<div style="font-size:1.8rem;margin-bottom:8px">' + emoji + '</div>' +
       '<div style="font-weight:700">' + name + '</div>' +
       '<div style="font-size:.75rem;color:var(--muted);margin-top:4px">' + sub + '</div>' +
-      (disabled ? '<div style="font-size:.7rem;color:var(--muted);margin-top:6px;font-weight:600">Coming soon</div>' : '') +
+      (disabled ? '<div style="font-size:.7rem;color:#f59e0b;margin-top:6px;font-weight:600">Coming soon</div>' : '') +
       '</div>';
   }
 
@@ -125,9 +144,9 @@
     document.getElementById('feBody').innerHTML =
       '<p style="color:var(--muted);font-size:.87rem;margin-bottom:4px">Select the platform to enable features for.</p>' +
       '<div class="fe-platform-grid">' +
-        mkPlatformCard('AIQUA', 'AIQUA', 'Customer Engagement', '🎯', false) +
-        mkPlatformCard('AIRIS', 'AIRIS', 'Customer Data Platform', '🔮', false) +
-        mkPlatformCard('BB', 'BotBonnie', 'Conversational AI', '🤖', true) +
+        mkPlatCard('AIQUA', 'AIQUA', 'Customer Engagement', '🎯', false) +
+        mkPlatCard('AIRIS', 'AIRIS', 'Customer Data Platform', '🔮', false) +
+        mkPlatCard('BB', 'BotBonnie', 'Conversational AI', '🤖', true) +
       '</div>';
     document.getElementById('feFooter').innerHTML =
       '<button class="wiz-btn-sec" onclick="closeFeWizard()">Cancel</button>' +
@@ -150,40 +169,53 @@
   }
 
   function feFeaturesStep() {
-    var feats = FE_FEATS[feW.platform] || [];
-    var cards = feats.map(function (f) {
-      return '<div class="fe-feat-item' + (feW.selectedFeatures[f.id] ? ' fe-active' : '') +
-        '" data-id="' + f.id + '" onclick="feToggleFeat(\'' + f.id + '\')">' +
-        '<div style="font-weight:600;font-size:.88rem">' + f.label + '</div>' +
-        '<div style="font-size:.74rem;color:var(--muted);margin-top:3px">' + f.desc + '</div>' +
-        '</div>';
-    }).join('');
+    var cats = FE_CATALOG[feW.platform] || [];
+    var html = '';
+    cats.forEach(function (g) {
+      html += '<div class="fe-cat-header">' + g.cat.toUpperCase() + '</div>';
+      g.items.forEach(function (f) {
+        var on = feW.sel[f.id] ? ' fe-row-on' : '';
+        var badge = f.mode === 'manual'
+          ? '<span class="fe-badge-manual">⚠ manual</span>'
+          : '<span class="fe-badge-clone">clone</span>';
+        html += '<div class="fe-feat-row' + on + '" data-id="' + f.id + '" onclick="feToggleFeat(\'' + f.id + '\')">' +
+          '<div class="fe-feat-cb' + (feW.sel[f.id] ? ' fe-cb-on' : '') + '" data-id="' + f.id + '"></div>' +
+          '<span class="fe-feat-name">' + f.name + '</span>' +
+          badge +
+          '</div>';
+      });
+    });
     document.getElementById('feBody').innerHTML =
       '<p style="color:var(--muted);font-size:.82rem;margin-bottom:12px">Enabling for <strong>' +
-      esc(feW.clientName) + '</strong> · ' + feW.platform + ' · App <strong>' + esc(feW.appId) + '</strong></p>' +
-      '<div class="fe-feat-grid">' + cards + '</div>';
+      esc(feW.clientName) + '</strong> · App <strong>' + esc(feW.appId) + '</strong></p>' +
+      '<div class="fe-feat-list">' + html + '</div>';
     document.getElementById('feFooter').innerHTML =
       '<button class="wiz-btn-sec" onclick="feBack()">← Back</button>' +
-      '<button class="wiz-btn-pri" onclick="feNext()">Preview →</button>';
+      '<button class="wiz-btn-pri" onclick="feNext()">Review & Create →</button>';
   }
 
   function fePreviewStep() {
-    var feats = FE_FEATS[feW.platform] || [];
-    var selected = feats.filter(function (f) { return feW.selectedFeatures[f.id]; });
+    var cats = FE_CATALOG[feW.platform] || [];
+    var allItems = []; cats.forEach(function(g){ allItems = allItems.concat(g.items); });
+    var selected = allItems.filter(function (f) { return feW.sel[f.id]; });
+    var rows = selected.map(function (f) {
+      var badge = f.mode === 'manual'
+        ? '<span class="fe-badge-manual">⚠ manual</span>'
+        : '<span class="fe-badge-clone">clone</span>';
+      return '<div class="fe-preview-feat-row"><span>' + f.name + '</span>' + badge + '</div>';
+    }).join('');
     document.getElementById('feBody').innerHTML =
       '<div class="fe-preview-card">' +
         '<div class="fe-preview-row"><span class="fe-preview-label">Platform</span><span class="fe-preview-val">' + feW.platform + '</span></div>' +
         '<div class="fe-preview-row"><span class="fe-preview-label">Client</span><span class="fe-preview-val">' + esc(feW.clientName) + '</span></div>' +
         '<div class="fe-preview-row"><span class="fe-preview-label">App ID</span><span class="fe-preview-val">' + esc(feW.appId) + '</span></div>' +
-        '<div class="fe-preview-row"><span class="fe-preview-label">Features (' + selected.length + ')</span>' +
-          '<span class="fe-preview-val" style="font-size:.82rem">' + (selected.map(function (f) { return f.label; }).join(', ') || '—') + '</span></div>' +
       '</div>' +
-      '<p style="color:var(--muted);font-size:.8rem;margin-top:14px">One Jira ticket per feature linked to <strong>' +
-      esc(feW.clientName) + '</strong>. Track in the Issue Tracking tab.</p>';
+      '<div style="margin-top:14px;font-size:.82rem;color:var(--muted);margin-bottom:8px;font-weight:600">' + selected.length + ' feature' + (selected.length !== 1 ? 's' : '') + ' selected:</div>' +
+      '<div class="fe-feat-list fe-feat-list-preview">' + rows + '</div>' +
+      '<p style="color:var(--muted);font-size:.78rem;margin-top:12px">One Jira ticket per feature. Track in the Issue Tracking tab.</p>';
     document.getElementById('feFooter').innerHTML =
       '<button class="wiz-btn-sec" onclick="feBack()">← Back</button>' +
-      '<button class="wiz-btn-pri" id="feCreateBtn" onclick="feCreate()">' +
-      '🎫 Create ' + selected.length + ' Ticket' + (selected.length !== 1 ? 's' : '') + '</button>';
+      '<button class="wiz-btn-pri" id="feCreateBtn" onclick="feCreate()">🎫 Create ' + selected.length + ' Ticket' + (selected.length !== 1 ? 's' : '') + '</button>';
   }
 
   function feShowResult(created, failed) {
@@ -192,17 +224,14 @@
         '<div style="font-size:2.5rem;margin-bottom:12px">' + (created.length ? '✅' : '⚠️') + '</div>' +
         '<div style="font-weight:700;font-size:1.05rem;margin-bottom:8px">' +
           created.length + ' ticket' + (created.length !== 1 ? 's' : '') + ' created' +
-          (failed.length ? ' · ' + failed.length + ' failed' : '') +
-        '</div>' +
+          (failed.length ? ' · ' + failed.length + ' failed' : '') + '</div>' +
         '<div style="color:var(--accent);font-weight:600;margin-bottom:16px">' + created.join(' · ') + '</div>' +
         (failed.length ? '<div style="color:var(--red);font-size:.8rem;margin-bottom:12px">Failed: ' + failed.join(', ') + '</div>' : '') +
-        '<div style="color:var(--muted);font-size:.82rem">Track progress for <strong>' +
-          esc(feW.clientName) + '</strong> in the Issue Tracking tab.</div>' +
+        '<div style="color:var(--muted);font-size:.82rem">Track progress for <strong>' + esc(feW.clientName) + '</strong> in the Issue Tracking tab.</div>' +
       '</div>';
     document.getElementById('feFooter').innerHTML =
       '<button class="wiz-btn-sec" onclick="closeFeWizard()">Close</button>' +
-      '<button class="wiz-btn-pri" onclick="closeFeWizard();var t=document.getElementById(\'tab-tracking\');if(t)t.click()">' +
-      '📋 Go to Tracking</button>';
+      '<button class="wiz-btn-pri" onclick="closeFeWizard();var t=document.getElementById(\'tab-tracking\');if(t)t.click()">📋 Go to Tracking</button>';
     if (window.loadTickets) { window.loadTickets(); }
   }
 }());
