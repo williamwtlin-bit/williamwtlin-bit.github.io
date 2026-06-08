@@ -1,3 +1,23 @@
+/* inject fe-v2 styles at runtime */
+(function(){
+  var s = document.createElement('style');
+  s.textContent = [
+    '.fe-feat-list{display:flex;flex-direction:column;gap:6px;max-height:340px;overflow-y:auto;padding-right:4px}',
+    '.fe-feat-list-preview{max-height:220px}',
+    '.fe-cat-header{font-size:.7rem;font-weight:700;letter-spacing:.08em;color:var(--muted);padding:10px 0 4px;border-bottom:1px solid var(--border);margin-bottom:2px}',
+    '.fe-feat-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:background .15s,border-color .15s;margin-bottom:2px}',
+    '.fe-feat-row:hover{border-color:var(--accent);background:rgba(99,102,241,.06)}',
+    '.fe-feat-row.fe-row-on{border-color:var(--accent);background:rgba(99,102,241,.12)}',
+    '.fe-feat-cb{width:16px;height:16px;border-radius:4px;border:2px solid var(--muted);flex-shrink:0;transition:all .15s;position:relative}',
+    '.fe-feat-cb.fe-cb-on{background:var(--accent);border-color:var(--accent)}',
+    '.fe-feat-cb.fe-cb-on::after{content:\'\\2713\';position:absolute;top:0;left:2px;color:#fff;font-size:11px;line-height:15px}',
+    '.fe-feat-name{flex:1;font-size:.88rem;font-weight:500}',
+    '.fe-badge-clone{font-size:.7rem;padding:2px 8px;border-radius:4px;border:1px solid var(--border);color:var(--muted);flex-shrink:0}',
+    '.fe-badge-manual{font-size:.7rem;padding:2px 8px;border-radius:4px;background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.3);flex-shrink:0}',
+    '.fe-preview-feat-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:6px;border:1px solid var(--border);margin-bottom:4px}'
+  ].join('');
+  document.head.appendChild(s);
+}());
 /* Feature Enable Wizard v2 — CSM Dashboard */
 (function () {
   'use strict';
