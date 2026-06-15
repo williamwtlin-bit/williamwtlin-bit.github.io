@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-14T09:00:26.904+08:00",
+  "generatedAt": "2026-06-15T09:00:57.087+08:00",
   "accounts": [
     {
       "id": "mannings",
@@ -211,7 +211,7 @@
       "id": "citysuper",
       "name": "City Super",
       "health": "yellow",
-      "insight": "LEG-15992 open 8d.",
+      "insight": "LEG-15992 open 9d.",
       "diffs": [],
       "riskTags": [
         "ticket"
