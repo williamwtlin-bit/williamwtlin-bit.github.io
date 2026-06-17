@@ -1,12 +1,29 @@
 {
-  "generatedAt": "2026-06-17T16:33:13.039+08:00",
+  "generatedAt": "2026-06-17T16:33:40.440+08:00",
   "accounts": [
     {
       "id": "mannings",
       "name": "Mannings",
       "health": "yellow",
       "insight": "CAM-395958 open 0d · +12 more · Appier x Mannings Bi-weekly Meeting Jun 25 · renewal due Jun 2026.",
-      "diffs": [],
+      "diffs": [
+        {
+          "type": "new",
+          "text": "QGWL-24671 [Mannings] Resolving Content Security Privacy(CSP) limitatio"
+        },
+        {
+          "type": "new",
+          "text": "QGWL-18833 [SunUp] Evaluate the man-day needed for Sun Up's new EC doma"
+        },
+        {
+          "type": "close",
+          "text": "MT-8290 closed"
+        },
+        {
+          "type": "close",
+          "text": "DC-203 closed"
+        }
+      ],
       "riskTags": [
         "ticket",
         "renewal",
@@ -90,24 +107,10 @@
           "pinned": false
         },
         {
-          "key": "MT-8290",
-          "title": "[Web] [Rollbar] TypeError: n.nativeGetRecommendationByScenario is not a function on mannings.com.hk",
-          "status": "backlog",
-          "assignee": "Unassigned",
-          "pinned": false
-        },
-        {
           "key": "CAM-386939",
           "title": "Mannings_Google account_Integration_20260318",
           "status": "in-progress",
           "assignee": "Jaron Tsai",
-          "pinned": false
-        },
-        {
-          "key": "DC-203",
-          "title": "UGC: Using the same model, but putting the person in different environments. (ie. You generate one black man in a kitchen. Use the same black man but put him in a living room)",
-          "status": "open",
-          "assignee": "Unassigned",
           "pinned": false
         },
         {
@@ -122,6 +125,20 @@
           "title": "Mannings",
           "status": "open",
           "assignee": "william.wt.lin",
+          "pinned": false
+        },
+        {
+          "key": "QGWL-24671",
+          "title": "[Mannings] Resolving Content Security Privacy(CSP) limitation",
+          "status": "backlog",
+          "assignee": "zebbie.tran",
+          "pinned": false
+        },
+        {
+          "key": "QGWL-18833",
+          "title": "[SunUp] Evaluate the man-day needed for Sun Up's new EC domain (Shopline Malaysia)",
+          "status": "backlog",
+          "assignee": "cyy.yang",
           "pinned": false
         }
       ],
@@ -231,13 +248,38 @@
       "id": "luxgen",
       "name": "Luxgen",
       "health": "yellow",
-      "insight": "LEG-16090 open 13d · +14 more.",
-      "diffs": [],
+      "insight": "LEG-16090 open 13d · +8 more.",
+      "diffs": [
+        {
+          "type": "close",
+          "text": "PROJ-22175 closed"
+        },
+        {
+          "type": "close",
+          "text": "PROJ-22178 closed"
+        },
+        {
+          "type": "close",
+          "text": "BBB-1064 closed"
+        },
+        {
+          "type": "close",
+          "text": "PROJ-21319 closed"
+        },
+        {
+          "type": "close",
+          "text": "BBB-1011 closed"
+        },
+        {
+          "type": "close",
+          "text": "BBB-876 closed"
+        }
+      ],
       "riskTags": [
         "ticket",
         "stale"
       ],
-      "ticketCount": 15,
+      "ticketCount": 9,
       "mtgCount": 0,
       "projects": [
         {
@@ -297,20 +339,6 @@
           "pinned": false
         },
         {
-          "key": "PROJ-22175",
-          "title": "[Luxgen]  Data Column of Customer360 - Location / Language",
-          "status": "in-progress",
-          "assignee": "Mark Liu",
-          "pinned": false
-        },
-        {
-          "key": "PROJ-22178",
-          "title": "[CW][Senheng][Luxgen] export BB tags import to AIXON ",
-          "status": "backlog",
-          "assignee": "Ben (Teng-Yuan) Chang",
-          "pinned": false
-        },
-        {
           "key": "QGWL-11820",
           "title": "[Luxgen] Please help to check online/offline table name of Luxgen ",
           "status": "backlog",
@@ -318,38 +346,10 @@
           "pinned": false
         },
         {
-          "key": "BBB-1064",
-          "title": "【RFQ】Luxgen_預約日期事先提醒",
-          "status": "open",
-          "assignee": "Samuel Chiang",
-          "pinned": false
-        },
-        {
-          "key": "PROJ-21319",
-          "title": "[Luxgen] AX segment anonymous user number looks suspicious",
-          "status": "open",
-          "assignee": "I-Ting Fang",
-          "pinned": false
-        },
-        {
-          "key": "BBB-1011",
-          "title": "【RFQ】LUXGEN_推導流工具數據 API 新增欄位",
-          "status": "open",
-          "assignee": "Chloe Wong",
-          "pinned": false
-        },
-        {
           "key": "QGWL-10821",
           "title": "[Luxgen]Luxgen AIQUA Web SDK embedded BB Web Chat SDK",
           "status": "in-progress",
           "assignee": "Mark Liu",
-          "pinned": false
-        },
-        {
-          "key": "BBB-876",
-          "title": "[CSM Check] Luxgen",
-          "status": "in-progress",
-          "assignee": "Samuel Chiang",
           "pinned": false
         }
       ],
@@ -359,14 +359,23 @@
       "id": "55688",
       "name": "55688",
       "health": "red",
-      "insight": "BBT-5428 backlog 191d · +14 more · [潔衣家]BotBonnie 產品更新及討論 Jun 24.",
-      "diffs": [],
+      "insight": "BBT-5428 backlog 191d · +12 more · [潔衣家]BotBonnie 產品更新及討論 Jun 24.",
+      "diffs": [
+        {
+          "type": "close",
+          "text": "PSOPPTY-118 closed"
+        },
+        {
+          "type": "close",
+          "text": "CAM-262292 closed"
+        }
+      ],
       "riskTags": [
         "ticket",
         "stale",
         "mtg"
       ],
-      "ticketCount": 15,
+      "ticketCount": 13,
       "mtgCount": 1,
       "projects": [
         {
@@ -471,20 +480,6 @@
           "title": "CLONE - 【55688】Timeout limitation in AQ JM should be shorten.",
           "status": "backlog",
           "assignee": "Unassigned",
-          "pinned": false
-        },
-        {
-          "key": "PSOPPTY-118",
-          "title": "55688",
-          "status": "open",
-          "assignee": "Tammy Chang",
-          "pinned": false
-        },
-        {
-          "key": "CAM-262292",
-          "title": "台灣大車隊55688 AIBID",
-          "status": "open",
-          "assignee": "bernie.chang",
           "pinned": false
         }
       ],
