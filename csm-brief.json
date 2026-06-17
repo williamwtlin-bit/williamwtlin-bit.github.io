@@ -5,7 +5,7 @@
       "id": "mannings",
       "name": "Mannings",
       "health": "yellow",
-      "insight": "CAM-395958 open 0d · +12 more · Appier x Mannings Bi-weekly Meeting Jun 25 · renewal due Jun 2026.",
+      "insight": "⚠️ CONTRACT EXPIRES Jun 30 (13 days). LEG-16095 (Q3 renewal order form) is open — confirm client has received and is actively reviewing. ETS-4145 + ETS-4179 (tracking studies) both in-progress with tech team. Bi-weekly meeting Jun 25 (11:00 HKT) with Rola Chung — bring renewal proposal and AIXON→AIRIS Q4 upgrade timeline.",
       "diffs": [
         {
           "type": "new",
@@ -146,12 +146,17 @@
         {
           "priority": "high",
           "label": "Renewal · High",
-          "text": "Mannings renewal due Jun 2026 — confirm status now"
+          "text": "LEG-16095 (Q3 renewal order form) is open with 13 days to contract expiry (Jun 30). Chase client sign-back immediately — escalate to AE if no response within 48h."
+        },
+        {
+          "priority": "high",
+          "label": "Meeting · High",
+          "text": "Bi-weekly meeting Jun 25 with Rola Chung (11:00–12:00 HKT). Prepare renewal proposal + AIXON→AIRIS Q4 upgrade scope — this is the decision meeting for both."
         },
         {
           "priority": "medium",
-          "label": "Meeting · Medium",
-          "text": "Prep for Appier x Mannings Bi-weekly Meeting on Jun 25 (11:00–12:00 HKT · Rola Chung)"
+          "label": "Ticket · Medium",
+          "text": "ETS-4145 + ETS-4179 (data tracking + GTM tracking studies) both in-progress. Get ETA from ETS team before Jun 25 meeting so you can update client."
         }
       ]
     },
@@ -159,7 +164,7 @@
       "id": "scmp",
       "name": "SCMP",
       "health": "yellow",
-      "insight": "AIQ-1465 open 329d · +1 more · SCMP AR renewal proposal Jun 18 · renewal due Jun 2026.",
+      "insight": "⚠️ Renewal proposal meeting TOMORROW Jun 18 (14:00–14:45 HKT). Contract expires Jun 30 (13 days). AIQ-1465 open. AID-8880 (AiDeal from Jun 2022) is almost certainly stale — confirm and add to ignore list. Finalize renewal terms and Segments Enablement status before the meeting.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -206,12 +211,12 @@
         {
           "priority": "high",
           "label": "Renewal · High",
-          "text": "SCMP renewal due Jun 2026 — confirm status now"
+          "text": "Renewal meeting TOMORROW Jun 18 (14:00 HKT). Prepare: renewal proposal with pricing/scope, Segments Enablement current status, and contract extension terms. Contract expires Jun 30."
         },
         {
           "priority": "medium",
-          "label": "Meeting · Medium",
-          "text": "Prep for SCMP AR renewal proposal on Jun 18 (14:00–14:45 HKT · william.wt.lin@appier.com)"
+          "label": "Ticket · Medium",
+          "text": "Confirm AIQ-1465 status before meeting. AID-8880 (AiDeal 2022) is likely stale — verify and add to ignore list to clean up future briefs."
         }
       ]
     },
@@ -219,7 +224,7 @@
       "id": "1010hope",
       "name": "10/10Hope",
       "health": "green",
-      "insight": "No active tickets — all clear.",
+      "insight": "All clear — no open tickets, no upcoming meetings. AIQUA onboarding and klickngo API integration both actively in progress with Mark Liu. Account is healthy but silent; a proactive check-in will keep momentum.",
       "diffs": [],
       "riskTags": [],
       "ticketCount": 0,
@@ -238,9 +243,14 @@
       "tickets": [],
       "suggestions": [
         {
+          "priority": "medium",
+          "label": "Integration · Medium",
+          "text": "Follow up with Mark Liu on klickngo API integration and AIQUA onboarding — confirm progress, blockers, and expected go-live dates for both."
+        },
+        {
           "priority": "low",
-          "label": "Check-in · Low",
-          "text": "No active tickets — send a check-in to 10/10Hope"
+          "label": "Meeting · Low",
+          "text": "No meetings scheduled. Book a short sync this week to keep both workstreams on track."
         }
       ]
     },
@@ -248,7 +258,7 @@
       "id": "luxgen",
       "name": "Luxgen",
       "health": "yellow",
-      "insight": "LEG-16090 open 13d · +8 more.",
+      "insight": "🚨 RISK: EAM-227 (offboard request for AQ, AX, EDP — retaining only BB) is open. This signals potential scope reduction — understand driver before it becomes a contract issue. LEG-16090 (BB renewal 2026) active. Multiple BB product backlog items (BBT-5953, BBT-3692, BBT-2905) may indicate platform friction. No meetings scheduled.",
       "diffs": [
         {
           "type": "close",
@@ -353,13 +363,29 @@
           "pinned": false
         }
       ],
-      "suggestions": []
+      "suggestions": [
+        {
+          "priority": "high",
+          "label": "Offboard Risk · High",
+          "text": "EAM-227 (offboard request for AQ/AX/EDP) is open — schedule a call to understand why client is scaling back. Surface retention risk to AE and Solutions team this week."
+        },
+        {
+          "priority": "high",
+          "label": "Engagement · High",
+          "text": "No meetings scheduled and multiple BB product backlog tickets suggest friction. Check in to assess overall satisfaction before LEG-16090 renewal discussion."
+        },
+        {
+          "priority": "medium",
+          "label": "Contract · Medium",
+          "text": "LEG-16090 (BB renewal 2026) is open. Confirm renewal timeline — understand if the offboard request affects contract scope."
+        }
+      ]
     },
     {
       "id": "55688",
       "name": "55688",
       "health": "red",
-      "insight": "BBT-5428 backlog 191d · +12 more · [潔衣家]BotBonnie 產品更新及討論 Jun 24.",
+      "insight": "🔴 BLOCKED: QGWL-19924 (AQ JM timeout limitation) is blocked — driving red health. Escalate with product team and get a committed resolution date. BBT-5428 (Service Agent RFQ) in backlog. Meeting Jun 24 [潔衣家] BotBonnie update (14:30 HKT).",
       "diffs": [
         {
           "type": "close",
@@ -485,9 +511,19 @@
       ],
       "suggestions": [
         {
+          "priority": "high",
+          "label": "Blocked · High",
+          "text": "QGWL-19924 (AQ JM timeout) is BLOCKED — escalate with product team today, get committed ETA, and update client before Jun 24 meeting."
+        },
+        {
+          "priority": "high",
+          "label": "RFQ · High",
+          "text": "BBT-5428 (Service Agent RFQ — 客服功能優化客製) is in backlog. Chase Brian Tsai for scope confirmation, pricing, and delivery timeline."
+        },
+        {
           "priority": "medium",
           "label": "Meeting · Medium",
-          "text": "Prep for [潔衣家]BotBonnie 產品更新及討論 on Jun 24 (14:30–15:00 HKT · william.wt.lin@appier.com)"
+          "text": "[潔衣家] BotBonnie update Jun 24 (14:30–15:00 HKT). Prepare BB product update and QGWL-19924 resolution status — client will ask."
         }
       ]
     },
@@ -495,7 +531,7 @@
       "id": "tiangyuanxiang",
       "name": "田原香",
       "health": "yellow",
-      "insight": "APC-697 open 6d · +12 more.",
+      "insight": "APC-697 + APC-698 are duplicate bug reports for the same issue (create template from scratch cannot be clicked) — consolidate and get fix ETA. AEP-6090 (EUU onboarding) may now be complete — verify and add to ignore list if done. Weekly tracking meeting every Tuesday 09:30 HKT.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -603,13 +639,29 @@
           "pinned": false
         }
       ],
-      "suggestions": []
+      "suggestions": [
+        {
+          "priority": "medium",
+          "label": "Bug · Medium",
+          "text": "APC-697 and APC-698 are duplicate reports of the same template creation bug. Consolidate into one ticket, get a fix ETA, and update client at Tuesday check-in."
+        },
+        {
+          "priority": "medium",
+          "label": "Cleanup · Medium",
+          "text": "AEP-6090 (EUU onboarding) should be confirmed complete. Verify with client and add to ignore list to clean up the brief."
+        },
+        {
+          "priority": "low",
+          "label": "Features · Low",
+          "text": "Review QGWL feature requests (send time optimization QGWL-25627, segmentation QGWL-22084) with client at next QBR to build a prioritized roadmap."
+        }
+      ]
     },
     {
       "id": "momax",
       "name": "Momax",
       "health": "yellow",
-      "insight": "CAM-350143 open 398d · +1 more.",
+      "insight": "CAM-257353 (Momax Q1 Ecom 2023, FB attribution) is from 3 years ago and almost certainly stale — confirm and add to ignore list. CAM-350143 (CPV Multi Geo 2025) is the only active campaign. No meetings scheduled — account needs a proactive touch.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -635,13 +687,29 @@
           "pinned": false
         }
       ],
-      "suggestions": []
+      "suggestions": [
+        {
+          "priority": "medium",
+          "label": "Cleanup · Medium",
+          "text": "CAM-257353 (Q1 Ecom 2023) is 3 years old — confirm it's closed and add to ignore list to remove noise from future briefs."
+        },
+        {
+          "priority": "medium",
+          "label": "Campaign · Medium",
+          "text": "Confirm CAM-350143 (CPV Multi Geo 2025) is running as expected and check if client needs performance review or support."
+        },
+        {
+          "priority": "low",
+          "label": "Check-in · Low",
+          "text": "No active platform work or meetings tracked. Schedule a check-in to understand Momax's current priorities."
+        }
+      ]
     },
     {
       "id": "citysuper",
       "name": "City Super",
       "health": "yellow",
-      "insight": "AIR-4564 in-progress 0d · +13 more.",
+      "insight": "Most activity is Prizm partner work. QGWL-25915 + AIR-4564 (Prizm demo account) in-progress. LEG-15992 (pinned, AIQUA HK order form) and LEG-16086 (clone) both open — confirm approval status with emily.cheng. Multiple Prizm AIBID campaigns running.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -751,13 +819,29 @@
           "pinned": false
         }
       ],
-      "suggestions": []
+      "suggestions": [
+        {
+          "priority": "high",
+          "label": "Order Forms · High",
+          "text": "LEG-15992 (pinned) and LEG-16086 (clone) are both open AIQUA order forms. Follow up with emily.cheng to confirm approval status and unblock both."
+        },
+        {
+          "priority": "medium",
+          "label": "Prizm Demo · Medium",
+          "text": "QGWL-25915 and AIR-4564 (Prizm demo account requests) in-progress — confirm delivery timeline and set client expectation."
+        },
+        {
+          "priority": "low",
+          "label": "Campaigns · Low",
+          "text": "Multiple Prizm AIBID campaigns open — check if any need attention or client has performance questions."
+        }
+      ]
     },
     {
       "id": "xindongli",
       "name": "行動力國際",
       "health": "yellow",
-      "insight": "BBT-7270 open 99d · +3 more.",
+      "insight": "Account handover in progress. BBT-7270 (Service Agent — wrong custom answers) and BBT-4660 (Phoenix migration + Knowledge Bot) are open and must be fully documented for the incoming CSM. BBT-5599 (sales bot feature) also pending. No meetings scheduled.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -802,7 +886,23 @@
           "pinned": false
         }
       ],
-      "suggestions": []
+      "suggestions": [
+        {
+          "priority": "high",
+          "label": "Handover · High",
+          "text": "Document all 4 open tickets (BBT-7270, BBT-4660, BBT-5599, BBT-7024) for the incoming CSM — include status, client context, and next steps before handover is complete."
+        },
+        {
+          "priority": "medium",
+          "label": "Migration · Medium",
+          "text": "BBT-4660 (Phoenix migration + Knowledge Bot) is technically complex — ensure new CSM has delivery timeline from product team."
+        },
+        {
+          "priority": "low",
+          "label": "Intro · Low",
+          "text": "Arrange a client introduction meeting between the new CSM and 行動力國際 team before handover is signed off."
+        }
+      ]
     }
   ]
 }
