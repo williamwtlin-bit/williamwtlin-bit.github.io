@@ -57,7 +57,69 @@ let ACCOUNTS = [
     ],
     meetings:[
       {date:'May 18',title:'10/10 整合',meta:'14:30–15:00 HKT · Recurring'},
-      {date:'May 25',title:'10/10 整合'tribution',  cls:'team'},
+      {date:'May 25',title:'10/10 整合',meta:'14:30–15:00 HKT'},
+    ],
+    tickets:[
+      {key:'QGWL-25317',title:'klickngo API Integration for 10/10 Hope',status:'in-progress',assignee:'Mark Liu',pinned:false},
+    ],
+    suggestions:[
+      {priority:'medium',label:'Ticket · Medium',text:'Get Mark Liu update on QGWL-25317 klickngo API integration status.'},
+      {priority:'medium',label:'Action · Medium',text:'EC & POS integration has no formal ticket — consider raising one to track it.'},
+    ],
+  },
+  {
+    id:'luxgen', name:'Luxgen', health:'yellow',
+    insight:'Renewal decision meetings were May 19. Log the outcome and update status.',
+    diffs:[{type:'new',text:'確認是否延 Luxgen 合約 — outcome pending log'}],
+    riskTags:['renewal'], ticketCount:0, mtgCount:1,
+    projects:[{name:'Contract Renewal Decision',status:'progress'}],
+    meetings:[{date:'May 26',title:'Luxgen checking',meta:'10:00–10:30 HKT · Recurring'}],
+    tickets:[],
+    suggestions:[
+      {priority:'high',label:'Renewal · High',text:'Log the May 19 renewal outcome — renew, churn, or pending? Update account status.'},
+    ],
+  },
+  {
+    id:'55688', name:'55688', health:'yellow',
+    insight:'Tracking Service Agent purchase intent. Weekly check-in ongoing.',
+    diffs:[], riskTags:['ticket'], ticketCount:0, mtgCount:2,
+    projects:[{name:'Service Agent Purchase Decision',status:'progress'}],
+    meetings:[
+      {date:'May 19',title:'55688 SA Tracking',meta:'09:15–09:45 HKT · Recurring'},
+      {date:'May 26',title:'55688 SA Tracking',meta:'09:15–09:45 HKT'},
+    ],
+    tickets:[],
+    suggestions:[
+      {priority:'medium',label:'Action · Medium',text:'Bring Service Agent pricing summary to May 19 meeting. Push for a clear decision timeline.'},
+    ],
+  },
+  {
+    id:'tiyuanxiang', name:'田原香', health:'green',
+    insight:'Use case tracking session weekly. No blockers detected.',
+    diffs:[], riskTags:['ok'], ticketCount:0, mtgCount:2,
+    projects:[
+      {name:'Automation Journey Development',status:'progress'},
+      {name:'Agent Usage & Feedback',status:'ok'},
+    ],
+    meetings:[
+      {date:'May 20',title:'田原香 use case tracking',meta:'09:30–10:00 HKT · Recurring'},
+      {date:'May 27',title:'田原香 use case tracking',meta:'09:30–10:00 HKT'},
+    ],
+    tickets:[],
+    suggestions:[
+      {priority:'low',label:'Action · Low',text:'Collect agent usage feedback at May 20 session and log for OKR.'},
+    ],
+  },
+];
+
+const BRIEF_CAT_META = {
+  onboard:  {emoji:'🚀', label:'Onboard',           cls:'onboard'},
+  renewal:  {emoji:'🔄', label:'Renewal',            cls:'renewal'},
+  ticket:   {emoji:'🎫', label:'Ticket Resolved',    cls:'ticket'},
+  feature:  {emoji:'⚡', label:'Feature Enabled',    cls:'feature'},
+  pitching: {emoji:'🎯', label:'Pitching',           cls:'pitching'},
+  ai:       {emoji:'🤖', label:'AI Adoption',        cls:'ai'},
+  team:     {emoji:'🤝', label:'Team Contribution',  cls:'team'},
   other:    {emoji:'📌', label:'Other',              cls:'other'},
 };
 
@@ -74,7 +136,7 @@ const OKR_SECTIONS = [
 
 const RISK_LABELS = {mtg:'📅 Meeting Due', ticket:'🐛 Ticket Blocked', renewal:'⚠️ Renewal Risk', silent:'👻 Client Silent', ok:'✅ On Track'};
 
-const PRELOADED_LOG = [
+const PREMOADEF_LOG = [
   {id:1,  date:'2026-Q1', quarter:'Q1 2026', category:'onboard',  client:'10/10Hope', description:'AIQUA onboarded (Prizm HK)'},
   {id:2,  date:'2026-Q1', quarter:'Q1 2026', category:'renewal',  client:'Mannings',  description:'Renewed AQ & AX to 2026-06-30'},
   {id:3,  date:'2026-Q1', quarter:'Q1 2026', category:'renewal',  client:'田原香',     description:'Renewed to 2027-02-16'},
@@ -172,7 +234,7 @@ function initBrief(){
   }
 }
 
-// ── BRIEF SUB-TAB SWITCH ─────────────────────────────────────────────────────
+// ── BRIEF SUB-TAB SWITCH ──────────────────────────────────────────────────────
 function briefSwitchTab(name){
   ['brief','okr'].forEach(t=>{
     const btn  = document.getElementById('btab-'+t);
