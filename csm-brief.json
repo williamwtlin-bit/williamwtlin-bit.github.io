@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-18T09:00:10.601+08:00",
+  "generatedAt": "2026-06-19T09:00:08.740+08:00",
   "accounts": [
     {
       "id": "mannings",
       "name": "Mannings",
       "health": "yellow",
-      "insight": "CAM-395958 open 0d · +12 more · Appier x Mannings Bi-weekly Meeting Jun 25 · renewal due Jun 2026.",
+      "insight": "CAM-395958 in-progress 0d · +12 more · Appier x Mannings Bi-weekly Meeting Jun 25 · renewal due Jun 2026.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -14,7 +14,7 @@
         "mtg"
       ],
       "ticketCount": 13,
-      "mtgCount": 1,
+      "mtgCount": 2,
       "projects": [
         {
           "name": "Q3 Renewal Contract",
@@ -30,6 +30,11 @@
           "date": "Jun 25",
           "title": "Appier x Mannings Bi-weekly Meeting",
           "meta": "11:00–12:00 HKT · Rola Chung"
+        },
+        {
+          "date": "Jul 2",
+          "title": "Appier x Mannings Monthly Meeting",
+          "meta": "11:00–12:00 HKT · Rola Chung"
         }
       ],
       "recentNotes": [],
@@ -37,8 +42,8 @@
         {
           "key": "CAM-395958",
           "title": "[Website re-test]OMG_Mannings_Double 11 EC Campaign_Oct 2024",
-          "status": "open",
-          "assignee": "jen.huang",
+          "status": "in-progress",
+          "assignee": "Eric Lai",
           "pinned": false
         },
         {
@@ -143,16 +148,15 @@
       "id": "scmp",
       "name": "SCMP",
       "health": "yellow",
-      "insight": "AIQ-1465 open 329d · +1 more · SCMP AR renewal proposal Jun 18 · renewal due Jun 2026.",
+      "insight": "AIQ-1465 open 330d · +1 more · renewal due Jun 2026.",
       "diffs": [],
       "riskTags": [
         "ticket",
         "renewal",
-        "stale",
-        "mtg"
+        "stale"
       ],
       "ticketCount": 2,
-      "mtgCount": 1,
+      "mtgCount": 0,
       "projects": [
         {
           "name": "Segments Enablement",
@@ -163,13 +167,7 @@
           "status": "progress"
         }
       ],
-      "meetings": [
-        {
-          "date": "Jun 18",
-          "title": "SCMP AR renewal proposal",
-          "meta": "14:00–14:45 HKT · william.wt.lin@appier.com"
-        }
-      ],
+      "meetings": [],
       "recentNotes": [],
       "tickets": [
         {
@@ -192,11 +190,6 @@
           "priority": "high",
           "label": "Renewal · High",
           "text": "SCMP renewal due Jun 2026 — confirm status now"
-        },
-        {
-          "priority": "medium",
-          "label": "Meeting · Medium",
-          "text": "Prep for SCMP AR renewal proposal on Jun 18 (14:00–14:45 HKT · william.wt.lin@appier.com)"
         }
       ]
     },
@@ -234,7 +227,7 @@
       "id": "luxgen",
       "name": "Luxgen",
       "health": "yellow",
-      "insight": "LEG-16090 open 13d · +8 more.",
+      "insight": "LEG-16090 open 14d · +8 more.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -321,7 +314,7 @@
       "id": "55688",
       "name": "55688",
       "health": "red",
-      "insight": "BBT-5428 backlog 191d · +12 more · [潔衣家]BotBonnie 產品更新及討論 Jun 24.",
+      "insight": "BBT-5428 backlog 192d · +12 more · [潔衣家]BotBonnie 產品更新及討論 Jun 24.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -449,7 +442,7 @@
       "id": "tiangyuanxiang",
       "name": "田原香",
       "health": "yellow",
-      "insight": "APC-697 open 7d · +12 more.",
+      "insight": "APC-697 open 8d · +12 more.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -564,7 +557,7 @@
       "id": "momax",
       "name": "Momax",
       "health": "yellow",
-      "insight": "CAM-350143 open 399d · +1 more.",
+      "insight": "CAM-350143 open 400d · +1 more.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -597,7 +590,7 @@
       "id": "citysuper",
       "name": "City Super",
       "health": "yellow",
-      "insight": "AIR-4564 in-progress 0d · +13 more.",
+      "insight": "AIR-4564 in-progress 1d · +13 more.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -714,7 +707,7 @@
       "id": "xindongli",
       "name": "行動力國際",
       "health": "yellow",
-      "insight": "BBT-7270 open 99d · +3 more.",
+      "insight": "BBT-7270 open 100d · +3 more.",
       "diffs": [],
       "riskTags": [
         "ticket",
