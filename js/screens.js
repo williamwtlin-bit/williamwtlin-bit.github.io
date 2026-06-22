@@ -1,7 +1,7 @@
 'use strict';
 
-// SECTION 6 — SCREEN MANAGEMENT & APP INIT
-// ════════════════════════════════════════════════════════════════════════════
+// SECTION 6 \u2014 SCREEN MANAGEMENT & APP INIT
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 
 function showScreen(name){
   ['loginScreen','appScreen'].forEach(id=>{
@@ -23,14 +23,14 @@ function showLoginError(msg){
 function getConfiguredClientId(){
   return CONFIG.CLIENT_ID || null;
 }
-// Stub — setup screen removed
+// Stub \u2014 setup screen removed
 function showSetupScreen(){ showLoginScreen(); }
 function copyRedirectUri(){}
 function logout(){
   clearSession();
   selAsn=null; allData=[]; tbdData=[];
   showLoginScreen();
-  toast('info','Logged out — session cleared');
+  toast('info','Logged out \u2014 session cleared');
 }
 
 async function launchDashboard(user){
@@ -38,7 +38,7 @@ async function launchDashboard(user){
   document.getElementById('tab-brief').style.display=user.email==='william.wt.lin@appier.com'?'':'none';
   document.getElementById('headerUser').textContent=user.displayName;
   document.getElementById('headerSub').textContent=
-    `${user.email} · ${user.siteName||user.siteUrl} · Reporter view`;
+    `${user.email} \u00b7 ${user.siteName||user.siteUrl} \u00b7 Reporter view`;
   try{
     // Fetch both datasets in parallel
     const [reported, assigned] = await Promise.all([
@@ -48,7 +48,7 @@ async function launchDashboard(user){
     renderDashboard(reported);
     renderTbd(assigned);
     renderPinned();
-    toast('success',`Welcome ${user.displayName} — loaded ${reported.length} reported, ${assigned.length} assigned`);
+    toast('success',`Welcome ${user.displayName} \u2014 loaded ${reported.length} reported, ${assigned.length} assigned`);
     // Strip any stale mock records left over from a preview session (ob_mock_*)
     saveOnboardings(loadOnboardings().filter(function(o){ return !o.id.startsWith('ob_mock_'); }));
     renderOnboardingProgress();
@@ -58,9 +58,9 @@ async function launchDashboard(user){
   }
 }
 
-// ── PREVIEW / MOCK MODE ──────────────────────────────────────────────────────
+// \u2500\u2500 PREVIEW / MOCK MODE \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 const MOCK_REPORTED = [
-  // ── Mannings: mix of active + done (normal full card) ──
+  // \u2500\u2500 Mannings: mix of active + done (normal full card) \u2500\u2500
   {key:'ETS-3345',url:'#',summary:'[Mannings] Campaign #3115910 investigation',status:'To Do',assignee:'hazel.wang',reporter:'william.wt.lin',created:'2026-04-28',resolutiondate:null},
   {key:'QGWL-25560',url:'#',summary:'[Mannings] Campaign #3115910 investigation',status:'Backlog',assignee:'hazel.wang',reporter:'william.wt.lin',created:'2026-04-28',resolutiondate:null},
   {key:'QGWL-25487',url:'#',summary:'[Mannings] Check edm campaign deliver queries',status:'In Progress',assignee:'hazel.wang',reporter:'william.wt.lin',created:'2026-04-20',resolutiondate:null},
@@ -71,30 +71,30 @@ const MOCK_REPORTED = [
   {key:'QGWL-25258',url:'#',summary:'[Mannings] Feed trigger campaign investigation',status:'Done',assignee:'hazel.wang',reporter:'william.wt.lin',created:'2026-03-25',resolutiondate:'2026-04-08'},
   {key:'ETS-2705',url:'#',summary:'[Mannings] Enable enterprise segment feature',status:"Won't Fix",assignee:'hazel.wang',reporter:'william.wt.lin',created:'2026-03-10',resolutiondate:'2026-03-20'},
 
-  // ── 1010Hope: active only (normal card, no done section) ──
+  // \u2500\u2500 1010Hope: active only (normal card, no done section) \u2500\u2500
   {key:'QGWL-25317',url:'#',summary:'[1010Hope] klickngo API Integration',status:'In Progress',assignee:'Mark Liu',reporter:'william.wt.lin',created:'2026-04-01',resolutiondate:null},
   {key:'QGWL-24745',url:'#',summary:'[1010Hope] Onboarding new AIQUA account',status:'In Progress',assignee:'Mark Liu',reporter:'william.wt.lin',created:'2026-01-16',resolutiondate:null},
 
-  // ── Qchicken: active + done ──
+  // \u2500\u2500 Qchicken: active + done \u2500\u2500
   {key:'QGWL-24972',url:'#',summary:'[Qchicken] Enable campaign agent for client',status:'Backlog',assignee:'susan.huang',reporter:'william.wt.lin',created:'2026-02-13',resolutiondate:null},
   {key:'ETS-2926',url:'#',summary:'[Qchicken] Enable event count condition on AIQUA',status:'Done',assignee:'vivian.yang',reporter:'william.wt.lin',created:'2026-04-09',resolutiondate:'2026-04-09'},
   {key:'AEP-6217',url:'#',summary:'[Qchicken] Credit System operation request',status:'Done',assignee:'mars.weng',reporter:'william.wt.lin',created:'2026-03-27',resolutiondate:'2026-03-30'},
 
-  // ── Luxgen: ALL DONE → compact row ──
-  {key:'FIN-2402',url:'#',summary:'[Luxgen] 2026-3月服務交付報告',status:'Done',assignee:'william.wt.lin',reporter:'william.wt.lin',created:'2026-04-01',resolutiondate:'2026-04-01'},
-  {key:'FIN-2340',url:'#',summary:'[Luxgen] 2026-2月服務交付報告',status:'Done',assignee:'william.wt.lin',reporter:'william.wt.lin',created:'2026-03-05',resolutiondate:'2026-03-10'},
-  {key:'FIN-2283',url:'#',summary:'[Luxgen] 2026-1月服務交付報告',status:'Done',assignee:'william.wt.lin',reporter:'william.wt.lin',created:'2026-02-05',resolutiondate:'2026-02-05'},
+  // \u2500\u2500 Luxgen: ALL DONE \u2192 compact row \u2500\u2500
+  {key:'FIN-2402',url:'#',summary:'[Luxgen] 2026-3\u6708\u670d\u52d9\u4ea4\u4ed8\u5831\u544a',status:'Done',assignee:'william.wt.lin',reporter:'william.wt.lin',created:'2026-04-01',resolutiondate:'2026-04-01'},
+  {key:'FIN-2340',url:'#',summary:'[Luxgen] 2026-2\u6708\u670d\u52d9\u4ea4\u4ed8\u5831\u544a',status:'Done',assignee:'william.wt.lin',reporter:'william.wt.lin',created:'2026-03-05',resolutiondate:'2026-03-10'},
+  {key:'FIN-2283',url:'#',summary:'[Luxgen] 2026-1\u6708\u670d\u52d9\u4ea4\u4ed8\u5831\u544a',status:'Done',assignee:'william.wt.lin',reporter:'william.wt.lin',created:'2026-02-05',resolutiondate:'2026-02-05'},
 
-  // ── Genki: ALL DONE → compact row ──
+  // \u2500\u2500 Genki: ALL DONE \u2192 compact row \u2500\u2500
   {key:'ETS-2622',url:'#',summary:'[Genki] Offboard Genki AIXON account',status:'Done',assignee:'jason.wu',reporter:'william.wt.lin',created:'2026-03-20',resolutiondate:'2026-03-20'},
   {key:'ETS-1650',url:'#',summary:'[Genki] Deactivate Genki account',status:'Done',assignee:'jason.wu',reporter:'william.wt.lin',created:'2026-01-21',resolutiondate:'2026-01-21'},
   {key:'PROJ-32948',url:'#',summary:'[Genki] Offboard Genki AIXON account',status:"Won't Fix",assignee:'jason.wu',reporter:'william.wt.lin',created:'2026-03-16',resolutiondate:'2026-03-16'},
 
-  // ── 55688潔衣家: Pending Approval (active, normal card) ──
-  {key:'BBT-7216',url:'#',summary:'[55688潔衣家] Customized binding feature show error messages',status:'Pending Approval',assignee:'rick.lee',reporter:'william.wt.lin',created:'2026-02-12',resolutiondate:null},
-  {key:'BBT-7209',url:'#',summary:'[55688潔衣家] 反映腳本模組突然消失',status:'Done',assignee:'rick.lee',reporter:'william.wt.lin',created:'2026-02-11',resolutiondate:'2026-02-11'},
+  // \u2500\u2500 55688\u6f54\u8863\u5bb6: Pending Approval (active, normal card) \u2500\u2500
+  {key:'BBT-7216',url:'#',summary:'[55688\u6f54\u8863\u5bb6] Customized binding feature show error messages',status:'Pending Approval',assignee:'rick.lee',reporter:'william.wt.lin',created:'2026-02-12',resolutiondate:null},
+  {key:'BBT-7209',url:'#',summary:'[55688\u6f54\u8863\u5bb6] \u53cd\u6620\u8173\u672c\u6a21\u7d44\u7a81\u7136\u6d88\u5931',status:'Done',assignee:'rick.lee',reporter:'william.wt.lin',created:'2026-02-11',resolutiondate:'2026-02-11'},
 
-  // ── Others: no brackets ──
+  // \u2500\u2500 Others: no brackets \u2500\u2500
   {key:'AIR-4126',url:'#',summary:'Feature request on providing event prediction on AIRIS UI',status:'To Do',assignee:'Michael Palmer',reporter:'william.wt.lin',created:'2026-02-05',resolutiondate:null},
   {key:'EAM-355',url:'#',summary:'Offboard Request - Genki',status:'Backlog',assignee:'Roland Wang',reporter:'william.wt.lin',created:'2026-03-16',resolutiondate:null},
 ];
@@ -108,7 +108,7 @@ const MOCK_ASSIGNED = [
   {key:'ETS-9004',url:'#',summary:'[Luxgen] Monthly delivery report sign-off',status:'To Do',assignee:'william.wt.lin',reporter:'Brandon Tang',created:'2026-04-10',resolutiondate:null},
 ];
 
-// ── MOCK ONBOARDING RECORDS ─────────────────────────────────────────────────
+// \u2500\u2500 MOCK ONBOARDING RECORDS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 const MOCK_ONBOARDINGS = [
   {
     id: 'ob_mock_001',
@@ -135,7 +135,7 @@ const MOCK_ONBOARDINGS = [
     legalTicket: 'LEG-1002',
     opportunityLink: 'https://appier.atlassian.net/opp/456',
     onboardTicketKey: 'QGWL-24745',
-    appId: '',   // ← No App ID yet — shows "Awaiting from TS" state
+    appId: '',   // \u2190 No App ID yet \u2014 shows "Awaiting from TS" state
     createdAt: '2026-04-28',
     features: [
       { featureId:'edm',       name:'Enable EDM Channel',      ticketKey:'QGWL-9901', status:'Backlog',     mode:'clone' },
@@ -175,12 +175,12 @@ function loadPreview(){
   showScreen('app');
   document.getElementById('headerUser').textContent = mockUser.displayName;
   document.getElementById('headerSub').textContent =
-    `${mockUser.email} · ${mockUser.siteName} · Reporter view`;
+    `${mockUser.email} \u00b7 ${mockUser.siteName} \u00b7 Reporter view`;
   document.getElementById('previewBadge').style.display = 'flex';
   renderDashboard(MOCK_REPORTED);
   renderTbd(MOCK_ASSIGNED);
   renderPinned();
-  toast('info', '🎨 Preview mode — showing mock data');
+  toast('info', '\u{1f3a8} Preview mode \u2014 showing mock data');
 
   // Inject mock onboardings into localStorage for preview
   saveOnboardings(MOCK_ONBOARDINGS);
@@ -200,7 +200,7 @@ function exitPreview(){
   showLoginScreen();
 }
 
-// Mock version of renderOnboardingProgress — skips the live Jira status fetch
+// Mock version of renderOnboardingProgress \u2014 skips the live Jira status fetch
 // Inject one mock draft so preview shows the draft/resume state
 function injectMockDraft(){
   const mockDraft = {
@@ -217,7 +217,7 @@ function injectMockDraft(){
     organizationId:   '',
     selectedFeatures: { edm:true, seg_split:true, creative:true },
     extraFields:      { edm:{ email:'noreply@luxgen.com' } },
-    step:             3,  // resumes at IDs step — TS provides these before feature selection
+    step:             3,  // resumes at IDs step \u2014 TS provides these before feature selection
   };
   const drafts = loadDrafts().filter(d=>!d.id.startsWith('draft_MOCK'));
   drafts.unshift(mockDraft);
@@ -262,14 +262,14 @@ function renderOnboardingProgressMock(){
           ? `<div class="ob-appid-row">
                <span class="ob-appid-label">App ID</span>
                <span class="ob-appid-val">${esc(ob.appId)}</span>
-               <button class="btn-add-feat" onclick="addObFeatures('${ob.id}')">＋ Add Features</button>
+               <button class="btn-add-feat" onclick="addObFeatures('${ob.id}')">\uff0b Add Features</button>
                <button class="ob-del-btn" onclick="deleteOnboarding('${ob.id}')">Delete record</button>
              </div>`
           : `<div class="ob-appid-row">
                <span class="ob-appid-label">App ID</span>
-               <span class="ob-appid-missing">⏳ Awaiting from TS team</span>
-               <button class="appid-scan-btn" style="font-size:11px">🔍 Scan (preview)</button>
-               <button class="btn-add-feat" onclick="addObFeatures('${ob.id}')">＋ Add Features</button>
+               <span class="ob-appid-missing">\u23f3 Awaiting from TS team</span>
+               <button class="appid-scan-btn" style="font-size:11px">\u{1f50d} Scan (preview)</button>
+               <button class="btn-add-feat" onclick="addObFeatures('${ob.id}')">\uff0b Add Features</button>
                <button class="ob-del-btn" onclick="deleteOnboarding('${ob.id}')">Delete</button>
              </div>`}
         <table class="ob-feat-table">
@@ -278,8 +278,8 @@ function renderOnboardingProgressMock(){
             <tr>
               <td style="color:var(--muted2);font-size:12px">Onboard Ticket</td>
               <td><a class="ob-ticket-link" href="https://appier.atlassian.net/browse/${ob.onboardTicketKey}" target="_blank">${ob.onboardTicketKey}</a></td>
-              <td id="obst-${ob.onboardTicketKey}"><span class="sb ${sClass(ob.onboardStatus||'')}" style="${ob.onboardStatus?'':'color:var(--muted);font-style:italic'}"><span class="sd"></span>${esc(ob.onboardStatus||'Loading…')}</span></td>
-              <td>—</td>
+              <td id="obst-${ob.onboardTicketKey}"><span class="sb ${sClass(ob.onboardStatus||'')}" style="${ob.onboardStatus?'':'color:var(--muted);font-style:italic'}"><span class="sd"></span>${esc(ob.onboardStatus||'Loading\u2026')}</span></td>
+              <td>\u2014</td>
             </tr>
             ${ob.features.map(f=>{
               const days = Math.floor((Date.now()-new Date(ob.createdAt))/86400000);
@@ -293,11 +293,11 @@ function renderOnboardingProgressMock(){
           </tbody>
         </table>
         <div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;justify-content:flex-end">
-          <button class="btn-add-feat" onclick="addObFeatures('${ob.id}')">＋ Add Features</button>
+          <button class="btn-add-feat" onclick="addObFeatures('${ob.id}')">\uff0b Add Features</button>
         </div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ════════════════════════════════════════════════════════════════════════════
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
