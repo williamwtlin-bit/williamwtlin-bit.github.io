@@ -1441,12 +1441,17 @@ async function refresh(){
 
 // Save currently-tracked (non-done) tickets per client to localStorage
 function saveCsmTracked(issues) {
+  var _aliases = {'qchicken': '\u7530\u539f\u9999', '\u7530\u539f\u9999': 'qchicken'};
   var _t = {};
   (issues || []).forEach(function(issue) {
     var _c = extractClient((issue.fields&&issue.fields.summary)||'');
     if (!_c) return;
     if (!_t[_c]) _t[_c] = [];
-    if (!isDone((issue.fields&&issue.fields.status&&issue.fields.status.name)||'')) _t[_c].push(issue.key);
+    if (!isDone((issue.fields&&issue.fields.status&&issue.fields.status.name)||'')) {
+      _t[_c].push(issue.key);
+      var _alias = _aliases[_c];
+      if (_alias) { if (!_t[_alias]) _t[_alias] = []; _t[_alias].push(issue.key); }
+    }
   });
   try { localStorage.setItem('csmTracked', JSON.stringify(_t)); } catch(_e) {}
 }
