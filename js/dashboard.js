@@ -1441,10 +1441,10 @@ async function refresh(){
 function saveCsmTracked(issues) {
   var _t = {};
   (issues || []).forEach(function(issue) {
-    var _c = extractClient(issue);
+    var _c = extractClient((issue.fields&&issue.fields.summary)||'');
     if (!_c) return;
     if (!_t[_c]) _t[_c] = [];
-    if (!isDone(issue)) _t[_c].push(issue.key);
+    if (!isDone((issue.fields&&issue.fields.status&&issue.fields.status.name)||'')) _t[_c].push(issue.key);
   });
   try { localStorage.setItem('csmTracked', JSON.stringify(_t)); } catch(_e) {}
 }
