@@ -1,7 +1,7 @@
 'use strict';
 
-// SECTION 1 — PKCE UTILITIES
-// ════════════════════════════════════════════════════════════════════════════
+// SECTION 1 \u2014 PKCE UTILITIES
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 
 // Cryptographically random string using Web Crypto API (available on HTTPS + localhost)
 function randomString(len=64){
@@ -23,9 +23,9 @@ async function generatePKCE(){
   return {verifier, challenge:b64url(digest)};
 }
 
-// ════════════════════════════════════════════════════════════════════════════
-// SECTION 2 — TOKEN MANAGEMENT (sessionStorage only — cleared on tab close)
-// ════════════════════════════════════════════════════════════════════════════
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+// SECTION 2 \u2014 TOKEN MANAGEMENT (sessionStorage only \u2014 cleared on tab close)
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 
 function saveTokens(t){
   // Never log tokens. Store expiry as absolute timestamp.
@@ -80,14 +80,14 @@ async function getAccessToken(){
   return fresh.access_token;
 }
 
-// ════════════════════════════════════════════════════════════════════════════
-// SECTION 3 — OAUTH 2.0 FLOW
-// ════════════════════════════════════════════════════════════════════════════
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+// SECTION 3 \u2014 OAUTH 2.0 FLOW
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 
 async function startLogin(){
   if(!getConfiguredClientId()){ showSetupScreen(); return; }
   const btn=document.getElementById('loginBtn');
-  btn.disabled=true; btn.textContent='Redirecting…';
+  btn.disabled=true; btn.textContent='Redirecting\u2026';
 
   // Generate PKCE + state, store temporarily in sessionStorage
   const {verifier,challenge}=await generatePKCE();
@@ -106,7 +106,7 @@ async function startLogin(){
     code_challenge:    challenge,
     code_challenge_method: 'S256',
   });
-  // Navigate to Atlassian — user will see Google SSO if configured on their org
+  // Navigate to Atlassian \u2014 user will see Google SSO if configured on their org
   window.location.href = `${CONFIG.AUTH_URL}?${params}`;
 }
 
@@ -116,17 +116,17 @@ async function handleOAuthCallback(){
   const returnedState=params.get('state');
   const error=params.get('error');
 
-  // Clean the URL immediately — ~ever leave auth code in browser history
+  // Clean the URL immediately \u2014 ~ever leave auth code in browser history
   history.replaceState({}, document.title, CONFIG.REDIRECT_URI);
 
   if(error){
     showLoginScreen();
-    showLoginError(`Atlassian returned an error: ${error} — ${params.get('error_description')||''}`);
+    showLoginError(`Atlassian returned an error: ${error} \u2014 ${params.get('error_description')||''}`);
     return;
   }
   if(!code){ showLoginScreen(); return; }
 
-  // ── CSRF check: state must match exactly what we generated ──────────────
+  // \u2500\u2500 CSRF check: state must match exactly what we generated \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
   const savedState=sessionStorage.getItem(SK.STATE);
   const verifier=sessionStorage.getItem(SK.VERIFIER);
   sessionStorage.removeItem(SK.STATE);    // one-time use
@@ -143,7 +143,7 @@ async function handleOAuthCallback(){
     return;
   }
 
-  // ── Exchange code for tokens via Cloudflare Worker proxy ───────────────
+  // \u2500\u2500 Exchange code for tokens via Cloudflare Worker proxy \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
   showScreen('loading');
   try{
     // Worker receives JSON, adds client_secret server-side, calls Atlassian
@@ -164,9 +164,9 @@ async function handleOAuthCallback(){
     const tokens=await resp.json();
     saveTokens(tokens);
 
-    // ── Fetch user identity ──────────────────────────────────────────────
+    // \u2500\u2500 Fetch user identity \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
     const [me, resources]=await Promise.all([fetchMe(), fetchAccessibleResources()]);
-    // Pick the resource that has Jira scopes — avoids accidentally picking Confluence
+    // Pick the resource that has Jira scopes \u2014 avoids accidentally picking Confluence
     const resource = resources.find(r =>
       r.scopes && r.scopes.some(s => s.includes('jira'))
     ) || resources[0];
@@ -190,4 +190,4 @@ async function handleOAuthCallback(){
   }
 }
 
-// ════════════════════════════════════════════════════════════════════════════
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
