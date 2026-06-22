@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-21T09:00:42.120+08:00",
+  "generatedAt": "2026-06-22T09:00:11.756+08:00",
   "accounts": [
     {
       "id": "mannings",
       "name": "Mannings",
       "health": "yellow",
-      "insight": "CAM-395958 in-progress 2d · +12 more · Appier x Mannings Bi-weekly Meeting Jun 25 · renewal due Jun 2026.",
+      "insight": "CAM-395958 in-progress 3d · +12 more · Appier x Mannings Bi-weekly Meeting Jun 25 · renewal due Jun 2026.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -148,7 +148,7 @@
       "id": "scmp",
       "name": "SCMP",
       "health": "yellow",
-      "insight": "AIQ-1465 open 332d · +1 more · renewal due Jun 2026.",
+      "insight": "AIQ-1465 open 333d · +1 more · renewal due Jun 2026.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -227,7 +227,7 @@
       "id": "luxgen",
       "name": "Luxgen",
       "health": "yellow",
-      "insight": "LEG-16090 open 16d · +8 more.",
+      "insight": "LEG-16090 open 17d · +8 more.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -314,7 +314,7 @@
       "id": "55688",
       "name": "55688",
       "health": "red",
-      "insight": "BBT-5428 backlog 194d · +12 more · [潔衣家]BotBonnie 產品更新及討論 Jun 24.",
+      "insight": "BBT-5428 backlog 195d · +12 more · [潔衣家]BotBonnie 產品更新及討論 Jun 24.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -442,7 +442,7 @@
       "id": "tiangyuanxiang",
       "name": "田原香",
       "health": "yellow",
-      "insight": "APC-697 open 10d · +12 more.",
+      "insight": "APC-697 open 11d · +12 more.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -557,7 +557,7 @@
       "id": "momax",
       "name": "Momax",
       "health": "yellow",
-      "insight": "CAM-350143 open 402d · +1 more.",
+      "insight": "CAM-350143 open 403d · +1 more.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -590,7 +590,7 @@
       "id": "citysuper",
       "name": "City Super",
       "health": "yellow",
-      "insight": "AIR-4564 in-progress 3d · +13 more.",
+      "insight": "AIR-4564 in-progress 4d · +13 more.",
       "diffs": [],
       "riskTags": [
         "ticket",
@@ -707,7 +707,7 @@
       "id": "xindongli",
       "name": "行動力國際",
       "health": "yellow",
-      "insight": "BBT-7270 open 102d · +3 more.",
+      "insight": "BBT-7270 open 103d · +3 more.",
       "diffs": [],
       "riskTags": [
         "ticket",
