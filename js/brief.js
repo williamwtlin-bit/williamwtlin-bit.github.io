@@ -1,30 +1,30 @@
 'use strict';
 
-// CSM BRIEF — DATA, STATE & FUNCTIONS
-// ════════════════════════════════════════════════════════════════════════════
+// CSM BRIEF â DATA, STATE & FUNCTIONS
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 let ACCOUNTS = [
   {
     id:'mannings', name:'Mannings', health:'red',
-    insight:'AIXP-1840 open 11 days — no update from Jin Chen. Bi-weekly May 28.',
+    insight:'AIXP-1840 open 11 days â no update from Jin Chen. Bi-weekly May 28.',
     diffs:[{type:'warn',text:'AIXP-1840 no update in 11 days'}],
     riskTags:['mtg','ticket'], ticketCount:1, mtgCount:3,
     projects:[
       {name:'Q3 Renewal Contract',status:'progress'},
-      {name:'AIXON → AIRIS Upgrade (Q4)',status:'progress'},
+      {name:'AIXON â AIRIS Upgrade (Q4)',status:'progress'},
     ],
     meetings:[
-      {date:'May 28',title:'Bi-weekly Meeting',meta:'11:00–12:00 HKT · Teams · Rola Chung'},
-      {date:'Jun 1',title:'Mannings Quotation',meta:'11:15–12:00 HKT'},
-      {date:'Jun 4',title:'Monthly Meeting',meta:'11:00–12:00 HKT · Teams · Rola Chung'},
+      {date:'May 28',title:'Bi-weekly Meeting',meta:'11:00â12:00 HKT Â· Teams Â· Rola Chung'},
+      {date:'Jun 1',title:'Mannings Quotation',meta:'11:15â12:00 HKT'},
+      {date:'Jun 4',title:'Monthly Meeting',meta:'11:00â12:00 HKT Â· Teams Â· Rola Chung'},
     ],
     tickets:[
-      {key:'AIXP-1840',title:'IPA_Mannings_Meta 沒有產出 AI suggestions',status:'in-progress',assignee:'Jin Chen',pinned:true},
+      {key:'AIXP-1840',title:'IPA_Mannings_Meta æ²æç¢åº AI suggestions',status:'in-progress',assignee:'Jin Chen',pinned:true},
     ],
     suggestions:[
-      {priority:'high',label:'Ticket · High',text:'Chase Jin Chen on AIXP-1840 before May 28 — 11 days open with no update.'},
-      {priority:'high',label:'Renewal · High',text:'Prep Q3 renewal quotation now — Jun 1 meeting is 14 days away.'},
-      {priority:'medium',label:'Timeline · Medium',text:'Confirm AIRIS upgrade ETA before Jun 4 monthly — currently no timeline set.'},
+      {priority:'high',label:'Ticket Â· High',text:'Chase Jin Chen on AIXP-1840 before May 28 â 11 days open with no update.'},
+      {priority:'high',label:'Renewal Â· High',text:'Prep Q3 renewal quotation now â Jun 1 meeting is 14 days away.'},
+      {priority:'medium',label:'Timeline Â· Medium',text:'Confirm AIRIS upgrade ETA before Jun 4 monthly â currently no timeline set.'},
     ],
   },
   {
@@ -36,15 +36,15 @@ let ACCOUNTS = [
       {name:'Renewal (June 2026)',status:'blocked'},
     ],
     meetings:[
-      {date:'May 19',title:'Segment / Experiment / Insight Interview',meta:'10:30–11:00 HKT · Recurring weekly'},
-      {date:'May 26',title:'Segment / Experiment / Insight Interview',meta:'10:30–11:00 HKT'},
+      {date:'May 19',title:'Segment / Experiment / Insight Interview',meta:'10:30â11:00 HKT Â· Recurring weekly'},
+      {date:'May 26',title:'Segment / Experiment / Insight Interview',meta:'10:30â11:00 HKT'},
     ],
     tickets:[
       {key:'PROJ-33328',title:'Enable segment quota increase to 50',status:'backlog',assignee:'Michael Palmer',pinned:false},
     ],
     suggestions:[
-      {priority:'high',label:'Renewal · High',text:'June renewal has no meeting booked yet — schedule it this week.'},
-      {priority:'medium',label:'Ticket · Medium',text:'PROJ-33328 sitting in backlog since May 15. Follow up with Michael Palmer.'},
+      {priority:'high',label:'Renewal Â· High',text:'June renewal has no meeting booked yet â schedule it this week.'},
+      {priority:'medium',label:'Ticket Â· Medium',text:'PROJ-33328 sitting in backlog since May 15. Follow up with Michael Palmer.'},
     ],
   },
   {
@@ -56,27 +56,27 @@ let ACCOUNTS = [
       {name:'EC & POS Integration',status:'progress'},
     ],
     meetings:[
-      {date:'May 18',title:'10/10 整合',meta:'14:30–15:00 HKT · Recurring'},
-      {date:'May 25',title:'10/10 整合',meta:'14:30–15:00 HKT'},
+      {date:'May 18',title:'10/10 æ´å',meta:'14:30â15:00 HKT Â· Recurring'},
+      {date:'May 25',title:'10/10 æ´å',meta:'14:30â15:00 HKT'},
     ],
     tickets:[
       {key:'QGWL-25317',title:'klickngo API Integration for 10/10 Hope',status:'in-progress',assignee:'Mark Liu',pinned:false},
     ],
     suggestions:[
-      {priority:'medium',label:'Ticket · Medium',text:'Get Mark Liu update on QGWL-25317 klickngo API integration status.'},
-      {priority:'medium',label:'Action · Medium',text:'EC & POS integration has no formal ticket — consider raising one to track it.'},
+      {priority:'medium',label:'Ticket Â· Medium',text:'Get Mark Liu update on QGWL-25317 klickngo API integration status.'},
+      {priority:'medium',label:'Action Â· Medium',text:'EC & POS integration has no formal ticket â consider raising one to track it.'},
     ],
   },
   {
     id:'luxgen', name:'Luxgen', health:'yellow',
     insight:'Renewal decision meetings were May 19. Log the outcome and update status.',
-    diffs:[{type:'new',text:'確認是否延 Luxgen 合約 — outcome pending log'}],
+    diffs:[{type:'new',text:'ç¢ºèªæ¯å¦å»¶ Luxgen åç´ â outcome pending log'}],
     riskTags:['renewal'], ticketCount:0, mtgCount:1,
     projects:[{name:'Contract Renewal Decision',status:'progress'}],
-    meetings:[{date:'May 26',title:'Luxgen checking',meta:'10:00–10:30 HKT · Recurring'}],
+    meetings:[{date:'May 26',title:'Luxgen checking',meta:'10:00â10:30 HKT Â· Recurring'}],
     tickets:[],
     suggestions:[
-      {priority:'high',label:'Renewal · High',text:'Log the May 19 renewal outcome — renew, churn, or pending? Update account status.'},
+      {priority:'high',label:'Renewal Â· High',text:'Log the May 19 renewal outcome â renew, churn, or pending? Update account status.'},
     ],
   },
   {
@@ -85,16 +85,16 @@ let ACCOUNTS = [
     diffs:[], riskTags:['ticket'], ticketCount:0, mtgCount:2,
     projects:[{name:'Service Agent Purchase Decision',status:'progress'}],
     meetings:[
-      {date:'May 19',title:'55688 SA Tracking',meta:'09:15–09:45 HKT · Recurring'},
-      {date:'May 26',title:'55688 SA Tracking',meta:'09:15–09:45 HKT'},
+      {date:'May 19',title:'55688 SA Tracking',meta:'09:15â09:45 HKT Â· Recurring'},
+      {date:'May 26',title:'55688 SA Tracking',meta:'09:15â09:45 HKT'},
     ],
     tickets:[],
     suggestions:[
-      {priority:'medium',label:'Action · Medium',text:'Bring Service Agent pricing summary to May 19 meeting. Push for a clear decision timeline.'},
+      {priority:'medium',label:'Action Â· Medium',text:'Bring Service Agent pricing summary to May 19 meeting. Push for a clear decision timeline.'},
     ],
   },
   {
-    id:'tiyuanxiang', name:'田原香', health:'green',
+    id:'tiyuanxiang', name:'ç°åé¦', health:'green',
     insight:'Use case tracking session weekly. No blockers detected.',
     diffs:[], riskTags:['ok'], ticketCount:0, mtgCount:2,
     projects:[
@@ -102,31 +102,31 @@ let ACCOUNTS = [
       {name:'Agent Usage & Feedback',status:'ok'},
     ],
     meetings:[
-      {date:'May 20',title:'田原香 use case tracking',meta:'09:30–10:00 HKT · Recurring'},
-      {date:'May 27',title:'田原香 use case tracking',meta:'09:30–10:00 HKT'},
+      {date:'May 20',title:'ç°åé¦ use case tracking',meta:'09:30â10:00 HKT Â· Recurring'},
+      {date:'May 27',title:'ç°åé¦ use case tracking',meta:'09:30â10:00 HKT'},
     ],
     tickets:[],
     suggestions:[
-      {priority:'low',label:'Action · Low',text:'Collect agent usage feedback at May 20 session and log for OKR.'},
+      {priority:'low',label:'Action Â· Low',text:'Collect agent usage feedback at May 20 session and log for OKR.'},
     ],
   },
 ];
 
 const BRIEF_CAT_META = {
-  onboard:  {emoji:'🚀', label:'Onboard',           cls:'onboard'},
-  renewal:  {emoji:'🔄', label:'Renewal',            cls:'renewal'},
-  ticket:   {emoji:'🎫', label:'Ticket Resolved',    cls:'ticket'},
-  feature:  {emoji:'⚡', label:'Feature Enabled',    cls:'feature'},
-  pitching: {emoji:'🎯', label:'Pitching',           cls:'pitching'},
-  ai:       {emoji:'🤖', label:'AI Adoption',        cls:'ai'},
-  team:     {emoji:'🤝', label:'Team Contribution',  cls:'team'},
-  other:    {emoji:'📌', label:'Other',              cls:'other'},
+  onboard:  {emoji:'ð', label:'Onboard',           cls:'onboard'},
+  renewal:  {emoji:'ð', label:'Renewal',            cls:'renewal'},
+  ticket:   {emoji:'ð«', label:'Ticket Resolved',    cls:'ticket'},
+  feature:  {emoji:'â¡', label:'Feature Enabled',    cls:'feature'},
+  pitching: {emoji:'ð¯', label:'Pitching',           cls:'pitching'},
+  ai:       {emoji:'ð¤', label:'AI Adoption',        cls:'ai'},
+  team:     {emoji:'ð¤', label:'Team Contribution',  cls:'team'},
+  other:    {emoji:'ð', label:'Other',              cls:'other'},
 };
 
 const OKR_SECTIONS = [
   {key:'onboard',  title:'1. Onboarded new accounts'},
   {key:'renewal',  title:'2. Renewed successfully'},
-  {key:'pitching', title:'3. Others — Pitching & team contribution'},
+  {key:'pitching', title:'3. Others â Pitching & team contribution'},
   {key:'feature',  title:'4. Pilot / New feature enablement'},
   {key:'ai',       title:'5. AI adoption'},
   {key:'team',     title:'6. Functional knowledge & teamwork'},
@@ -134,18 +134,18 @@ const OKR_SECTIONS = [
   {key:'other',    title:'8. Other contributions'},
 ];
 
-const RISK_LABELS = {mtg:'📅 Meeting Due', ticket:'🐛 Ticket Blocked', renewal:'⚠️ Renewal Risk', silent:'👻 Client Silent', ok:'✅ On Track'};
+const RISK_LABELS = {mtg:'ð Meeting Due', ticket:'ð Ticket Blocked', renewal:'â ï¸ Renewal Risk', silent:'ð» Client Silent', ok:'â On Track'};
 
 const PRELOADED_LOG = [
   {id:1,  date:'2026-Q1', quarter:'Q1 2026', category:'onboard',  client:'10/10Hope', description:'AIQUA onboarded (Prizm HK)'},
   {id:2,  date:'2026-Q1', quarter:'Q1 2026', category:'renewal',  client:'Mannings',  description:'Renewed AQ & AX to 2026-06-30'},
-  {id:3,  date:'2026-Q1', quarter:'Q1 2026', category:'renewal',  client:'田原香',     description:'Renewed to 2027-02-16'},
-  {id:4,  date:'2026-Q1', quarter:'Q1 2026', category:'pitching', client:'Internal',  description:'Genki — AA opportunity pitched'},
+  {id:3,  date:'2026-Q1', quarter:'Q1 2026', category:'renewal',  client:'ç°åé¦',     description:'Renewed to 2027-02-16'},
+  {id:4,  date:'2026-Q1', quarter:'Q1 2026', category:'pitching', client:'Internal',  description:'Genki â AA opportunity pitched'},
   {id:5,  date:'2026-Q1', quarter:'Q1 2026', category:'pitching', client:'Mannings',  description:'AA & AR opportunities pitched'},
-  {id:6,  date:'2026-Q1', quarter:'Q1 2026', category:'pitching', client:'Internal',  description:'Partner team pitching — Prizm (City Super)'},
-  {id:7,  date:'2026-Q1', quarter:'Q1 2026', category:'pitching', client:'Internal',  description:'Partner team pitching — Ledgerbio (Chinachem)'},
+  {id:6,  date:'2026-Q1', quarter:'Q1 2026', category:'pitching', client:'Internal',  description:'Partner team pitching â Prizm (City Super)'},
+  {id:7,  date:'2026-Q1', quarter:'Q1 2026', category:'pitching', client:'Internal',  description:'Partner team pitching â Ledgerbio (Chinachem)'},
   {id:8,  date:'2026-Q1', quarter:'Q1 2026', category:'team',     client:'SCMP',      description:'Assisted in finding SCMP for panel speaker'},
-  {id:9,  date:'2026-Q1', quarter:'Q1 2026', category:'feature',  client:'田原香',     description:'Campaign agent enabled'},
+  {id:9,  date:'2026-Q1', quarter:'Q1 2026', category:'feature',  client:'ç°åé¦',     description:'Campaign agent enabled'},
   {id:10, date:'2026-Q1', quarter:'Q1 2026', category:'feature',  client:'Mannings',  description:'AB test with new recommendations filtering rules'},
   {id:11, date:'2026-Q1', quarter:'Q1 2026', category:'ai',       client:'Internal',  description:'Gemini + NotebookLM as first answer-seeking before team'},
   {id:12, date:'2026-Q1', quarter:'Q1 2026', category:'ai',       client:'Internal',  description:'AI video scene generation for AA demo'},
@@ -156,7 +156,7 @@ const PRELOADED_LOG = [
   {id:17, date:'2026-Q1', quarter:'Q1 2026', category:'team',     client:'Internal',  description:'AQ recommendation sharing with Zebbie'},
 ];
 
-// ── BRIEF STATE ───────────────────────────────────────────────────────────────
+// ââ BRIEF STATE âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 let logEntries = [];
 let briefNextId = 100;
 const BRIEF_LOG_KEY = 'csm_session_log';
@@ -167,12 +167,12 @@ function loadLog(){
 }
 function saveLog(){ localStorage.setItem(BRIEF_LOG_KEY, JSON.stringify(logEntries)); }
 
-// ── BRIEF INIT (called once on page load) ─────────────────────────────────────
+// ââ BRIEF INIT (called once on page load) âââââââââââââââââââââââââââââââââââââ
 
-// ── GITHUB BRIEF AUTO-SYNC ────────────────────────────────────────────────────
-// csm-brief.json lives in the repo root → served by GitHub Pages at same origin.
+// ââ GITHUB BRIEF AUTO-SYNC ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// csm-brief.json lives in the repo root â served by GitHub Pages at same origin.
 // Claude pushes a new version via GitHub API after every brief generation.
-// Dashboard fetches it on every load — zero manual steps.
+// Dashboard fetches it on every load â zero manual steps.
 
 function _setSyncUI(state, text) {
   const dot = document.getElementById('syncDot');
@@ -182,13 +182,13 @@ function _setSyncUI(state, text) {
 }
 
 async function loadBriefFromGitHub() {
-  _setSyncUI('spin', 'Loading brief from GitHub…');
+  _setSyncUI('spin', 'Loading brief from GitHubâ¦');
   try {
     // Cache-bust so we always get the latest commit, not a CDN-cached copy
-    const res = await fetch('/csm-brief.json?_=' + Date.now());
-    if (!res.ok) throw new Error(res.status === 404 ? 'No brief pushed yet — ask Claude to generate your brief.' : 'HTTP ' + res.status);
+    const res = await fetch('./csm-brief.json?_=' + Date.now());
+    if (!res.ok) throw new Error(res.status === 404 ? 'No brief pushed yet â ask Claude to generate your brief.' : 'HTTP ' + res.status);
     const data = await res.json();
-    if (!Array.isArray(data.accounts) || data.accounts.length === 0) throw new Error('Brief is empty — ask Claude to generate your brief.');
+    if (!Array.isArray(data.accounts) || data.accounts.length === 0) throw new Error('Brief is empty â ask Claude to generate your brief.');
     ACCOUNTS = data.accounts;
     renderBriefCards();
     renderBriefStats();
@@ -196,7 +196,7 @@ async function loadBriefFromGitHub() {
     const ts = data.generatedAt
       ? new Date(data.generatedAt).toLocaleString('en-HK', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Hong_Kong' })
       : '?';
-    _setSyncUI('ok', 'Brief synced · ' + ts + ' HKT · auto-updated by Claude each morning');
+    _setSyncUI('ok', 'Brief synced Â· ' + ts + ' HKT Â· auto-updated by Claude each morning');
   } catch (e) {
     _setSyncUI('err', e.message || 'Could not load brief');
   }
@@ -234,7 +234,7 @@ function initBrief(){
   }
 }
 
-// ── BRIEF SUB-TAB SWITCH ──────────────────────────────────────────────────────
+// ââ BRIEF SUB-TAB SWITCH ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function briefSwitchTab(name){
   ['brief','okr'].forEach(t=>{
     const btn  = document.getElementById('btab-'+t);
@@ -244,7 +244,7 @@ function briefSwitchTab(name){
   });
 }
 
-// ── BRIEF STATS ───────────────────────────────────────────────────────────────
+// ââ BRIEF STATS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function renderBriefStats(){
   const crit = ACCOUNTS.filter(a=>a.health==='red').length;
   const risk = ACCOUNTS.filter(a=>a.health==='yellow').length;
@@ -264,7 +264,7 @@ function briefUpdateTabCounts(){
   set('tc-brief',  ACCOUNTS.length);
 }
 
-// ── ACCOUNT BRIEF RENDER ──────────────────────────────────────────────────────
+// ââ ACCOUNT BRIEF RENDER ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function renderBriefCards(){
   const grid = document.getElementById('accountGrid');
   if(!grid) return;
@@ -273,8 +273,8 @@ function renderBriefCards(){
     return (order[a.health]??3)-(order[b.health]??3);
   });
   grid.innerHTML = sorted.map(acct=>{
-    const hBadge={red:'🔴 Critical',yellow:'🟡 At Risk',green:'🟢 On Track',gray:'⚪ Unclear'}[acct.health]||'⚪';
-    const diffHTML = acct.diffs.map(d=>`<div class="diff-line diff-${esc(d.type)}">${d.type==='new'?'↗':d.type==='close'?'↘':'⚠'} ${esc(d.text)}</div>`).join('');
+    const hBadge={red:'ð´ Critical',yellow:'ð¡ At Risk',green:'ð¢ On Track',gray:'âª Unclear'}[acct.health]||'âª';
+    const diffHTML = acct.diffs.map(d=>`<div class="diff-line diff-${esc(d.type)}">${d.type==='new'?'â':d.type==='close'?'â':'â '} ${esc(d.text)}</div>`).join('');
     const riskHTML = acct.riskTags.map(t=>`<span class="risk-tag ${esc(t)}">${RISK_LABELS[t]||t}</span>`).join('');
     return `
     <div class="acct-card health-${esc(acct.health)}" onclick="openBriefPanel('${esc(acct.id)}')">
@@ -282,8 +282,8 @@ function renderBriefCards(){
         <div>
           <div class="acct-name">${esc(acct.name)}</div>
           <div class="acct-meta">
-            <span>🎫 ${acct.ticketCount} ticket${acct.ticketCount!==1?'s':''}</span>
-            <span>📅 ${acct.mtgCount} meeting${acct.mtgCount!==1?'s':''}</span>
+            <span>ð« ${acct.ticketCount} ticket${acct.ticketCount!==1?'s':''}</span>
+            <span>ð ${acct.mtgCount} meeting${acct.mtgCount!==1?'s':''}</span>
           </div>
         </div>
         <div class="health-badge ${esc(acct.health)}">${hBadge}</div>
@@ -294,13 +294,13 @@ function renderBriefCards(){
       </div>
       <div class="acct-footer">
         <div class="risk-tags">${riskHTML}</div>
-        <div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted)">→ Full brief</div>
+        <div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted)">â Full brief</div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── BRIEF SIDE PANEL ──────────────────────────────────────────────────────────
+// ââ BRIEF SIDE PANEL ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function openBriefPanel(id){
   const acct = ACCOUNTS.find(a=>a.id===id);
   if(!acct) return;
@@ -308,8 +308,8 @@ function openBriefPanel(id){
   const subEl   = document.getElementById('briefPanelSub');
   const bodyEl  = document.getElementById('briefPanelBody');
   if(titleEl) titleEl.textContent = acct.name;
-  const hLabel = {red:'🔴 Critical',yellow:'🟡 At Risk',green:'🟢 On Track',gray:'⚪ Unclear'}[acct.health]||'';
-  if(subEl) subEl.textContent = hLabel + ' · Updated today';
+  const hLabel = {red:'ð´ Critical',yellow:'ð¡ At Risk',green:'ð¢ On Track',gray:'âª Unclear'}[acct.health]||'';
+  if(subEl) subEl.textContent = hLabel + ' Â· Updated today';
 
   const mtgHTML = acct.meetings.length
     ? acct.meetings.map(m=>`
@@ -340,7 +340,7 @@ function openBriefPanel(id){
     ? acct.projects.map(p=>`
         <div class="project-row">
           <div class="proj-name">${esc(p.name)}</div>
-          <div class="proj-status ${esc(p.status)}">${{progress:'🟡 In Progress',ok:'🟢 On Track',blocked:'🔴 Blocked'}[p.status]||p.status}</div>
+          <div class="proj-status ${esc(p.status)}">${{progress:'ð¡ In Progress',ok:'ð¢ On Track',blocked:'ð´ Blocked'}[p.status]||p.status}</div>
         </div>`).join('')
     : '';
 
@@ -352,20 +352,20 @@ function openBriefPanel(id){
 
   if(bodyEl) bodyEl.innerHTML = `
     <div class="p-section">
-      <div class="p-section-title">📅 Upcoming Meetings</div>
+      <div class="p-section-title">ð Upcoming Meetings</div>
       ${mtgHTML}
     </div>
     <div class="p-section">
-      <div class="p-section-title">🎫 Active Tickets</div>
+      <div class="p-section-title">ð« Active Tickets</div>
       ${tickHTML}
     </div>
     ${acct.projects.length?`
     <div class="p-section">
-      <div class="p-section-title">🗂 Projects</div>
+      <div class="p-section-title">ð Projects</div>
       ${projHTML}
     </div>`:''}
     <div class="p-section">
-      <div class="p-section-title">💡 Suggestions</div>
+      <div class="p-section-title">ð¡ Suggestions</div>
       ${sugHTML}
       <div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted);margin-top:10px">
         Reply in Claude: "Done: [#]" or "Didn't work: [#]" to log outcome
@@ -386,7 +386,7 @@ function closeBriefPanel(){
   if(sp) sp.classList.remove('open');
 }
 
-// ── OKR TAB ───────────────────────────────────────────────────────────────────
+// ââ OKR TAB âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function renderOKR(){
   const qSel = document.getElementById('okrQSel');
   if(!qSel) return;
@@ -400,7 +400,7 @@ function renderOKR(){
     return `
     <div class="okr-section">
       <div class="okr-section-head" onclick="toggleOKRSection('${id}')">
-        <div class="title">${BRIEF_CAT_META[sec.key]?.emoji||'•'} ${esc(sec.title)}</div>
+        <div class="title">${BRIEF_CAT_META[sec.key]?.emoji||'â¢'} ${esc(sec.title)}</div>
         <div class="count">${items.length} item${items.length!==1?'s':''}</div>
       </div>
       <div class="okr-body" id="${id}">
@@ -427,22 +427,22 @@ function copyOKR(){
   if(!qSel) return;
   const q = qSel.value;
   const filtered = logEntries.filter(e=>e.quarter===q);
-  let txt = `📊 OKR SUMMARY — CSM Brief (${q})\n\n`;
+  let txt = `ð OKR SUMMARY â CSM Brief (${q})\n\n`;
   OKR_SECTIONS.forEach(sec=>{
     const items = filtered.filter(e=>e.category===sec.key);
     txt += sec.title+'\n';
     txt += items.length
-      ? items.map(e=>`  • [${e.client}] ${e.description}`).join('\n')+'\n'
-      : '  • None this quarter\n';
+      ? items.map(e=>`  â¢ [${e.client}] ${e.description}`).join('\n')+'\n'
+      : '  â¢ None this quarter\n';
     txt += '\n';
   });
   navigator.clipboard.writeText(txt).then(()=>{
     const btn = document.getElementById('okrCopyBtn');
-    if(btn){ btn.textContent='✓ Copied!'; setTimeout(()=>btn.textContent='Copy Summary', 2000); }
+    if(btn){ btn.textContent='â Copied!'; setTimeout(()=>btn.textContent='Copy Summary', 2000); }
   });
 }
 
-// ── SESSION LOG TAB ───────────────────────────────────────────────────────────
+// ââ SESSION LOG TAB âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function renderLog(){
   const qF   = document.getElementById('logQFilter');
   const catF  = document.getElementById('logCatFilter');
@@ -465,7 +465,7 @@ function renderLog(){
   }
   list.innerHTML = filtered.map(e=>`
     <div class="log-entry">
-      <span class="log-emoji">${BRIEF_CAT_META[e.category]?.emoji||'📌'}</span>
+      <span class="log-emoji">${BRIEF_CAT_META[e.category]?.emoji||'ð'}</span>
       <div class="log-body">
         <div class="log-tags">
           <span class="log-cat ${esc(e.category)}">${esc(BRIEF_CAT_META[e.category]?.label||e.category)}</span>
@@ -475,7 +475,7 @@ function renderLog(){
         <div class="log-desc">${esc(e.description)}</div>
         <div class="log-qtr">${esc(e.quarter)}</div>
       </div>
-      <button class="log-del" onclick="deleteLogEntry(${e.id})" title="Remove">✕</button>
+      <button class="log-del" onclick="deleteLogEntry(${e.id})" title="Remove">â</button>
     </div>`).join('');
   briefUpdateTabCounts();
 }
@@ -488,7 +488,7 @@ function deleteLogEntry(id){
   briefUpdateTabCounts();
 }
 
-// ── ADD LOG MODAL ─────────────────────────────────────────────────────────────
+// ââ ADD LOG MODAL âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function openAddModal(){
   const today = new Date().toISOString().split('T')[0];
   const mDate = document.getElementById('mDate');
@@ -526,6 +526,6 @@ function saveEntry(){
   briefUpdateTabCounts();
 }
 
-// ════════════════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // END CSM BRIEF
-// ════════════════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
