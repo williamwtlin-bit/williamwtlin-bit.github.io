@@ -1,3 +1,17 @@
+// Sync csm-memory.json ignore list into localStorage on init
+(async function syncIgnoreFromMemory(){
+  try {
+    const r = await fetch('https://raw.githubusercontent.com/williamwtlin-bit/williamwtlin-bit.github.io/main/csm-memory.json?t='+Date.now());
+    if(!r.ok) return;
+    const mem = await r.json();
+    const memKeys = (mem.ignoreTickets||[]).map(function(t){return t.key;}).filter(Boolean);
+    if(!memKeys.length) return;
+    const existing = new Set(JSON.parse(localStorage.getItem('jd_tbd_ignored')||'[]'));
+    memKeys.forEach(function(k){ existing.add(k); });
+    localStorage.setItem('jd_tbd_ignored', JSON.stringify([...existing]));
+  } catch(e){}
+})();
+
 'use strict';
 
 // SECTION 5 — DASHBOARD LOGIC (unchanged from previous version)
@@ -95,7 +109,8 @@ function buildDropdown(id,values){
 function mkRow(issue,showBtn){
   const days=calcLT(issue.created), done=isDone(issue.status);
   const sumClean=esc(normU(issue.summary).replace(/\[[^\]]+\]\s*/,''));
-  return `<tr class="tracking-row" data-key="${issue.key}" data-search="${(issue.key+' '+issue.summary+' '+issue.assignee+' '+issue.reporter+' '+issue.status).toLowerCase()}" data-asn="${esc(issue.assignee)}" onclick="openPanel('${issue.key}',event,'tracking')">
+  const _ign=(new Set(JSON.parse(localStorage.getItem('jd_tbd_ignored')||'[]'))) .has(issue.key);
+  return `<tr class="tracking-row${_ign?' row-ignored':''}" data-key="${issue.key}" data-search="${(issue.key+' '+issue.summary+' '+issue.assignee+' '+issue.reporter+' '+issue.status).toLowerCase()}" data-asn="${esc(issue.assignee)}" onclick="openPanel('${issue.key}',event,'tracking')">
     <td class="cb-td" onclick="event.stopPropagation()">
       <input type="checkbox" class="row-cb" data-key="${issue.key}" onchange="onRowCbChange(this)"/>
     </td>
@@ -1419,3 +1434,6 @@ function scheduleDaily(){
 }
 
 // ════════════════════════════════════════════════════════════════════════════
+
+/* Ignored ticket row style */
+document.head.insertAdjacentHTML('beforeend','<style>.row-ignored{opacity:.4;background:#f8f8f8}.row-ignored td{color:#aaa}.row-ignored td:first-child::before{content:"[ignored] ";font-style:normal;opacity:1}.row-ignored a{color:#bbb;pointer-events:none}</style>');
