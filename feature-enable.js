@@ -27,7 +27,7 @@
   document.head.appendChild(s);
 }());
 
-/* Feature Enable Wizard v4 — CSM Dashboard */
+/* Feature Enable Wizard v4 \u2014 CSM Dashboard */
 (function () {
   'use strict';
 
@@ -122,7 +122,7 @@
     return getAllItems(platform).filter(function(f){ return feW.sel[f.id]; });
   }
 
-  /* ── public API ─────────────────────────────────────── */
+  /* \u2500\u2500 public API \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
   window.openFeatureEnableWizard = function () {
     feW = { step: 0, platform: null, clientName: '', appId: '', sel: {}, extraFields: {} };
     document.getElementById('feOverlay').style.display = 'flex';
@@ -153,7 +153,7 @@
     var cb = item.querySelector('.fe-feat-cb');
     if (cb) {
       cb.classList.toggle('fe-cb-on', !!feW.sel[id]);
-      cb.textContent = feW.sel[id] ? '✓' : '';
+      cb.textContent = feW.sel[id] ? '\u2713' : '';
     }
   };
 
@@ -184,7 +184,7 @@
     var selected = getSelected(feW.platform);
     if (!selected.length) { alert('No features selected.'); return; }
     var btn = document.getElementById('feCreateBtn');
-    if (btn) { btn.disabled = true; btn.textContent = '⏳ Creating...'; }
+    if (btn) { btn.disabled = true; btn.textContent = '\u23f3 Creating...'; }
     var created = [], failed = [];
     Promise.resolve()
       .then(function () { return window.getAccessToken(); })
@@ -200,9 +200,9 @@
           chain = chain.then(function () {
             var extras = feW.extraFields[f.id] || {};
             var extraLines = (f.extra || []).map(function(ex){
-              return ex.label + ': ' + (extras[ex.id] || '—');
+              return ex.label + ': ' + (extras[ex.id] || '\u2014');
             }).join('\n');
-            var summary = '[Feature Enable] ' + feW.clientName + ' · ' + feW.platform + ' · ' + f.name;
+            var summary = '[Feature Enable] ' + feW.clientName + ' \u00b7 ' + feW.platform + ' \u00b7 ' + f.name;
             var body = {
               fields: {
                 project: { key: 'LEG' },
@@ -237,17 +237,17 @@
       .then(function(){ feShowResult(created, failed); })
       .catch(function(err){
         document.getElementById('feBody').innerHTML =
-          '<div style="text-align:center;padding:20px;color:var(--red)">⚠️ Auth error: ' + esc(err.message) + '</div>';
+          '<div style="text-align:center;padding:20px;color:var(--red)">\u26a0\ufe0f Auth error: ' + esc(err.message) + '</div>';
         document.getElementById('feFooter').innerHTML =
           '<button class="wiz-btn-pri" onclick="closeFeWizard()">Close</button>';
       });
   };
 
-  /* ── private helpers ─────────────────────────────────── */
+  /* \u2500\u2500 private helpers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
   function feRender() {
     var pcts   = [12, 37, 63, 88];
     var titles = ['Select Platform', 'Client Details',
-                  feW.platform ? feW.platform + ' — Select Features' : 'Select Features',
+                  feW.platform ? feW.platform + ' \u2014 Select Features' : 'Select Features',
                   'Preview & Create'];
     var labels = ['Step 1 / 4', 'Step 2 / 4', 'Step 3 / 4', 'Step 4 / 4'];
     document.getElementById('feProgressBar').style.width = pcts[feW.step] + '%';
@@ -258,9 +258,9 @@
 
   function fePlatformStep() {
     var platforms = [
-      ['AIQUA', 'Customer Engagement',   '🎯', false],
-      ['AIRIS', 'Customer Data Platform', '🔮', false],
-      ['BB',    'BotBonnie',              '🤖', true ]
+      ['AIQUA', 'Customer Engagement',   '\u{1f3af}', false],
+      ['AIRIS', 'Customer Data Platform', '\u{1f52e}', false],
+      ['BB',    'BotBonnie',              '\u{1f916}', true ]
     ];
     var cards = platforms.map(function(p) {
       var dis = p[3];
@@ -278,7 +278,7 @@
       + '<div class="fe-platform-grid">' + cards + '</div>';
     document.getElementById('feFooter').innerHTML =
       '<button class="wiz-btn-sec" onclick="closeFeWizard()">Cancel</button>'
-      + '<button class="wiz-btn-pri" onclick="feNext()"' + (feW.platform ? '' : ' disabled') + '>Next →</button>';
+      + '<button class="wiz-btn-pri" onclick="feNext()"' + (feW.platform ? '' : ' disabled') + '>Next \u2192</button>';
   }
 
   function feDetailsStep() {
@@ -292,8 +292,8 @@
       + '<input class="wiz-input" id="feAppId" placeholder="e.g. 12345" value="' + esc(feW.appId) + '" oninput="window.feSetAppId(this.value)">'
       + '</div>';
     document.getElementById('feFooter').innerHTML =
-      '<button class="wiz-btn-sec" onclick="feBack()">← Back</button>'
-      + '<button class="wiz-btn-pri" onclick="feNext()">Next →</button>';
+      '<button class="wiz-btn-sec" onclick="feBack()">\u2190 Back</button>'
+      + '<button class="wiz-btn-pri" onclick="feNext()">Next \u2192</button>';
     setTimeout(function(){ var el = document.getElementById('feClientName'); if(el) el.focus(); }, 50);
   }
 
@@ -301,7 +301,7 @@
     var sel      = !!feW.sel[f.id];
     var isManual = f.mode === 'manual' || f.mode === 'manual_clone';
     var badge    = isManual
-      ? '<span class="fe-badge-manual">⚠ manual</span>'
+      ? '<span class="fe-badge-manual">\u26a0 manual</span>'
       : '<span class="fe-badge-clone">clone</span>';
 
     var extraHtml = '';
@@ -323,18 +323,18 @@
     if (f.sample) {
       var link = '<a href="https://appier.atlassian.net/browse/' + f.sample + '" target="_blank">' + f.sample + '</a>';
       hintHtml += isManual
-        ? '<p class="fe-hint">⚠️ Manual update required after creation — clone from ' + link + '.</p>'
-        : '<p class="fe-hint">📋 Will clone from ' + link + '.</p>';
+        ? '<p class="fe-hint">\u26a0\ufe0f Manual update required after creation \u2014 clone from ' + link + '.</p>'
+        : '<p class="fe-hint">\u{1f4cb} Will clone from ' + link + '.</p>';
     }
     if (f.suggestedAssignee) {
-      hintHtml += '<p class="fe-hint" style="color:var(--accent)">💡 Suggested assignee: <strong>' + esc(f.suggestedAssignee) + '</strong></p>';
+      hintHtml += '<p class="fe-hint" style="color:var(--accent)">\u{1f4a1} Suggested assignee: <strong>' + esc(f.suggestedAssignee) + '</strong></p>';
     }
 
     var hasExtra = !!(extraHtml || hintHtml);
 
     return '<div class="fe-feat-item' + (sel ? ' fe-row-on' : '') + '" data-id="' + f.id + '">'
       + '<div class="fe-feat-row" onclick="window.feToggleFeat(\'' + f.id + '\')">'
-      + '<div class="fe-feat-cb' + (sel ? ' fe-cb-on' : '') + '">' + (sel ? '✓' : '') + '</div>'
+      + '<div class="fe-feat-cb' + (sel ? ' fe-cb-on' : '') + '">' + (sel ? '\u2713' : '') + '</div>'
       + '<span class="fe-feat-name">' + esc(f.name) + '</span>'
       + badge
       + '</div>'
@@ -350,11 +350,11 @@
     }).join('');
     document.getElementById('feBody').innerHTML =
       '<p style="color:var(--muted);font-size:.82rem;margin-bottom:10px">Enabling for <strong>'
-      + esc(feW.clientName) + '</strong> · App <strong>' + esc(feW.appId) + '</strong></p>'
+      + esc(feW.clientName) + '</strong> \u00b7 App <strong>' + esc(feW.appId) + '</strong></p>'
       + '<div class="fe-feat-list">' + html + '</div>';
     document.getElementById('feFooter').innerHTML =
-      '<button class="wiz-btn-sec" onclick="feBack()">← Back</button>'
-      + '<button class="wiz-btn-pri" onclick="feNext()">Review & Create →</button>';
+      '<button class="wiz-btn-sec" onclick="feBack()">\u2190 Back</button>'
+      + '<button class="wiz-btn-pri" onclick="feNext()">Review & Create \u2192</button>';
   }
 
   function fePreviewStep() {
@@ -363,7 +363,7 @@
       var extras     = feW.extraFields[f.id] || {};
       var isManual   = f.mode === 'manual' || f.mode === 'manual_clone';
       var badge      = isManual
-        ? '<span class="fe-badge-manual" style="font-size:.65rem">⚠ manual</span>'
+        ? '<span class="fe-badge-manual" style="font-size:.65rem">\u26a0 manual</span>'
         : '<span class="fe-badge-clone" style="font-size:.65rem">clone</span>';
       var extraLines = (f.extra || []).filter(function(ex){ return extras[ex.id]; }).map(function(ex){
         return '<div>' + esc(ex.label) + ': <strong>' + esc(extras[ex.id]) + '</strong></div>';
@@ -384,26 +384,26 @@
       + '<div class="fe-feat-list fe-feat-list-preview">' + featRows + '</div>'
       + '<p style="color:var(--muted);font-size:.76rem;margin-top:12px">One Jira ticket per feature. Track in the Issue Tracking tab.</p>';
     document.getElementById('feFooter').innerHTML =
-      '<button class="wiz-btn-sec" onclick="feBack()">← Back</button>'
-      + '<button class="wiz-btn-pri" id="feCreateBtn" onclick="feCreate()">🎫 Create '
+      '<button class="wiz-btn-sec" onclick="feBack()">\u2190 Back</button>'
+      + '<button class="wiz-btn-pri" id="feCreateBtn" onclick="feCreate()">\u{1f3ab} Create '
       + selected.length + ' Ticket' + (selected.length !== 1 ? 's' : '') + '</button>';
   }
 
   function feShowResult(created, failed) {
     document.getElementById('feBody').innerHTML =
       '<div style="text-align:center;padding:24px">'
-      + '<div style="font-size:2.5rem;margin-bottom:12px">' + (created.length ? '✅' : '⚠️') + '</div>'
+      + '<div style="font-size:2.5rem;margin-bottom:12px">' + (created.length ? '\u2705' : '\u26a0\ufe0f') + '</div>'
       + '<div style="font-weight:700;font-size:1.05rem;margin-bottom:8px">'
       + created.length + ' ticket' + (created.length !== 1 ? 's' : '') + ' created'
-      + (failed.length ? ' · ' + failed.length + ' failed' : '') + '</div>'
-      + '<div style="color:var(--accent);font-weight:600;margin-bottom:16px">' + created.join(' · ') + '</div>'
+      + (failed.length ? ' \u00b7 ' + failed.length + ' failed' : '') + '</div>'
+      + '<div style="color:var(--accent);font-weight:600;margin-bottom:16px">' + created.join(' \u00b7 ') + '</div>'
       + (failed.length ? '<div style="color:var(--red);font-size:.8rem;margin-bottom:12px">Failed: ' + failed.join(', ') + '</div>' : '')
       + '<div style="color:var(--muted);font-size:.82rem">Track progress for <strong>'
       + esc(feW.clientName) + '</strong> in the Issue Tracking tab.</div>'
       + '</div>';
     document.getElementById('feFooter').innerHTML =
       '<button class="wiz-btn-sec" onclick="closeFeWizard()">Close</button>'
-      + '<button class="wiz-btn-pri" onclick="closeFeWizard();var t=document.getElementById(\'tab-tracking\');if(t)t.click()">📋 Go to Tracking</button>';
+      + '<button class="wiz-btn-pri" onclick="closeFeWizard();var t=document.getElementById(\'tab-tracking\');if(t)t.click()">\u{1f4cb} Go to Tracking</button>';
     if (window.loadTickets) window.loadTickets();
   }
 
