@@ -1,11 +1,11 @@
 'use strict';
 
-// SECTION 4 — JIRA REST API (direct, no Anthropic API needed)
-// ════════════════════════════════════════════════════════════════════════════
+// SECTION 4 \u2014 JIRA REST API (direct, no Anthropic API needed)
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 
 async function apiFetch(url, opts={}){
   if(url.includes('/ex/jira//'))
-    throw new Error('API URL is malformed — cloudId is missing. Please log in again.');
+    throw new Error('API URL is malformed \u2014 cloudId is missing. Please log in again.');
   if(/\/\?/.test(url))
     throw new Error(`API URL has an empty path segment (missing ticket key): ${url}`);
 
@@ -21,8 +21,8 @@ async function apiFetch(url, opts={}){
 
   let finalUrl = url;
 
-  // ── Route write operations through the Cloudflare Worker proxy ─────────────
-  // The browser converts POST → GET when following Atlassian's CDN redirects.
+  // \u2500\u2500 Route write operations through the Cloudflare Worker proxy \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+  // The browser converts POST \u2192 GET when following Atlassian's CDN redirects.
   // The Worker makes the request server-side where redirects work correctly.
   if(method !== 'GET' && method !== 'HEAD' && url.includes(CONFIG.API_BASE)){
     // Rewrite: https://api.atlassian.com/ex/jira/{id}/rest/...
@@ -67,7 +67,7 @@ async function fetchAllIssues(user){
   const sinceStr = since.toISOString().slice(0,10).replace(/-/g,'/');
   const jql=`reporter = "${accountId}" AND created >= "${sinceStr}" ORDER BY created DESC`;
   // fields must be an array for POST /search/jql
-  // startAt is NOT supported — pagination uses nextPageToken only
+  // startAt is NOT supported \u2014 pagination uses nextPageToken only
   const fields=['summary','status','assignee','reporter','created','resolutiondate'];
   let issues=[], nextPageToken=null;
 
@@ -155,4 +155,4 @@ async function markIssueDone(key){
   });
 }
 
-// ════════════════════════════════════════════════════════════════════════════
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
