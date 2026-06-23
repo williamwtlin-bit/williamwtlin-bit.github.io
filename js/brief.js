@@ -379,36 +379,54 @@ const _allTix = (acct.tickets||[]).filter(function(t){
 const _flags = getTicketFlags();
 const _activeTix = _allTix.filter(t => _flags[t.key] !== 'done' && _flags[t.key] !== 'ignored');
 const _hiddenTix = _allTix.filter(t => _flags[t.key] === 'done' || _flags[t.key] === 'ignored');
-const _renderTixRow = (t, active) => `
-<div class="brief-ticket-row${active ? '' : ' tix-hidden'}">
-  <div class="brief-ticket-key" style="${active ? '' : 'opacity:0.4'}">${esc(t.key)}</div>
-  <div class="brief-ticket-info" style="${active ? '' : 'opacity:0.4;text-decoration:line-through'}">
-    <div class="title">${esc(t.title)}${t.pinned && active ? '<span class="brief-pinned-badge">pinned</span>' : ''}</div>
-    <div class="meta">
-      <span class="status-dot ${esc(t.status)}">${active ? esc(t.status.replace('-',' ')) : (_flags[t.key]==='done' ? '✓ done' : '⊘ ignored')}</span>
-      <span>${esc(t.assignee)}</span>
-    </div>
-  </div>
-  <div class="brief-tix-actions">
-    ${active
-      ? '<button onclick="flagTicket(''+esc(t.key)+'','done')" class="tix-flag-btn tix-done" title="Mark done">✓</button><button onclick="flagTicket(''+esc(t.key)+'','ignored')" class="tix-flag-btn tix-ignore" title="Ignore">⊘</button>'
-      : '<button onclick="unflagTicket(''+esc(t.key)+'')" class="tix-flag-btn tix-restore" title="Restore">↩</button>'
-    }
-  </div>
-</div>`;
-const tickHTML = _allTix.length === 0
-  ? '<div class="brief-empty-state">No active tickets</div>'
-  : (() => {
-      let html = _activeTix.map(t => _renderTixRow(t, true)).join('');
-      if (_hiddenTix.length) {
-        html += '<div class="brief-flagged-toggle"><button onclick="showFlaggedSection(''+esc(acct.id)+'')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:10px;padding:4px 0;font-family:'DM Mono',monospace">'+_hiddenTix.length+' hidden (done/ignored) · show</button></div>';
-        html += '<div id="tix-flagged-'+esc(acct.id)+'" style="display:none">'+_hiddenTix.map(t => _renderTixRow(t, false)).join('')+'</div>';
-      }
-      if (_activeTix.length === 0 && _hiddenTix.length > 0) {
-        html = '<div class="brief-empty-state">All tickets marked done or ignored. <button onclick="showFlaggedSection(''+esc(acct.id)+'')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:11px;padding:0 4px">Show '+_hiddenTix.length+' hidden</button></div><div id="tix-flagged-'+esc(acct.id)+'" style="display:none">'+_hiddenTix.map(t => _renderTixRow(t, false)).join('')+'</div>';
-      }
-      return html;
-    })();
+const _renderTixRow = function(t, active) {
+  var _f = _flags[t.key];
+  var dimStyle  = active ? '' : 'opacity:0.4';
+  var strikeStyle = active ? '' : 'opacity:0.4;text-decoration:line-through';
+  var statusTxt = active ? esc(t.status.replace('-',' ')) : (_f==='done' ? '✓ done' : '⊘ ignored');
+  var pinBadge  = (t.pinned && active) ? '<span class="brief-pinned-badge">pinned</span>' : '';
+  var actions;
+  if (active) {
+    actions = '<button class="tix-flag-btn tix-done" data-k="' + esc(t.key) + '" data-f="done" onclick="flagTicket(this.dataset.k,this.dataset.f)" title="Mark done">✓</button>'
+            + '<button class="tix-flag-btn tix-ignore" data-k="' + esc(t.key) + '" data-f="ignored" onclick="flagTicket(this.dataset.k,this.dataset.f)" title="Ignore">⊘</button>';
+  } else {
+    actions = '<button class="tix-flag-btn tix-restore" data-k="' + esc(t.key) + '" onclick="unflagTicket(this.dataset.k)" title="Restore">↩</button>';
+  }
+  return '<div class="brief-ticket-row' + (active ? '' : ' tix-hidden') + '">'
+    + '<div class="brief-ticket-key" style="' + dimStyle + '">' + esc(t.key) + '</div>'
+    + '<div class="brief-ticket-info" style="' + strikeStyle + '">'
+    +   '<div class="title">' + esc(t.title) + pinBadge + '</div>'
+    +   '<div class="meta">'
+    +     '<span class="status-dot ' + esc(t.status) + '">' + statusTxt + '</span>'
+    +     '<span>' + esc(t.assignee) + '</span>'
+    +   '</div>'
+    + '</div>'
+    + '<div class="brief-tix-actions">' + actions + '</div>'
+    + '</div>';
+};
+
+const _buildTickHTML = function() {
+  if (_allTix.length === 0) return '<div class="brief-empty-state">No active tickets</div>';
+  var html = '';
+  _activeTix.forEach(function(t){ html += _renderTixRow(t, true); });
+  if (_hiddenTix.length > 0) {
+    var hid = acct.id.replace(/[^a-z0-9]/g,'');
+    html += '<div class="brief-flagged-toggle">'
+          + '<button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:10px;padding:4px 0;font-family:'DM Mono',monospace" onclick="showFlaggedSection('' + hid + '')">'
+          + _hiddenTix.length + ' hidden (done / ignored) · show</button></div>';
+    var rows = '';
+    _hiddenTix.forEach(function(t){ rows += _renderTixRow(t, false); });
+    html += '<div id="tix-flagged-' + hid + '" style="display:none">' + rows + '</div>';
+  }
+  if (_activeTix.length === 0 && _hiddenTix.length > 0) {
+    var hid2 = acct.id.replace(/[^a-z0-9]/g,'');
+    html = '<div class="brief-empty-state">All tickets marked done or ignored. '
+         + '<button onclick="showFlaggedSection('' + hid2 + '')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:11px;padding:0 4px">Show ' + _hiddenTix.length + ' hidden</button></div>'
+         + '<div id="tix-flagged-' + hid2 + '" style="display:none">' + rows + '</div>';
+  }
+  return html;
+};
+const tickHTML = _buildTickHTML();
 
   const projHTML = acct.projects.length
     ? acct.projects.map(p=>`
