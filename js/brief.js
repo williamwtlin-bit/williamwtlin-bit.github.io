@@ -173,7 +173,10 @@ function saveLog(){ localStorage.setItem(BRIEF_LOG_KEY, JSON.stringify(logEntrie
 // csm-brief.json lives in the repo root \u2192 served by GitHub Pages at same origin.
 // Claude pushes a new version via GitHub API after every brief generation.
 // Dashboard fetches it on every load \u2014 zero manual steps.
-
+function fixUtf8(str) {
+  if (!str) return str;
+  try { return decodeURIComponent(escape(str)); } catch(e) { return str; }
+}
 function _setSyncUI(state, text) {
   const dot = document.getElementById('syncDot');
   const lbl = document.getElementById('syncLabel');
@@ -189,7 +192,16 @@ async function loadBriefFromGitHub() {
     if (!res.ok) throw new Error(res.status === 404 ? 'No brief pushed yet \u2014 ask Claude to generate your brief.' : 'HTTP ' + res.status);
     const data = await res.json();
     if (!Array.isArray(data.accounts) || data.accounts.length === 0) throw new Error('Brief is empty \u2014 ask Claude to generate your brief.');
-    ACCOUNTS = data.accounts;
+    ACCOUNTS = data.accounts.map(function(acct) {
+  return Object.assign({}, acct, {
+    tickets: (acct.tickets||[]).map(function(t) {
+      return Object.assign({}, t, { title: fixUtf8(t.title) });
+    }),
+    meetings: (acct.meetings||[]).map(function(m) {
+      return Object.assign({}, m, { title: fixUtf8(m.title) });
+    })
+  });
+});
     renderBriefCards();
     renderBriefStats();
     briefUpdateTabCounts();
