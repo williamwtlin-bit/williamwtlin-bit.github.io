@@ -369,11 +369,11 @@ function openBriefPanel(id){
     : '<div class="brief-empty-state">No meetings in next 14 days</div>';
 
   // Flag-aware ticket filter — replaces old csmTracked logic
-const _acctN = (acct.name||'').toLowerCase().replace(/[^a-z0-9一-鿿]/g,'');
+const _acctN = (acct.name||'').toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]/g,'');
 const _allTix = (acct.tickets||[]).filter(function(t){
-  const _m = (t.title||'').match(/^[([^]]+)]/);
+  const _m = (t.title||'').match(/^\[([^\]]+)\]/);
   if (!_m) return true;
-  const _p = _m[1].toLowerCase().replace(/[^a-z0-9一-鿿]/g,'');
+  const _p = _m[1].toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]/g,'');
   return _p.includes(_acctN) || _acctN.includes(_p);
 });
 const _flags = getTicketFlags();
