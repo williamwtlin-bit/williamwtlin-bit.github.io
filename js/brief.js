@@ -282,7 +282,7 @@ function renderBriefCards(){
         <div>
           <div class="acct-name">${esc(acct.name)}</div>
           <div class="acct-meta">
-            <span>\u{1f3ab} ${acct.ticketCount} ticket${acct.ticketCount!==1?'s':''}</span>
+            <span>\u{1f3ab} ${getActiveTix(acct.tickets).length} ticket${getActiveTix(acct.tickets).length!==1?'s':''}</span>
             <span>\u{1f4c5} ${acct.mtgCount} meeting${acct.mtgCount!==1?'s':''}</span>
           </div>
         </div>
