@@ -202,6 +202,52 @@ async function loadBriefFromGitHub() {
   }
 }
 
+
+// ── TICKET FLAG SYSTEM ───────────────────────────────────────────────────────
+// Flags stored in localStorage as { "TICKET-KEY": "done" | "ignored" }
+// The brief panel only surfaces tickets NOT flagged.
+const TICKET_FLAGS_KEY = 'csmTicketFlags';
+
+function getTicketFlags() {
+  try { return JSON.parse(localStorage.getItem(TICKET_FLAGS_KEY) || '{}'); }
+  catch(_) { return {}; }
+}
+
+function flagTicket(key, flag) {
+  const flags = getTicketFlags();
+  flags[key] = flag;
+  localStorage.setItem(TICKET_FLAGS_KEY, JSON.stringify(flags));
+  _refreshOpenPanel();
+  renderBriefCards();
+}
+
+function unflagTicket(key) {
+  const flags = getTicketFlags();
+  delete flags[key];
+  localStorage.setItem(TICKET_FLAGS_KEY, JSON.stringify(flags));
+  _refreshOpenPanel();
+  renderBriefCards();
+}
+
+function showFlaggedSection(acctId) {
+  const el = document.getElementById('tix-flagged-' + acctId);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function _refreshOpenPanel() {
+  const sp = document.getElementById('briefSidePanel');
+  if (!sp || !sp.classList.contains('open')) return;
+  const titleEl = document.getElementById('briefPanelTitle');
+  if (!titleEl) return;
+  const acct = ACCOUNTS.find(a => a.name === titleEl.textContent);
+  if (acct) openBriefPanel(acct.id);
+}
+
+function getActiveTix(tickets) {
+  const flags = getTicketFlags();
+  return (tickets || []).filter(t => flags[t.key] !== 'done' && flags[t.key] !== 'ignored');
+}
+
 function initBrief(){
   loadBriefFromGitHub();
   logEntries = loadLog();
