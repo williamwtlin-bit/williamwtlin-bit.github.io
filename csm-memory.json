@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-06-26T16:23:30.399+08:00",
+  "lastUpdated": "2026-06-26T16:28:20.158+08:00",
   "rules": [
     {
       "id": "okr-consolidate",
@@ -277,151 +277,176 @@
       "date": "2026-Q2",
       "category": "Renewal",
       "client": "Luxgen",
-      "description": "BB contract renewed to 2026-11-23 (LEG-16090 approved)"
+      "description": "BB contract renewed to 2026-11-23 (LEG-16090 approved)",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Pitching",
       "client": "Momax",
-      "description": "Referred Momax from Jammy to Partner team"
+      "description": "Referred Momax from Jammy to Partner team",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Pitching",
       "client": "Mannings",
-      "description": "Mannings AIRIS pitching"
+      "description": "Mannings AIRIS pitching",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Pitching",
       "client": "SCMP",
-      "description": "SCMP BotBonnie pitching"
+      "description": "SCMP BotBonnie pitching",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "17live TW",
-      "description": "Referral 17live TW to BB sales team"
+      "description": "Referral 17live TW to BB sales team",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "LON",
-      "description": "Answered Darren LON pitching request"
+      "description": "Answered Darren LON pitching request",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "Internal",
-      "description": "Assisted on AA UX interview"
+      "description": "Assisted on AA UX interview",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "Internal",
-      "description": "Assisted on eDM agent prototype"
+      "description": "Assisted on eDM agent prototype",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "Internal",
-      "description": "Insights report discussion with PM"
+      "description": "Insights report discussion with PM",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "Internal",
-      "description": "Assisted in Agent testing and feedback"
+      "description": "Assisted in Agent testing and feedback",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "LON",
-      "description": "LON finance payment assist"
+      "description": "LON finance payment assist",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "Internal",
-      "description": "Assisted in template builder interview"
+      "description": "Assisted in template builder interview",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "Mannings",
-      "description": "Adjusted platform communication Mannings - CrossX"
+      "description": "Adjusted platform communication Mannings - CrossX",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "SCMP",
-      "description": "Invited HK guest to event and found panel speaker from SCMP"
+      "description": "Invited HK guest to event and found panel speaker from SCMP",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "Internal",
-      "description": "Assisted in Eddie AQ exam"
+      "description": "Assisted in Eddie AQ exam",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Team Contribution",
       "client": "Mannings",
-      "description": "Answered Mannings SEA tech questions"
+      "description": "Answered Mannings SEA tech questions",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "AI Adoption",
       "client": "Internal",
-      "description": "Built Slides creation skill using Claude"
+      "description": "Built Slides creation skill using Claude",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "AI Adoption",
       "client": "Internal",
-      "description": "Built CSM tracking dashboard"
+      "description": "Built CSM tracking dashboard",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "AI Adoption",
       "client": "Internal",
-      "description": "Built CSM ask anything skill"
+      "description": "Built CSM ask anything skill",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "AI Adoption",
       "client": "Internal",
-      "description": "Built CSM task tracking automation"
+      "description": "Built CSM task tracking automation",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Ticket Resolved",
       "client": "SCMP",
-      "description": "Segment enablement closed ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ awaiting client feedback for renewal"
+      "description": "Segment enablement closed ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ awaiting client feedback for renewal",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Ticket Resolved",
       "client": "Mannings",
-      "description": "AIXP-1840 closed ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ AI suggestions issue resolved (Jin Chen)"
+      "description": "AIXP-1840 closed ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ AI suggestions issue resolved (Jin Chen)",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Ticket Resolved",
       "client": "55688",
-      "description": "AQ JM Timeout Fix (QGWL-19924) closed"
+      "description": "AQ JM Timeout Fix (QGWL-19924) closed",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Onboard",
       "client": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
-      "description": "EUU onboarding completed"
+      "description": "EUU onboarding completed",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-Q2",
       "category": "Feature Enabled",
       "client": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
-      "description": "Campaign Agent Feature delivered"
+      "description": "Campaign Agent Feature delivered",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-06-09",
@@ -440,145 +465,14 @@
       "date": "2026-Q2",
       "category": "Renewal",
       "client": "Mannings",
-      "description": "Q3 renewal contract sent to client ÃÂ¢ÃÂÃÂ pending signature (2026-06-17)."
+      "description": "Q3 renewal contract sent to client ÃÂ¢ÃÂÃÂ pending signature (2026-06-17).",
+      "quarter": "2026-Q2"
     },
     {
       "date": "2026-06-22",
       "category": "Onboard",
       "client": "SCMP",
       "description": "AIRIS onboarding in approval â expected week of 2026-08-04"
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Onboard",
-      "account": "行動力國際",
-      "description": "Picked up 行動力國際 account. WhatsApp Service Agent discussion in progress."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Renewal",
-      "account": "Mannings",
-      "description": "Renewed AQ & AX to 2026-09-30. Contract signing in progress."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Renewal",
-      "account": "SCMP",
-      "description": "Renewal in progress — switching from AIXON to AIRIS (AR). Contract shared 2026-06-26, target sign-back 2026-07-07."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Pitching",
-      "account": "City Super",
-      "description": "AQ deal pitching with partner Prizm. In progress."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Pitching",
-      "account": "Momax",
-      "description": "Referred Momax to Partner team for AQ opportunity."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Pitching",
-      "account": "BB 代駕",
-      "description": "AR discussion in progress."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Pitching",
-      "account": "55688",
-      "description": "Customer Service Service Agent (SA) pitching in progress."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Feature Enabled",
-      "account": "田原香",
-      "description": "Implemented schema agent for 田原香. Pushing client to adopt the product."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Feature Enabled",
-      "account": "Mannings",
-      "description": "OJM merge node feature enabled for Mannings."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Feature Enabled",
-      "account": "田原香",
-      "description": "OJM merge node feature enabled for 田原香."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "AI Adoption",
-      "account": "Internal",
-      "description": "Fully applied Claude to generate pitching decks and renewal decks from external & internal resources and performance data."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "AI Adoption",
-      "account": "Internal",
-      "description": "Adopted new Claude skills: caveman (lower token consumption), llm-council (full analysis with 6 experts), frontend-design (beautify slide design)."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "AI Adoption",
-      "account": "Internal",
-      "description": "Built and optimized CSM dashboard with daily brief (csm_reminder skill) — auto-scans tickets, calendar, and item records each morning."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "AI Adoption",
-      "account": "Internal",
-      "description": "Merged Salesforce AR status into CSM dashboard via Google AppScript and Salesforce report subscription."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "AI Adoption",
-      "account": "Internal",
-      "description": "Leveraged ask-anything skill to gather answers from Confluence, Jira tickets, and sales depot."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "account": "Internal",
-      "description": "LON insights shared to Darren — new discussion initiated."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "account": "Internal",
-      "description": "Provided CSM insights on platform onboarding process with backend team."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "account": "Alleypin",
-      "description": "Identified key communication gap between Alleypin and Appier on payment & contract issue. PM fixing API accordingly."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "account": "Internal",
-      "description": "Worked closely with pre-sales, partner sales and partner to close new deals (City Super, Momax in progress)."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "account": "Internal",
-      "description": "Collaborated with partner sales and sales ops to confirm deal status for contracts."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "account": "Internal",
-      "description": "Direct communication on AX→AR renewals — navigated AEP status constraints and aligned internal resources with client expectations."
-    },
-    {
-      "date": "2026-Q2",
-      "category": "Team Contribution",
-      "account": "Internal",
-      "description": "Open to additional work to drive sales — involved in early pitching and upsell discussions (55688 to AR, SCMP/Mannings to AR)."
     }
   ],
   "feedbackLog": [],
