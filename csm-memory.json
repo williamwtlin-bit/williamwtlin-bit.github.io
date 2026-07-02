@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-01T09:44:25.756+08:00",
+  "lastUpdated": "2026-07-02T10:34:42.330+08:00",
   "rules": [
     {
       "id": "okr-consolidate",
@@ -595,7 +595,7 @@
     }
   ],
   "ticketSnapshot": {
-    "generatedAt": "2026-07-01T01:44:25.719Z",
+    "generatedAt": "2026-07-02T02:34:42.269Z",
     "keys": {
       "55688": [
         "QGWL-19925",
@@ -610,14 +610,14 @@
         "BBT-5191"
       ],
       "mannings": [
-        "LEG-16095",
         "QGWL-24671",
         "PHXX-1559",
         "QGWL-18384",
         "QGWL-14560",
+        "ETS-4593",
+        "QGWL-20748",
         "ETS-4446",
         "QGWL-25598",
-        "QGWL-20748",
         "ETS-4145",
         "ETS-4130",
         "AIQ-1045",
